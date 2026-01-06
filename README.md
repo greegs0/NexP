@@ -93,7 +93,7 @@
 
 ### Structure de la base de données
 
-![Database Schema](app/assets/images/NexP.png)
+![Database Schema](docs/schema.png)
 
 **Modèles principaux :**
 
