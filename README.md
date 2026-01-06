@@ -17,19 +17,19 @@
 
 ## Table des matières
 
-- [À propos](#-à-propos)
-- [Fonctionnalités](#-fonctionnalités)
-- [Stack technique](#-stack-technique)
-- [Architecture](#-architecture)
-- [Installation](#-installation)
-- [Utilisation](#-utilisation)
-- [Base de données](#-base-de-données)
-- [API](#-api)
-- [Tests](#-tests)
-- [Déploiement](#-déploiement)
-- [Contribuer](#-contribuer)
-- [Roadmap](#-roadmap)
-- [License](#-license)
+- [À propos](#à-propos)
+- [Fonctionnalités](#fonctionnalités)
+- [Stack technique](#stack-technique)
+- [Architecture](#architecture)
+- [Installation](#installation)
+- [Utilisation](#utilisation)
+- [Base de données](#base-de-données)
+- [API](#api)
+- [Tests](#tests)
+- [Déploiement](#déploiement)
+- [Contribuer](#contribuer)
+- [Roadmap](#roadmap)
+- [License](#license)
 
 ---
 
