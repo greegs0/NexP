@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🚀 NexP
+# NexP
 
 ### Plateforme collaborative nouvelle génération pour développeurs
 
@@ -9,13 +9,13 @@
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-blue.svg)](https://www.postgresql.org/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-[Demo](#) • [Documentation](#) • [Contribuer](#contributing)
+[Contribuer](#-contribuer)
 
 </div>
 
 ---
 
-## 📋 Table des matières
+## Table des matières
 
 - [À propos](#-à-propos)
 - [Fonctionnalités](#-fonctionnalités)
@@ -33,21 +33,21 @@
 
 ---
 
-## 🎯 À propos
+## À propos
 
 **NexP** est une plateforme collaborative conçue pour connecter les développeurs autour de projets communs. Elle permet de :
 
-- 🔍 **Découvrir** des projets en fonction de ses compétences
-- 🤝 **Collaborer** avec d'autres devs en temps réel
-- 📊 **Suivre** l'avancement des projets via un dashboard intuitif
-- 🏆 **Gagner** des badges en fonction de vos contributions
-- 💬 **Échanger** via un système de messagerie intégré
+- **Découvrir** des projets en fonction de ses compétences
+- **Collaborer** avec d'autres devs en temps réel
+- **Suivre** l'avancement des projets via un dashboard intuitif
+- **Gagner** des badges en fonction de vos contributions
+- **Échanger** via un système de messagerie intégré
 
 ---
 
-## ✨ Fonctionnalités
+## Fonctionnalités
 
-### 🚀 MVP (Phase 1)
+### MVP (Phase 1)
 
 - [x] Authentification utilisateur (Devise)
 - [x] Gestion des profils développeurs
@@ -57,7 +57,7 @@
 - [x] Messagerie interne
 - [x] Feed social (posts + likes)
 
-### 🔮 Fonctionnalités avancées (Phase 2)
+### Fonctionnalités avancées (Phase 2)
 
 - [ ] Matching automatique projet/développeur (ML)
 - [ ] Système de badges et gamification
@@ -69,12 +69,12 @@
 
 ---
 
-## 🛠 Stack technique
+## Stack technique
 
 ### Backend
 
 | Technologie | Version | Usage |
-|------------|---------|-------|
+|-------------|---------|-------|
 | Ruby | 3.3.6 | Langage principal |
 | Rails | 8.0.1 | Framework web |
 | PostgreSQL | 17 | Base de données |
@@ -84,7 +84,7 @@
 ### Frontend
 
 | Technologie | Version | Usage |
-|------------|---------|-------|
+|-------------|---------|-------|
 | Hotwire | - | Interactivité |
 | Stimulus | 3.2 | JavaScript framework |
 | Tailwind CSS | 3.4 | Styling |
@@ -99,122 +99,99 @@
 
 ---
 
-## 🏗 Architecture
+## Architecture
 
 ### Structure de la base de données
 
-```mermaid
-erDiagram
-    USER ||--o{ USER_SKILL : has
-    USER ||--o{ TEAM : joins
-    USER ||--o{ POST : creates
-    USER ||--o{ MESSAGE : sends
-    USER ||--o{ USER_BADGE : earns
-    
-    PROJECT ||--o{ TEAM : contains
-    PROJECT ||--o{ PROJECT_SKILL : requires
-    PROJECT ||--o{ MESSAGE : has
-    
-    SKILL ||--o{ USER_SKILL : defines
-    SKILL ||--o{ PROJECT_SKILL : defines
-    
-    POST ||--o{ LIKE : receives
-    
-    BADGE ||--o{ USER_BADGE : award
-Modèles principaux
+![Database Schema](app/assets/images/NexP..png)
 
-User : Développeur avec compétences et badges
-Project : Projet collaboratif avec statut
-Team : Équipe projet avec rôles
-Skill : Compétence technique
-Message : Communication interne
-Post : Publication sur le feed
-Badge : Récompense utilisateur
+**Modèles principaux :**
 
+- **User** : Développeur avec compétences et portfolio
+- **Project** : Projet collaboratif avec équipe
+- **Team** : Association user ↔ project avec rôles
+- **Skill** : Compétences techniques (tags)
+- **Message** : Messagerie interne projet
+- **Post** : Feed social + likes
+- **Badge** : Système de gamification
 
-🚀 Installation
-Prérequis
+---
 
-Ruby 3.3.6
-PostgreSQL 17
-Node.js 20+ (pour Tailwind)
-Git
+## Installation
 
-Installation locale
-# 1. Cloner le repo
-git clone git@github.com:greegs0/ton-nom-de-projet.git
-cd ton-nom-de-projet
+### Prérequis
 
-# 2. Installer les dépendances
+- Ruby 3.3.6
+- Rails 8.0.1
+- PostgreSQL 17
+- Node.js 20+ (pour Tailwind/Stimulus)
+
+### Setup
+
+```bash
+# Clone le repo
+git clone https://github.com/greegs0/nexp.git
+cd nexp
+
+# Install dependencies
 bundle install
+yarn install
 
-# 3. Configurer la base de données
-cp config/database.yml.example config/database.yml
-# Éditer database.yml avec tes identifiants PostgreSQL
-
-# 4. Créer et migrer la base de données
+# Setup database
 rails db:create
 rails db:migrate
-
-# 5. (Optionnel) Charger les données de test
 rails db:seed
 
-# 6. Lancer le serveur
+# Lancer le serveur
 bin/dev
-L'application sera accessible sur http://localhost:3000
+```
 
-Installation avec Docker
-# Build & run
-docker-compose up --build
+L'app sera dispo sur http://localhost:3000
 
-# Migrations
-docker-compose exec web rails db:migrate
+---
 
-# Seeds
-docker-compose exec web rails db:seed
+## Utilisation
 
-💻 Utilisation
-Créer un compte développeur
+### Créer un compte
+
+```ruby
+# Via la console
 rails console
 User.create!(
   email: "dev@example.com",
   password: "password123",
-  username: "john_dev",
-  bio: "Full-stack developer"
+  name: "John Doe",
+  username: "johndoe"
 )
-Ajouter des compétences
-Skill.create!([
-  { name: "Ruby on Rails", category: "backend" },
-  { name: "React", category: "frontend" },
-  { name: "PostgreSQL", category: "database" }
-])
-Créer un projet
+```
+
+### Ajouter des skills
+
+```ruby
+user = User.first
+user.skills.create!(name: "Ruby on Rails")
+user.skills.create!(name: "React")
+```
+
+### Créer un projet
+
+```ruby
 project = Project.create!(
-  title: "Mon Super Projet",
-  description: "Description du projet",
-  status: "recruiting",
-  max_team_size: 5,
-  owner: User.first
+  title: "Super SaaS",
+  description: "Plateforme de gestion de projets",
+  owner: user,
+  max_members: 5,
+  status: "open"
 )
+```
 
-🗄 Base de données
-Schéma complet
-Le schéma de la base de données est disponible dans db/schema.rb.
-Tables principales :
+---
 
-users : Utilisateurs (Devise)
-projects : Projets collaboratifs
-teams : Membres d'équipe
-skills : Compétences techniques
-user_skills : Liaison User ↔ Skill
-project_skills : Liaison Project ↔ Skill
-messages : Messagerie
-posts : Publications
-likes : Likes sur posts
-badges : Badges gamification
-user_badges : Badges gagnés
+## Base de données
 
-Migrations importantes
+### Migrations principales
+
+```bash
 # Voir l'état des migrations
 rails db:migrate:status
 
@@ -223,10 +200,29 @@ rails db:rollback
 
 # Reset complet
 rails db:reset
+```
 
-🔌 API
-Endpoints (Phase 2)
+### Modèles clés
+
+| Modèle | Description | Relations |
+|--------|-------------|-----------|
+| User | Profil développeur | has_many :projects, has_many :skills |
+| Project | Projet collaboratif | belongs_to :owner, has_many :teams |
+| Team | Membre d'un projet | belongs_to :user, belongs_to :project |
+| Skill | Compétence technique | belongs_to :user |
+| Message | Message interne | belongs_to :sender, belongs_to :project |
+| Post | Publication sociale | belongs_to :user, has_many :likes |
+| Badge | Badge gamification | has_many :user_badges |
+
+---
+
+## API
+
+### Endpoints (Phase 2)
+
 Documentation complète à venir. Endpoints prévus :
+
+```
 GET    /api/v1/projects          # Liste des projets
 POST   /api/v1/projects          # Créer un projet
 GET    /api/v1/projects/:id      # Détails d'un projet
@@ -236,9 +232,15 @@ DELETE /api/v1/projects/:id      # Supprimer un projet
 GET    /api/v1/users             # Liste des devs
 GET    /api/v1/users/:id         # Profil d'un dev
 PATCH  /api/v1/users/:id         # Modifier son profil
+```
 
-🧪 Tests
-Lancer les tests
+---
+
+## Tests
+
+### Lancer les tests
+
+```bash
 # Tous les tests
 rails test
 
@@ -247,15 +249,21 @@ rails test test/models/user_test.rb
 
 # Avec couverture
 COVERAGE=true rails test
-Coverage attendue
+```
 
-Models : 90%+
-Controllers : 80%+
-Global : 85%+
+### Coverage attendue
 
+- Models : 90%+
+- Controllers : 80%+
+- Global : 85%+
 
-🚢 Déploiement
-Heroku
+---
+
+## Déploiement
+
+### Heroku
+
+```bash
 # Login
 heroku login
 
@@ -271,70 +279,73 @@ git push heroku main
 # Migrations
 heroku run rails db:migrate
 heroku run rails db:seed
-Render / Fly.io
+```
+
+### Render / Fly.io
+
 Documentation à venir.
 
-🤝 Contribuer
+---
+
+## Contribuer
+
 Les contributions sont les bienvenues ! Voici comment procéder :
 
-Fork le projet
-Créer une branche feature (git checkout -b feature/AmazingFeature)
-Commit vos changements (git commit -m 'Add: Amazing feature')
-Push vers la branche (git push origin feature/AmazingFeature)
-Ouvrir une Pull Request
+1. Fork le projet
+2. Créer une branche feature (`git checkout -b feature/AmazingFeature`)
+3. Commit vos changements (`git commit -m 'Add: Amazing feature'`)
+4. Push vers la branche (`git push origin feature/AmazingFeature`)
+5. Ouvrir une Pull Request
 
-Guidelines
+### Guidelines
 
-Suivre les conventions Ruby/Rails
-Ajouter des tests pour les nouvelles features
-Documenter les changements importants
-Respecter le style de code existant
+- Suivre les conventions Ruby/Rails
+- Ajouter des tests pour les nouvelles features
+- Documenter les changements importants
+- Respecter le style de code existant
 
+---
 
-🗺 Roadmap
-Q1 2025
+## Roadmap
 
- Setup projet Rails 8
- Modèles de données
- Interface utilisateur MVP
- Système de messagerie
+### Q1 2025
 
-Q2 2025
+- [x] Setup projet Rails 8
+- [x] Modèles de données
+- [ ] Interface utilisateur MVP
+- [ ] Système de messagerie
 
- Matching automatique
- Gamification complète
- API REST v1
- Dashboard analytics
+### Q2 2025
 
-Q3 2025
+- [ ] Matching automatique
+- [ ] Gamification complète
+- [ ] API REST v1
+- [ ] Dashboard analytics
 
- Intégrations Git
- Mode sombre
- Mobile app (React Native ?)
+### Q3 2025
 
+- [ ] Intégrations Git
+- [ ] Mode sombre
+- [ ] Mobile app (React Native ?)
 
-📝 License
-Ce projet est sous licence MIT. Voir le fichier LICENSE pour plus de détails.
+---
 
-👨‍💻 Auteur
-Greg - @greegs0
+## License
+
+Ce projet est sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus de détails.
+
+---
+
+## Auteur
+
+**Greg** - [@greegs0](https://github.com/greegs0)
+
+---
 
 <div align="center">
 
-Fait avec ❤️ et ☕ par la communauté dev
-⬆ Retour en haut
+Fait avec mass et mass par la communauté dev
+
+[Retour en haut](#nexp)
+
 </div>
-```
-
-
-🔥 Fichiers additionnels à créer :
-1. CONTRIBUTING.md
-# Guide de contribution
-
-Merci de contribuer à NexP ! [...]
-2. LICENSE
-MIT License [...]
-3. .github/ISSUE_TEMPLATE/bug_report.md
-Template pour les bugs
-4. .github/ISSUE_TEMPLATE/feature_request.md
-Template pour les features
