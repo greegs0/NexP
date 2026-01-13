@@ -22,8 +22,45 @@ class User < ApplicationRecord
   has_many :badges, through: :user_badges
 
   # Validations
-  validates :username, presence: true, uniqueness: true
-  validates :email, presence: true, uniqueness: true
+  validates :username, presence: true, uniqueness: { case_sensitive: false },
+            length: { minimum: 3, maximum: 30 },
+            format: { with: /\A[a-zA-Z0-9_]+\z/, message: "ne peut contenir que des lettres, chiffres et underscores" }
+  validates :email, presence: true, uniqueness: { case_sensitive: false }
+  validates :name, length: { maximum: 100 }, allow_blank: true
+  validates :bio, length: { maximum: 500 }, allow_blank: true
+  validates :zipcode, format: { with: /\A\d{5}\z/, message: "doit contenir 5 chiffres" }, allow_blank: true
+  validates :portfolio_url, :github_url, :linkedin_url,
+            format: { with: URI::DEFAULT_PARSER.make_regexp(%w[http https]), message: "doit être une URL valide" },
+            allow_blank: true
   validates :experience_points, numericality: { greater_than_or_equal_to: 0 }
-  validates :level, numericality: { greater_than_or_equal_to: 1 }
+  validates :level, numericality: { greater_than_or_equal_to: 1, less_than_or_equal_to: 100 }
+
+  # Callbacks
+  before_save :normalize_username
+
+  # Scopes
+  scope :available, -> { where(available: true) }
+  scope :with_skill, ->(skill_id) { joins(:user_skills).where(user_skills: { skill_id: skill_id }) }
+  scope :by_level, ->(min_level) { where('level >= ?', min_level) }
+
+  # Methods
+  def display_name
+    name.presence || username
+  end
+
+  def add_experience(points)
+    increment!(:experience_points, points)
+    level_up_if_needed
+  end
+
+  private
+
+  def normalize_username
+    self.username = username.downcase if username.present?
+  end
+
+  def level_up_if_needed
+    new_level = (experience_points / 100) + 1
+    update_column(:level, new_level) if new_level > level && new_level <= 100
+  end
 end

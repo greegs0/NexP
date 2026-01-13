@@ -4,11 +4,11 @@
 
 ### Plateforme collaborative nouvelle génération pour développeurs
 
-[![Ruby](https://img.shields.io/badge/Ruby-3.3.6-red.svg)](https://www.ruby-lang.org/)
-[![Rails](https://img.shields.io/badge/Rails-8.0.1-red.svg)](https://rubyonrails.org/)
+[![Ruby](https://img.shields.io/badge/Ruby-3.3.5-red.svg)](https://www.ruby-lang.org/)
+[![Rails](https://img.shields.io/badge/Rails-7.1.6-red.svg)](https://rubyonrails.org/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-blue.svg)](https://www.postgresql.org/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Status](https://img.shields.io/badge/Status-Early%20Development-orange.svg)]()
+[![Status](https://img.shields.io/badge/Status-Active%20Development-green.svg)]()
 
 [Contribuer](#contribuer)
 
@@ -45,14 +45,14 @@
 
 ### En cours de développement
 
-- [x] Setup projet Rails 8
+- [x] Setup projet Rails 7
 - [x] Architecture base de données
-- [ ] Authentification utilisateur (Devise)
-- [ ] Gestion des profils développeurs
-- [ ] Système de compétences (skills)
-- [ ] Création et gestion de projets
-- [ ] Équipes et collaborations
-- [ ] Messagerie interne
+- [x] Authentification utilisateur (Devise)
+- [x] Gestion des profils développeurs
+- [x] Système de compétences (skills) avec catégories
+- [x] Création et gestion de projets
+- [x] Équipes et collaborations
+- [x] Messagerie interne par projet
 - [ ] Feed social (posts + likes)
 
 ### Fonctionnalités futures
@@ -73,10 +73,11 @@
 
 | Technologie | Version | Usage |
 |-------------|---------|-------|
-| Ruby | 3.3.6 | Langage principal |
-| Rails | 8.0.1 | Framework web |
+| Ruby | 3.3.5 | Langage principal |
+| Rails | 7.1.6 | Framework web |
 | PostgreSQL | 17 | Base de données |
 | Puma | 6.5 | Serveur web |
+| Devise | - | Authentification |
 
 ### Frontend
 
@@ -111,8 +112,8 @@
 
 ### Prérequis
 
-- Ruby 3.3.6
-- Rails 8.0.1
+- Ruby 3.3.5
+- Rails 7.1.6
 - PostgreSQL 17
 - Node.js 20+ (pour Tailwind/Stimulus)
 

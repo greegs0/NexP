@@ -1,0 +1,19 @@
+<div class="my-skills">
+  <h2>Mes compétences (<%= user_skills.count %>)</h2>
+
+  <% if user_skills.any? %>
+    <div class="skills-grid">
+      <% user_skills.each do |user_skill| %>
+        <%= button_to user_skill_path(user_skill),
+            method: :delete,
+            class: "skill-pill selected",
+            data: { turbo_confirm: "Retirer cette compétence ?" } do %>
+          <%= user_skill.skill.name %>
+          <span class="remove">×</span>
+        <% end %>
+      <% end %>
+    </div>
+  <% else %>
+    <p class="empty-state">Aucune compétence sélectionnée pour l'instant.</p>
+  <% end %>
+</div>

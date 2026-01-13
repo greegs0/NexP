@@ -1,0 +1,149 @@
+<div class="user-profile">
+  <div class="profile-header">
+    <div class="avatar">
+      <% if @user.avatar_url.present? %>
+        <%= image_tag @user.avatar_url, alt: @user.display_name, class: "avatar-img" %>
+      <% else %>
+        <div class="avatar-placeholder">
+          <%= @user.display_name.first.upcase %>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="profile-info">
+      <h1><%= @user.display_name %></h1>
+      <p class="username">@<%= @user.username %></p>
+
+      <% if @user.bio.present? %>
+        <p class="bio"><%= @user.bio %></p>
+      <% end %>
+
+      <div class="profile-meta">
+        <% if @user.zipcode.present? %>
+          <span class="meta-item">
+            📍 <%= @user.zipcode %>
+          </span>
+        <% end %>
+
+        <span class="meta-item">
+          ⭐ Niveau <%= @user.level %> (<%= @user.experience_points %> XP)
+        </span>
+
+        <% if @user.available %>
+          <span class="meta-item available">
+            ✅ Disponible
+          </span>
+        <% end %>
+      </div>
+
+      <div class="profile-links">
+        <% if @user.portfolio_url.present? %>
+          <%= link_to "Portfolio", @user.portfolio_url, target: "_blank", rel: "noopener", class: "btn btn-sm btn-outline" %>
+        <% end %>
+        <% if @user.github_url.present? %>
+          <%= link_to "GitHub", @user.github_url, target: "_blank", rel: "noopener", class: "btn btn-sm btn-outline" %>
+        <% end %>
+        <% if @user.linkedin_url.present? %>
+          <%= link_to "LinkedIn", @user.linkedin_url, target: "_blank", rel: "noopener", class: "btn btn-sm btn-outline" %>
+        <% end %>
+      </div>
+
+      <% if @is_current_user %>
+        <div class="profile-actions">
+          <%= link_to "Modifier mon profil", edit_user_registration_path, class: "btn btn-primary" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="profile-body">
+    <section class="skills-section">
+      <h2>Compétences (<%= @user_skills.count %>)</h2>
+
+      <% if @user_skills.any? %>
+        <div class="skills-by-category">
+          <% @user_skills.group_by(&:category).each do |category, skills| %>
+            <div class="skill-category">
+              <h3><%= category %></h3>
+              <div class="skills-tags">
+                <% skills.each do |skill| %>
+                  <span class="skill-tag"><%= skill.name %></span>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <p class="empty-state">Aucune compétence ajoutée</p>
+      <% end %>
+
+      <% if @is_current_user %>
+        <%= link_to "Gérer mes compétences", skills_path, class: "btn btn-secondary mt-3" %>
+      <% end %>
+    </section>
+
+    <section class="projects-section">
+      <h2>Projets (<%= @total_projects %>)</h2>
+
+      <% if @owned_projects.any? %>
+        <h3>Projets créés (<%= @owned_projects.size %>)</h3>
+        <div class="projects-list">
+          <% @owned_projects.each do |project| %>
+            <div class="project-card">
+              <h4><%= link_to project.title, project_path(project) %></h4>
+              <span class="badge <%= project.status %>"><%= project.status.titleize %></span>
+              <p><%= truncate(project.description, length: 100) %></p>
+              <div class="project-skills">
+                <% project.skills.limit(3).each do |skill| %>
+                  <span class="skill-tag-sm"><%= skill.name %></span>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+
+      <% if @participated_projects.any? %>
+        <h3>Projets rejoints (<%= @participated_projects.size %>)</h3>
+        <div class="projects-list">
+          <% @participated_projects.each do |project| %>
+            <div class="project-card">
+              <h4><%= link_to project.title, project_path(project) %></h4>
+              <span class="badge <%= project.status %>"><%= project.status.titleize %></span>
+              <p class="project-owner">Par <%= project.owner.display_name %></p>
+              <div class="project-skills">
+                <% project.skills.limit(3).each do |skill| %>
+                  <span class="skill-tag-sm"><%= skill.name %></span>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+
+      <% if @owned_projects.empty? && @participated_projects.empty? %>
+        <p class="empty-state">Aucun projet</p>
+        <% if @is_current_user %>
+          <%= link_to "Créer un projet", new_project_path, class: "btn btn-primary" %>
+          <%= link_to "Parcourir les projets", projects_path, class: "btn btn-secondary" %>
+        <% end %>
+      <% end %>
+    </section>
+
+    <% if @badges.any? %>
+      <section class="badges-section">
+        <h2>Badges (<%= @badges.count %>)</h2>
+        <div class="badges-list">
+          <% @badges.each do |badge| %>
+            <div class="badge-card" title="<%= badge.description %>">
+              <% if badge.icon_url.present? %>
+                <%= image_tag badge.icon_url, alt: badge.name %>
+              <% end %>
+              <span><%= badge.name %></span>
+            </div>
+          <% end %>
+        </div>
+      </section>
+    <% end %>
+  </div>
+</div>

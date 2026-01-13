@@ -1,0 +1,9 @@
+<div class="search-bar">
+  <%= form_with url: skills_path, method: :get, local: true do |f| %>
+    <%= f.text_field :search,
+        placeholder: "Rechercher une compétence...",
+        value: params[:search],
+        class: "search-input",
+        data: { action: "input->skills#search" } %>
+  <% end %>
+</div>

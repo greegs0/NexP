@@ -1,0 +1,115 @@
+<div class="project-show">
+  <div class="project-header">
+    <div class="header-top">
+      <h1><%= @project.title %></h1>
+      <div class="badges">
+        <span class="badge <%= @project.status %>"><%= @project.status.titleize %></span>
+        <span class="badge <%= @project.visibility %>"><%= @project.visibility.titleize %></span>
+      </div>
+    </div>
+
+    <div class="project-owner">
+      Par <%= link_to @project.owner.display_name, user_path(@project.owner) %>
+      <% if @is_owner %>
+        <span class="owner-badge">Vous êtes le créateur</span>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="project-actions">
+    <% if @is_owner %>
+      <%= link_to "Modifier", edit_project_path(@project), class: "btn btn-primary" %>
+      <%= button_to "Supprimer", project_path(@project),
+          method: :delete,
+          class: "btn btn-danger",
+          data: { turbo_confirm: "Êtes-vous sûr de vouloir supprimer ce projet ?" } %>
+      <%= link_to "Messages (#{@project.messages.count})", project_messages_path(@project), class: "btn btn-outline" %>
+    <% elsif @is_member %>
+      <%= button_to "Quitter le projet", leave_project_path(@project),
+          method: :delete,
+          class: "btn btn-warning",
+          data: { turbo_confirm: "Êtes-vous sûr de vouloir quitter ce projet ?" } %>
+      <%= link_to "Messages (#{@project.messages.count})", project_messages_path(@project), class: "btn btn-outline" %>
+    <% elsif @project.accepting_members? %>
+      <%= button_to "Rejoindre le projet", join_project_path(@project),
+          method: :post,
+          class: "btn btn-success" %>
+    <% elsif @project.full? %>
+      <span class="text-muted">Projet complet</span>
+    <% end %>
+  </div>
+
+  <div class="project-body">
+    <div class="project-main">
+      <section class="description">
+        <h2>Description</h2>
+        <p><%= simple_format(@project.description) %></p>
+      </section>
+
+      <section class="skills">
+        <h2>Compétences requises</h2>
+        <% if @project_skills.any? %>
+          <div class="skills-list">
+            <% @project_skills.group_by(&:category).each do |category, skills| %>
+              <div class="skill-category">
+                <h4><%= category %></h4>
+                <div class="skills-tags">
+                  <% skills.each do |skill| %>
+                    <span class="skill-tag"><%= skill.name %></span>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <p class="text-muted">Aucune compétence spécifiée</p>
+        <% end %>
+      </section>
+
+      <section class="dates">
+        <h2>Calendrier</h2>
+        <ul>
+          <% if @project.start_date %>
+            <li>Début : <%= l(@project.start_date, format: :long) %></li>
+          <% end %>
+          <% if @project.end_date %>
+            <li>Fin : <%= l(@project.end_date, format: :long) %></li>
+          <% end %>
+          <% if @project.deadline %>
+            <li>Deadline : <%= l(@project.deadline, format: :long) %></li>
+          <% end %>
+        </ul>
+      </section>
+    </div>
+
+    <div class="project-sidebar">
+      <section class="team">
+        <h3>Équipe (<%= @project.current_members_count %> / <%= @project.max_members %>)</h3>
+
+        <div class="team-member owner">
+          <%= link_to user_path(@project.owner) do %>
+            <strong><%= @project.owner.display_name %></strong>
+            <span class="role">Créateur</span>
+          <% end %>
+        </div>
+
+        <% @team_members.where.not(id: @project.owner.id).each do |member| %>
+          <div class="team-member">
+            <%= link_to user_path(member) do %>
+              <%= member.display_name %>
+            <% end %>
+          </div>
+        <% end %>
+      </section>
+
+      <section class="meta">
+        <h3>Informations</h3>
+        <ul>
+          <li>Créé le <%= l(@project.created_at, format: :short) %></li>
+          <li>Statut : <%= @project.status.titleize %></li>
+          <li>Visibilité : <%= @project.visibility.titleize %></li>
+        </ul>
+      </section>
+    </div>
+  </div>
+</div>

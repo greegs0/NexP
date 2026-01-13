@@ -1,0 +1,19 @@
+<% skills_by_category.each do |category, skills| %>
+  <div class="skills-section" data-category="<%= category %>">
+    <h3><%= category %></h3>
+
+    <% if skills.any? %>
+      <div class="skills-grid">
+        <% skills.each do |skill| %>
+          <%= button_to user_skills_path(skill_id: skill.id),
+              method: :post,
+              class: "skill-pill available" do %>
+            <%= skill.name %>
+          <% end %>
+        <% end %>
+      </div>
+    <% else %>
+      <p class="empty-state">Aucune compétence disponible dans cette catégorie.</p>
+    <% end %>
+  </div>
+<% end %>

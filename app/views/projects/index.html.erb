@@ -1,0 +1,58 @@
+<div class="projects-page">
+  <div class="header">
+    <h1>Projets collaboratifs</h1>
+    <%= link_to "Créer un projet", new_project_path, class: "btn btn-primary" %>
+  </div>
+
+  <div class="filters">
+    <%= form_with url: projects_path, method: :get, class: "filter-form" do |f| %>
+      <%= f.select :status,
+          options_for_select(Project::STATUSES.map { |s| [s.titleize, s] }, params[:status]),
+          { include_blank: "Tous les statuts" },
+          class: "form-select" %>
+
+      <%= f.submit "Filtrer", class: "btn btn-secondary" %>
+    <% end %>
+  </div>
+
+  <% if @projects.any? %>
+    <div class="projects-grid">
+      <% @projects.each do |project| %>
+        <div class="project-card">
+          <div class="project-header">
+            <h3><%= link_to project.title, project_path(project) %></h3>
+            <span class="badge <%= project.status %>"><%= project.status.titleize %></span>
+          </div>
+
+          <p class="project-description"><%= truncate(project.description, length: 150) %></p>
+
+          <div class="project-meta">
+            <div class="owner">
+              Par <%= link_to project.owner.display_name, user_path(project.owner) %>
+            </div>
+            <div class="members">
+              <%= project.current_members_count %> / <%= project.max_members %> membres
+            </div>
+          </div>
+
+          <% if project.skills.any? %>
+            <div class="skills-tags">
+              <% project.skills.limit(5).each do |skill| %>
+                <span class="skill-tag"><%= skill.name %></span>
+              <% end %>
+            </div>
+          <% end %>
+
+          <div class="project-actions">
+            <%= link_to "Voir le projet", project_path(project), class: "btn btn-sm btn-outline" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="empty-state">
+      <p>Aucun projet trouvé.</p>
+      <%= link_to "Créer le premier projet", new_project_path, class: "btn btn-primary" %>
+    </div>
+  <% end %>
+</div>

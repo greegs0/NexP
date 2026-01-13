@@ -1,0 +1,10 @@
+<div class="categories">
+  <%= link_to "Toutes", skills_path,
+      class: "category-tag #{'active' if current_category.nil?}" %>
+
+  <% categories.each do |category| %>
+    <%= link_to category,
+        skills_path(category: category),
+        class: "category-tag #{'active' if current_category == category}" %>
+  <% end %>
+</div>
