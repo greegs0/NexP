@@ -1,5 +1,16 @@
-<div class="skills-page">
-  <h1>Gérer mes compétences</h1>
+<% content_for :page_title, "Compétences" %>
+
+<div class="max-w-7xl mx-auto">
+  <!-- Header -->
+  <div class="mb-8 animate-fade-in-up">
+    <div class="inline-flex items-center gap-2 text-sm font-mono text-muted-foreground mb-2">
+      Gestion des compétences
+    </div>
+    <h1 class="text-3xl md:text-4xl font-bold text-foreground tracking-tight">
+      Mes compétences<span class="text-primary">.</span>
+    </h1>
+    <p class="text-muted-foreground mt-2">Ajoute ou retire tes compétences pour matcher avec des projets</p>
+  </div>
 
   <%= render 'search_bar' %>
 
@@ -7,5 +18,7 @@
 
   <%= render 'my_skills', user_skills: @user_skills %>
 
-  <%= render 'available_skills', skills_by_category: @skills_by_category %>
+  <div id="available_skills">
+    <%= render 'available_skills', skills_by_category: @skills_by_category %>
+  </div>
 </div>

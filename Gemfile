@@ -28,6 +28,9 @@ gem "tailwindcss-rails"
 
 # additional gems
 gem "devise"
+gem "kaminari"
+gem "rack-attack"
+gem "rails-html-sanitizer"
 
 # Use Redis adapter to run Action Cable in production
 # gem "redis", ">= 4.0.1"

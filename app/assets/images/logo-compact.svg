@@ -1,0 +1,29 @@
+<svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <!-- Réseau de neurones raffiné -->
+  <g id="network">
+    <!-- Lignes de connexion fines -->
+    <line x1="60" y1="60" x2="30" y2="30" stroke="#8B8B8B" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+    <line x1="60" y1="60" x2="70" y2="20" stroke="#8B8B8B" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+    <line x1="60" y1="60" x2="100" y2="50" stroke="#8B8B8B" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+    <line x1="60" y1="60" x2="90" y2="90" stroke="#8B8B8B" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+    <line x1="60" y1="60" x2="35" y2="95" stroke="#8B8B8B" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+
+    <!-- Satellites (petits nodes périphériques) -->
+    <circle cx="30" cy="30" r="6" fill="#62754C" opacity="0.8"/>
+    <circle cx="70" cy="20" r="6" fill="#62754C" opacity="0.8"/>
+    <circle cx="100" cy="50" r="6" fill="#62754C" opacity="0.8"/>
+    <circle cx="90" cy="90" r="6" fill="#62754C" opacity="0.8"/>
+    <circle cx="35" cy="95" r="6" fill="#62754C" opacity="0.8"/>
+
+    <!-- Node central (plus gros, accent) -->
+    <circle cx="60" cy="60" r="16" fill="#62754C"/>
+    <circle cx="60" cy="60" r="12" fill="#2D2D2D"/>
+
+    <!-- Points internes (détails subtils) -->
+    <circle cx="60" cy="54" r="2" fill="#62754C" opacity="0.9"/>
+    <circle cx="56" cy="60" r="2" fill="#62754C" opacity="0.9"/>
+    <circle cx="60" cy="60" r="2.5" fill="#62754C"/>
+    <circle cx="64" cy="60" r="2" fill="#62754C" opacity="0.9"/>
+    <circle cx="60" cy="66" r="2" fill="#62754C" opacity="0.9"/>
+  </g>
+</svg>

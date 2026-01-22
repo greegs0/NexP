@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_user, only: [:show, :portfolio]
+  before_action :set_user, only: [:show, :portfolio, :toggle_availability]
 
   def show
     @user_skills = @user.skills.includes(:user_skills).order(:category, :name)
@@ -15,6 +15,15 @@ class UsersController < ApplicationController
   def portfolio
     @user_skills = @user.skills.order(:category, :name)
     @all_projects = (@user.owned_projects + @user.projects).uniq.sort_by(&:created_at).reverse
+  end
+
+  def toggle_availability
+    if current_user == @user
+      @user.update(available: params[:available])
+      render json: { available: @user.available }
+    else
+      render json: { error: 'Unauthorized' }, status: :forbidden
+    end
   end
 
   private

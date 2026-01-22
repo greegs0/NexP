@@ -1,0 +1,53 @@
+<nav class="navbar" style="margin-left: 16rem;">
+  <div class="flex items-center flex-1">
+    <!-- Mobile menu toggle -->
+    <button data-action="click->sidebar#toggle" class="md:hidden mr-4 p-2 rounded-lg hover:bg-secondary">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+      </svg>
+    </button>
+
+    <!-- Page title or search -->
+    <h1 class="text-xl font-semibold text-primary">
+      <%= content_for?(:page_title) ? yield(:page_title) : 'NexP' %>
+    </h1>
+  </div>
+
+  <div class="flex items-center space-x-4">
+    <!-- Notifications (placeholder) -->
+    <button class="p-2 rounded-lg hover:bg-secondary relative">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+      </svg>
+    </button>
+
+    <!-- Theme toggle -->
+    <button data-controller="theme" data-action="click->theme#toggle" class="p-2 rounded-lg hover:bg-secondary transition-colors flex items-center gap-2" aria-label="Changer le thème">
+      <svg data-theme-target="moonIcon" class="w-5 h-5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+      </svg>
+      <svg data-theme-target="sunIcon" class="w-5 h-5 text-muted-foreground hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+      </svg>
+      <span data-theme-target="label" class="text-sm text-muted-foreground hidden sm:inline">Sombre</span>
+    </button>
+  </div>
+</nav>
+
+<style>
+  @media (max-width: 768px) {
+    .navbar {
+      margin-left: 0 !important;
+    }
+  }
+
+  .sidebar.collapsed ~ .navbar {
+    margin-left: 5rem;
+  }
+
+  @media (max-width: 768px) {
+    .sidebar.collapsed ~ .navbar {
+      margin-left: 0;
+    }
+  }
+</style>

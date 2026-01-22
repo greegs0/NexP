@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <title><%= content_for?(:page_title) ? "#{yield(:page_title)} - NexP" : 'NexP - Build. Together.' %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="description" content="NexP connecte les porteurs d'idées avec les développeurs, designers et builders qui cherchent un projet, pas un job.">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body class="bg-background text-foreground">
+    <div class="relative min-h-screen">
+      <%= render 'shared/animated_background' %>
+      <%= yield %>
+    </div>
+  </body>
+</html>

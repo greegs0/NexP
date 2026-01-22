@@ -1,115 +1,240 @@
-<div class="project-show">
-  <div class="project-header">
-    <div class="header-top">
-      <h1><%= @project.title %></h1>
-      <div class="badges">
-        <span class="badge <%= @project.status %>"><%= @project.status.titleize %></span>
-        <span class="badge <%= @project.visibility %>"><%= @project.visibility.titleize %></span>
+<% content_for :page_title, @project.title %>
+
+<div class="max-w-7xl mx-auto">
+  <!-- Header -->
+  <div class="mb-8 animate-fade-in-up">
+    <div class="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-6">
+      <div class="flex-1">
+        <div class="flex items-center gap-3 mb-3">
+          <span class="px-3 py-1 text-xs rounded-full font-medium <%= %w[open in_progress].include?(@project.status) ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground' %>">
+            <%= @project.status.titleize %>
+          </span>
+          <span class="px-3 py-1 text-xs rounded-full font-medium bg-secondary text-secondary-foreground">
+            <%= @project.visibility.titleize %>
+          </span>
+        </div>
+        <h1 class="text-3xl md:text-4xl font-bold text-foreground tracking-tight mb-2">
+          <%= @project.title %><span class="text-primary">.</span>
+        </h1>
+        <p class="text-muted-foreground">
+          Par <%= link_to @project.owner.display_name, user_path(@project.owner), class: "text-primary hover:text-primary/80" %>
+          <% if @is_owner %>
+            <span class="ml-2 badge badge-primary text-xs">Créateur</span>
+          <% end %>
+        </p>
+      </div>
+
+      <div class="flex flex-wrap gap-3">
+        <% if @is_owner %>
+          <%= link_to edit_project_path(@project), class: "btn-primary inline-flex items-center gap-2" do %>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+            </svg>
+            Modifier
+          <% end %>
+          <%= button_to project_path(@project),
+              method: :delete,
+              class: "btn-secondary inline-flex items-center gap-2",
+              data: { turbo_confirm: "Êtes-vous sûr de vouloir supprimer ce projet ?" } do %>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+            </svg>
+            Supprimer
+          <% end %>
+          <%= link_to project_messages_path(@project), class: "btn-accent inline-flex items-center gap-2" do %>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+            </svg>
+            Messages (<%= @project.messages.count %>)
+          <% end %>
+        <% elsif @is_member %>
+          <%= button_to leave_project_path(@project),
+              method: :delete,
+              class: "btn-secondary inline-flex items-center gap-2",
+              data: { turbo_confirm: "Êtes-vous sûr de vouloir quitter ce projet ?" } do %>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+            </svg>
+            Quitter
+          <% end %>
+          <%= link_to project_messages_path(@project), class: "btn-primary inline-flex items-center gap-2" do %>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+            </svg>
+            Messages (<%= @project.messages.count %>)
+          <% end %>
+        <% elsif @project.accepting_members? %>
+          <%= button_to join_project_path(@project),
+              method: :post,
+              class: "btn-primary inline-flex items-center gap-2" do %>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+            </svg>
+            Rejoindre le projet
+          <% end %>
+        <% elsif @project.full? %>
+          <span class="text-muted-foreground flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+            </svg>
+            Projet complet
+          </span>
+        <% end %>
       </div>
     </div>
-
-    <div class="project-owner">
-      Par <%= link_to @project.owner.display_name, user_path(@project.owner) %>
-      <% if @is_owner %>
-        <span class="owner-badge">Vous êtes le créateur</span>
-      <% end %>
-    </div>
   </div>
 
-  <div class="project-actions">
-    <% if @is_owner %>
-      <%= link_to "Modifier", edit_project_path(@project), class: "btn btn-primary" %>
-      <%= button_to "Supprimer", project_path(@project),
-          method: :delete,
-          class: "btn btn-danger",
-          data: { turbo_confirm: "Êtes-vous sûr de vouloir supprimer ce projet ?" } %>
-      <%= link_to "Messages (#{@project.messages.count})", project_messages_path(@project), class: "btn btn-outline" %>
-    <% elsif @is_member %>
-      <%= button_to "Quitter le projet", leave_project_path(@project),
-          method: :delete,
-          class: "btn btn-warning",
-          data: { turbo_confirm: "Êtes-vous sûr de vouloir quitter ce projet ?" } %>
-      <%= link_to "Messages (#{@project.messages.count})", project_messages_path(@project), class: "btn btn-outline" %>
-    <% elsif @project.accepting_members? %>
-      <%= button_to "Rejoindre le projet", join_project_path(@project),
-          method: :post,
-          class: "btn btn-success" %>
-    <% elsif @project.full? %>
-      <span class="text-muted">Projet complet</span>
-    <% end %>
-  </div>
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Colonne principale -->
+    <div class="lg:col-span-2 space-y-6">
+      <!-- Description -->
+      <div class="card animate-fade-in-up" style="animation-delay: 100ms;">
+        <div class="flex items-center gap-2 mb-4">
+          <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+          </svg>
+          <h2 class="text-xl font-bold text-foreground">Description</h2>
+        </div>
+        <div class="text-muted-foreground prose prose-sm max-w-none prose-invert">
+          <%= simple_format(@project.description) %>
+        </div>
+      </div>
 
-  <div class="project-body">
-    <div class="project-main">
-      <section class="description">
-        <h2>Description</h2>
-        <p><%= simple_format(@project.description) %></p>
-      </section>
-
-      <section class="skills">
-        <h2>Compétences requises</h2>
+      <!-- Compétences requises -->
+      <div class="card animate-fade-in-up" style="animation-delay: 150ms;">
+        <div class="flex items-center gap-2 mb-4">
+          <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+          </svg>
+          <h2 class="text-xl font-bold text-foreground">Compétences requises</h2>
+        </div>
         <% if @project_skills.any? %>
-          <div class="skills-list">
+          <div class="space-y-4">
             <% @project_skills.group_by(&:category).each do |category, skills| %>
-              <div class="skill-category">
-                <h4><%= category %></h4>
-                <div class="skills-tags">
+              <div>
+                <h4 class="text-sm font-medium text-muted-foreground mb-2"><%= category %></h4>
+                <div class="flex flex-wrap gap-2">
                   <% skills.each do |skill| %>
-                    <span class="skill-tag"><%= skill.name %></span>
+                    <span class="badge badge-primary">
+                      <%= skill.name %>
+                    </span>
                   <% end %>
                 </div>
               </div>
             <% end %>
           </div>
         <% else %>
-          <p class="text-muted">Aucune compétence spécifiée</p>
+          <p class="text-muted-foreground">Aucune compétence spécifiée</p>
         <% end %>
-      </section>
+      </div>
 
-      <section class="dates">
-        <h2>Calendrier</h2>
-        <ul>
+      <!-- Calendrier -->
+      <div class="card animate-fade-in-up" style="animation-delay: 200ms;">
+        <div class="flex items-center gap-2 mb-4">
+          <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+          </svg>
+          <h2 class="text-xl font-bold text-foreground">Calendrier</h2>
+        </div>
+        <div class="space-y-3 text-muted-foreground">
           <% if @project.start_date %>
-            <li>Début : <%= l(@project.start_date, format: :long) %></li>
+            <p class="flex items-center gap-2">
+              <span class="text-foreground font-medium">Début :</span>
+              <%= l(@project.start_date, format: :long) %>
+            </p>
           <% end %>
           <% if @project.end_date %>
-            <li>Fin : <%= l(@project.end_date, format: :long) %></li>
+            <p class="flex items-center gap-2">
+              <span class="text-foreground font-medium">Fin :</span>
+              <%= l(@project.end_date, format: :long) %>
+            </p>
           <% end %>
           <% if @project.deadline %>
-            <li>Deadline : <%= l(@project.deadline, format: :long) %></li>
+            <p class="flex items-center gap-2">
+              <span class="text-foreground font-medium">Deadline :</span>
+              <%= l(@project.deadline, format: :long) %>
+            </p>
           <% end %>
-        </ul>
-      </section>
-    </div>
-
-    <div class="project-sidebar">
-      <section class="team">
-        <h3>Équipe (<%= @project.current_members_count %> / <%= @project.max_members %>)</h3>
-
-        <div class="team-member owner">
-          <%= link_to user_path(@project.owner) do %>
-            <strong><%= @project.owner.display_name %></strong>
-            <span class="role">Créateur</span>
+          <% unless @project.start_date || @project.end_date || @project.deadline %>
+            <p>Aucune date définie</p>
           <% end %>
         </div>
+      </div>
+    </div>
 
-        <% @team_members.where.not(id: @project.owner.id).each do |member| %>
-          <div class="team-member">
-            <%= link_to user_path(member) do %>
-              <%= member.display_name %>
+    <!-- Sidebar -->
+    <div class="space-y-6">
+      <!-- Équipe -->
+      <div class="card animate-fade-in-up" style="animation-delay: 250ms;">
+        <div class="flex items-center gap-2 mb-4">
+          <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+          </svg>
+          <h3 class="text-lg font-bold text-foreground">
+            Équipe (<%= @project.current_members_count %>/<%= @project.max_members %>)
+          </h3>
+        </div>
+
+        <div class="space-y-3">
+          <div class="p-3 bg-primary/10 border border-primary/20 rounded-lg">
+            <%= link_to user_path(@project.owner), class: "block group" do %>
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full stat-gradient-primary flex items-center justify-center text-white font-bold">
+                  <%= @project.owner.display_name.first.upcase %>
+                </div>
+                <div>
+                  <strong class="text-foreground group-hover:text-primary transition-colors"><%= @project.owner.display_name %></strong>
+                  <span class="block text-xs text-muted-foreground">Créateur</span>
+                </div>
+              </div>
             <% end %>
           </div>
-        <% end %>
-      </section>
 
-      <section class="meta">
-        <h3>Informations</h3>
-        <ul>
-          <li>Créé le <%= l(@project.created_at, format: :short) %></li>
-          <li>Statut : <%= @project.status.titleize %></li>
-          <li>Visibilité : <%= @project.visibility.titleize %></li>
-        </ul>
-      </section>
+          <% @team_members.where.not(id: @project.owner.id).each do |member| %>
+            <div class="p-3 bg-secondary rounded-lg hover:bg-muted transition-colors">
+              <%= link_to user_path(member), class: "flex items-center gap-3 group" do %>
+                <div class="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-foreground font-bold">
+                  <%= member.display_name.first.upcase %>
+                </div>
+                <span class="text-foreground group-hover:text-primary transition-colors"><%= member.display_name %></span>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Informations -->
+      <div class="card animate-fade-in-up" style="animation-delay: 300ms;">
+        <div class="flex items-center gap-2 mb-4">
+          <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          <h3 class="text-lg font-bold text-foreground">Informations</h3>
+        </div>
+        <div class="space-y-3 text-sm text-muted-foreground">
+          <p class="flex justify-between">
+            <span>Créé le</span>
+            <span class="text-foreground"><%= l(@project.created_at, format: :short) %></span>
+          </p>
+          <p class="flex justify-between">
+            <span>Statut</span>
+            <span class="text-foreground font-medium"><%= @project.status.titleize %></span>
+          </p>
+          <p class="flex justify-between">
+            <span>Visibilité</span>
+            <span class="text-foreground font-medium"><%= @project.visibility.titleize %></span>
+          </p>
+        </div>
+      </div>
     </div>
+  </div>
+
+  <div class="mt-8 animate-fade-in">
+    <%= link_to projects_path, class: "text-primary hover:text-primary/80 inline-flex items-center gap-2" do %>
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+      </svg>
+      Retour aux projets
+    <% end %>
   </div>
 </div>

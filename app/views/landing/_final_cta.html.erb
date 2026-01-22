@@ -1,0 +1,31 @@
+<section class="relative border-t border-border/40 py-24 md:py-32 overflow-hidden">
+  <div class="absolute inset-0 pointer-events-none">
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[600px] w-[600px] opacity-30 gradient-radial-center"></div>
+  </div>
+
+  <div class="relative section-container">
+    <div class="mx-auto max-w-2xl text-center">
+      <div class="scroll-animate" data-controller="scroll-animate" data-scroll-animate-animation-value="scale-in">
+        <h2 class="text-3xl font-bold tracking-tight md:text-4xl lg:text-5xl">Une idée mérite une équipe.</h2>
+      </div>
+
+      <div class="scroll-animate" data-controller="scroll-animate" data-scroll-animate-animation-value="fade-up" data-scroll-animate-delay-value="100">
+        <p class="mt-4 text-lg text-muted-foreground">
+          Propose ton projet ou rejoins-en un. C'est gratuit pour commencer.
+        </p>
+      </div>
+
+      <div class="scroll-animate" data-controller="scroll-animate" data-scroll-animate-animation-value="fade-up" data-scroll-animate-delay-value="200">
+        <div class="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+          <%= link_to new_project_path, class: "btn-primary btn-lg" do %>
+            Proposer un projet
+            <svg class="ml-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+            </svg>
+          <% end %>
+          <%= link_to "Explorer les projets", projects_path, class: "btn-secondary btn-lg" %>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

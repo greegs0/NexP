@@ -1,0 +1,45 @@
+<header class="landing-header" data-controller="mobile-menu">
+  <div class="landing-header-inner">
+    <%= link_to root_path, class: "flex items-center gap-2" do %>
+      <span class="logo">NexP<span class="logo-accent">.</span></span>
+    <% end %>
+
+    <nav class="hidden items-center gap-8 md:flex">
+      <a href="#comment-ca-marche" class="text-sm text-muted-foreground transition-colors hover:text-foreground">
+        Comment ça marche
+      </a>
+      <a href="#cas-usage" class="text-sm text-muted-foreground transition-colors hover:text-foreground">
+        Pour qui
+      </a>
+      <a href="#tarifs" class="text-sm text-muted-foreground transition-colors hover:text-foreground">
+        Tarifs
+      </a>
+    </nav>
+
+    <div class="hidden items-center gap-4 md:flex">
+      <%= link_to "Connexion", new_user_session_path, class: "btn-ghost text-sm" %>
+      <%= link_to "Rejoindre", new_user_registration_path, class: "btn-primary btn-sm" %>
+    </div>
+
+    <button class="md:hidden p-2" data-action="click->mobile-menu#toggle" aria-label="Ouvrir le menu">
+      <svg data-mobile-menu-target="openIcon" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+      </svg>
+      <svg data-mobile-menu-target="closeIcon" class="h-5 w-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+      </svg>
+    </button>
+  </div>
+
+  <div class="mobile-menu hidden md:hidden" data-mobile-menu-target="menu">
+    <nav class="flex flex-col gap-4">
+      <a href="#comment-ca-marche" class="mobile-menu-link">Comment ça marche</a>
+      <a href="#cas-usage" class="mobile-menu-link">Pour qui</a>
+      <a href="#tarifs" class="mobile-menu-link">Tarifs</a>
+      <div class="flex flex-col gap-2 pt-4">
+        <%= link_to "Connexion", new_user_session_path, class: "btn-ghost text-sm justify-start" %>
+        <%= link_to "Rejoindre", new_user_registration_path, class: "btn-primary btn-sm" %>
+      </div>
+    </nav>
+  </div>
+</header>

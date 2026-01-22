@@ -1,0 +1,25 @@
+<%= paginator.render do %>
+  <div class="flex flex-col items-center gap-3">
+    <p class="text-sm text-muted-foreground">
+      Page <span class="font-medium text-foreground"><%= current_page %></span> sur <span class="font-medium text-foreground"><%= total_pages %></span>
+      <span class="mx-2">·</span>
+      <span class="font-medium text-foreground"><%= @projects&.total_count || @skills&.total_count || 0 %></span> résultats
+    </p>
+
+    <nav class="flex items-center justify-center gap-1" role="navigation" aria-label="Pagination">
+      <%= first_page_tag unless current_page.first? %>
+      <%= prev_page_tag unless current_page.first? %>
+
+      <% each_page do |page| %>
+        <% if page.display_tag? %>
+          <%= page_tag page %>
+        <% elsif !page.was_truncated? %>
+          <%= gap_tag %>
+        <% end %>
+      <% end %>
+
+      <%= next_page_tag unless current_page.last? %>
+      <%= last_page_tag unless current_page.last? %>
+    </nav>
+  </div>
+<% end %>

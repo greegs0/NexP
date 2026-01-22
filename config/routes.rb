@@ -1,8 +1,11 @@
 Rails.application.routes.draw do
   devise_for :users
 
-  # Root path
-  root "dashboard#show"
+  # Root path - Landing page for visitors, dashboard for authenticated users
+  authenticated :user do
+    root to: "dashboard#show", as: :authenticated_root
+  end
+  root "landing#index"
 
   # Dashboard
   get 'dashboard', to: 'dashboard#show', as: :dashboard
@@ -24,6 +27,7 @@ Rails.application.routes.draw do
   resources :users, only: [:show] do
     member do
       get :portfolio
+      patch :toggle_availability
     end
   end
 

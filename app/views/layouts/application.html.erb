@@ -1,19 +1,105 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
   <head>
-    <title>NexP</title>
+    <title><%= content_for?(:page_title) ? "#{yield(:page_title)} - NexP" : 'NexP - Build. Together.' %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="description" content="NexP connecte les porteurs d'idées avec les développeurs, designers et builders qui cherchent un projet.">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
-    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
 
-  <body>
-    <main class="container mx-auto mt-28 px-5 flex">
-      <%= yield %>
-    </main>
+  <body data-controller="sidebar" class="bg-background text-foreground">
+    <% if user_signed_in? %>
+      <%= render 'shared/animated_background' %>
+      <%= render 'shared/sidebar' %>
+
+      <nav class="top-navbar">
+        <div class="flex items-center justify-between px-6 h-full">
+          <button data-action="click->sidebar#toggle" class="md:hidden p-2 hover:bg-secondary transition-colors" style="border-radius: var(--radius);" aria-label="Ouvrir le menu" aria-expanded="false">
+            <svg class="w-5 h-5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+          </button>
+
+          <div class="md:hidden flex-1 text-center">
+            <span class="logo">NexP<span class="logo-accent">.</span></span>
+          </div>
+
+          <div class="flex items-center gap-4 ml-auto">
+            <!-- Theme Toggle -->
+            <div data-controller="theme" class="flex items-center">
+              <button data-action="click->theme#toggle" class="p-2 hover:bg-secondary transition-colors relative group" style="border-radius: var(--radius);" aria-label="Changer le thème">
+                <!-- Sun icon (shown in dark mode) -->
+                <svg data-theme-target="sunIcon" class="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                </svg>
+                <!-- Moon icon (shown in light mode) -->
+                <svg data-theme-target="moonIcon" class="hidden w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+                </svg>
+              </button>
+            </div>
+
+            <!-- Notifications -->
+            <button class="p-2 hover:bg-secondary transition-colors relative group" style="border-radius: var(--radius);" aria-label="Notifications">
+              <svg class="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      <div class="main-content relative z-10 min-h-screen pt-16 ml-0 md:ml-64 transition-[margin] duration-300">
+        <main class="p-6">
+          <% if flash[:notice] %>
+            <div class="flash-notice" data-controller="flash" data-flash-duration-value="4000" data-flash-type-value="notice" role="status" aria-live="polite">
+              <div class="flex items-start gap-3">
+                <svg class="w-5 h-5 text-success flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <p class="flex-1"><%= flash[:notice] %></p>
+                <button type="button" data-action="click->flash#dismiss" class="text-muted-foreground hover:text-foreground transition-colors flex-shrink-0" aria-label="Fermer">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          <% end %>
+
+          <% if flash[:alert] %>
+            <div class="flash-alert" data-controller="flash" data-flash-duration-value="6000" data-flash-type-value="error" role="alert" aria-live="assertive">
+              <div class="flex items-start gap-3">
+                <svg class="w-5 h-5 text-destructive flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <p class="flex-1"><%= flash[:alert] %></p>
+                <button type="button" data-action="click->flash#dismiss" class="text-muted-foreground hover:text-foreground transition-colors flex-shrink-0" aria-label="Fermer">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          <% end %>
+
+          <%= yield %>
+        </main>
+      </div>
+    <% else %>
+      <%= render 'shared/animated_background' %>
+      <main class="min-h-screen flex items-center justify-center relative z-10">
+        <%= yield %>
+      </main>
+    <% end %>
   </body>
 </html>

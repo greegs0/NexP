@@ -1,0 +1,1072 @@
+/* === NEXP DESIGN SYSTEM === */
+/* Direction Artistique : Landing Page SaaS - Dark Theme Only */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* === CSS VARIABLES - DARK THEME (default) === */
+/* Palette NexP: noir profond, blanc pur, kaki désaturé signature */
+:root,
+html.dark,
+[data-theme="dark"] {
+  /* Backgrounds (deep black) */
+  --background: #0a0a0a;
+  --foreground: #fafafa;
+
+  /* Card */
+  --card: #141414;
+  --card-foreground: #fafafa;
+
+  /* Popover */
+  --popover: #141414;
+  --popover-foreground: #fafafa;
+
+  /* Primary (olive/kaki signature) */
+  --primary: #7a8f5c;
+  --primary-foreground: #fafafa;
+
+  /* Secondary */
+  --secondary: #1f1f1f;
+  --secondary-foreground: #fafafa;
+
+  /* Muted */
+  --muted: #1f1f1f;
+  --muted-foreground: #737373;
+
+  /* Accent (same as primary) */
+  --accent: #7a8f5c;
+  --accent-foreground: #fafafa;
+
+  /* Destructive */
+  --destructive: #dc2626;
+  --destructive-foreground: #fafafa;
+
+  /* Border and Input */
+  --border: #262626;
+  --border-subtle: rgba(255, 255, 255, 0.1);
+  --input: #262626;
+  --ring: #7a8f5c;
+
+  /* Chart colors */
+  --chart-1: #7a8f5c;
+  --chart-2: #3b82f6;
+  --chart-3: #8b5cf6;
+  --chart-4: #f59e0b;
+  --chart-5: #ef4444;
+
+  /* Border radius - quasi-carré comme le design */
+  --radius: 0.25rem;
+
+  /* Sidebar */
+  --sidebar: #141414;
+  --sidebar-foreground: #fafafa;
+  --sidebar-primary: #7a8f5c;
+  --sidebar-primary-foreground: #fafafa;
+  --sidebar-accent: #1f1f1f;
+  --sidebar-accent-foreground: #fafafa;
+  --sidebar-border: #262626;
+  --sidebar-ring: #7a8f5c;
+
+  /* Status colors */
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --error: #ef4444;
+  --info: #7a8f5c;
+}
+
+/* === CSS VARIABLES - LIGHT THEME === */
+/* Palette NexP Light: blanc crème / blanc cassé */
+html.light,
+html[data-theme="light"],
+[data-theme="light"],
+.light {
+  /* Backgrounds (off-white / cream) */
+  --background: #faf8f5 !important;
+  --foreground: #1a1a1a !important;
+
+  /* Card */
+  --card: #ffffff !important;
+  --card-foreground: #1a1a1a !important;
+
+  /* Popover */
+  --popover: #ffffff !important;
+  --popover-foreground: #1a1a1a !important;
+
+  /* Primary (olive/kaki signature - légèrement plus foncé pour contraste) */
+  --primary: #6b7d4e;
+  --primary-foreground: #fafafa;
+
+  /* Secondary */
+  --secondary: #f5f3f0 !important;
+  --secondary-foreground: #1a1a1a !important;
+
+  /* Muted */
+  --muted: #f0ebe5;
+  --muted-foreground: #6b6b6b;
+
+  /* Accent (same as primary) */
+  --accent: #6b7d4e;
+  --accent-foreground: #fafafa;
+
+  /* Destructive */
+  --destructive: #dc2626;
+  --destructive-foreground: #fafafa;
+
+  /* Border and Input */
+  --border: #e5e0d8;
+  --border-subtle: rgba(0, 0, 0, 0.08);
+  --input: #e5e0d8;
+  --ring: #6b7d4e;
+
+  /* Chart colors */
+  --chart-1: #6b7d4e;
+  --chart-2: #3b82f6;
+  --chart-3: #8b5cf6;
+  --chart-4: #f59e0b;
+  --chart-5: #ef4444;
+
+  /* Border radius - quasi-carré comme le design */
+  --radius: 0.25rem;
+
+  /* Sidebar */
+  --sidebar: #ffffff !important;
+  --sidebar-foreground: #1a1a1a !important;
+  --sidebar-primary: #6b7d4e;
+  --sidebar-primary-foreground: #fafafa;
+  --sidebar-accent: #f5f3f0;
+  --sidebar-accent-foreground: #1a1a1a !important;
+  --sidebar-border: #e5e0d8;
+  --sidebar-ring: #6b7d4e;
+
+  /* Status colors */
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --error: #ef4444;
+  --info: #6b7d4e;
+}
+
+/* === BASE LAYER === */
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  /* Light mode body styles */
+  html.light body,
+  [data-theme="light"] body {
+    background-color: #faf8f5 !important;
+    color: #1a1a1a !important;
+  }
+
+  html.light body *,
+  [data-theme="light"] body * {
+    --foreground: #1a1a1a;
+    --card-foreground: #1a1a1a;
+  }
+}
+
+/* === COMPONENT LAYER === */
+@layer components {
+  /* Cards - Style Landing Page */
+  .card {
+    @apply bg-card text-card-foreground border border-border/40 p-6;
+    border-radius: var(--radius);
+    transition: all 0.3s ease;
+  }
+
+  .card:hover {
+    @apply border-primary/50 bg-card;
+    transform: translateY(-4px);
+  }
+
+  /* Landing Card Style */
+  .landing-card {
+    @apply bg-card/50 border border-border/40 p-8;
+    border-radius: var(--radius);
+    transition: all 0.3s ease;
+  }
+
+  .landing-card:hover {
+    @apply border-primary/50 bg-card;
+    transform: translateY(-4px);
+  }
+
+  /* Buttons - Style Landing Page */
+  .btn-primary {
+    @apply bg-primary text-primary-foreground px-8 py-3 font-medium inline-flex items-center justify-center;
+    border-radius: var(--radius);
+    transition: all 0.3s ease;
+  }
+
+  .btn-primary:hover {
+    @apply bg-primary/90;
+    transform: scale(1.05);
+  }
+
+  .btn-secondary {
+    @apply bg-transparent text-foreground px-8 py-3 font-medium border border-border inline-flex items-center justify-center;
+    border-radius: var(--radius);
+    transition: all 0.3s ease;
+  }
+
+  .btn-secondary:hover {
+    @apply bg-secondary;
+    transform: scale(1.05);
+  }
+
+  .btn-ghost {
+    @apply text-muted-foreground px-4 py-2 font-medium;
+    transition: all 0.2s ease;
+  }
+
+  .btn-ghost:hover {
+    @apply text-foreground;
+  }
+
+  .btn-sm {
+    @apply px-4 py-2 text-sm;
+  }
+
+  .btn-lg {
+    @apply px-8 py-3 text-base h-12;
+  }
+
+  /* Inputs - Style Landing Page */
+  .input {
+    @apply bg-secondary border border-border text-foreground px-4 py-2.5 w-full;
+    border-radius: var(--radius);
+    transition: all 0.2s ease;
+  }
+
+  .input:focus {
+    @apply outline-none border-primary ring-2 ring-primary/20;
+  }
+
+  .input::placeholder {
+    @apply text-muted-foreground;
+  }
+
+  /* Links */
+  a {
+    @apply transition-colors;
+  }
+
+  .link-muted {
+    @apply text-muted-foreground;
+  }
+
+  .link-muted:hover {
+    @apply text-foreground;
+  }
+
+  /* Text utilities */
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .text-pretty {
+    text-wrap: pretty;
+  }
+}
+
+/* === LANDING PAGE SPECIFIC === */
+/* Header Landing */
+.landing-header {
+  @apply fixed top-0 left-0 right-0 z-50 border-b border-border/40;
+  background: rgba(10, 10, 10, 0.8);
+  backdrop-filter: blur(12px);
+}
+
+html.light .landing-header,
+[data-theme="light"] .landing-header {
+  background: rgba(250, 248, 245, 0.9);
+}
+
+.landing-header-inner {
+  @apply mx-auto flex h-16 max-w-6xl items-center justify-between px-6;
+}
+
+/* Logo */
+.logo {
+  @apply text-lg font-semibold tracking-tight;
+}
+
+.logo-accent {
+  @apply text-primary;
+}
+
+/* Section containers */
+.section-container {
+  @apply mx-auto max-w-6xl px-6;
+}
+
+/* Stats grid */
+.stats-grid {
+  @apply grid grid-cols-2 gap-px overflow-hidden border border-border/40 bg-border/40 md:grid-cols-4;
+  border-radius: var(--radius);
+}
+
+.stat-item {
+  @apply bg-background p-6 text-center md:p-8 transition-colors;
+}
+
+.stat-item:hover {
+  @apply bg-card/50;
+}
+
+.stat-value {
+  @apply text-2xl font-bold md:text-3xl;
+}
+
+.stat-label {
+  @apply mt-1 text-sm text-muted-foreground;
+}
+
+/* Feature cards */
+.feature-card {
+  @apply group relative border border-border/40 bg-card/50 p-8;
+  border-radius: var(--radius);
+  transition: all 0.3s ease;
+}
+
+.feature-card:hover {
+  @apply border-primary/50 bg-card;
+  transform: translateY(-4px);
+}
+
+.feature-card-glow {
+  @apply absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100;
+  border-radius: var(--radius);
+  background: radial-gradient(circle at center, rgba(122, 143, 92, 0.05) 0%, transparent 70%);
+}
+
+.feature-icon {
+  @apply flex h-10 w-10 items-center justify-center bg-secondary transition-colors group-hover:bg-primary/20;
+  border-radius: var(--radius);
+}
+
+.feature-icon svg {
+  @apply h-5 w-5 text-foreground transition-colors group-hover:text-primary;
+}
+
+/* Pricing cards */
+.pricing-card {
+  @apply group relative flex flex-col border p-8;
+  border-radius: var(--radius);
+  transition: all 0.3s ease;
+}
+
+.pricing-card:hover {
+  transform: translateY(-4px);
+}
+
+.pricing-card-default {
+  @apply border-border/40 bg-background;
+}
+
+.pricing-card-default:hover {
+  @apply border-border;
+}
+
+.pricing-card-popular {
+  @apply border-primary bg-card;
+}
+
+.pricing-card-glow {
+  @apply absolute inset-0 opacity-20;
+  border-radius: var(--radius);
+  background: radial-gradient(circle at top, rgba(122, 143, 92, 0.3) 0%, transparent 60%);
+}
+
+.pricing-badge {
+  @apply absolute -top-3 left-1/2 -translate-x-1/2 bg-primary px-3 py-1 text-xs font-medium text-primary-foreground;
+  border-radius: var(--radius);
+}
+
+/* Testimonial */
+.testimonial {
+  @apply border border-border/40 bg-background p-8 md:p-12 transition-all;
+  border-radius: var(--radius);
+}
+
+.testimonial:hover {
+  @apply border-border;
+}
+
+/* Footer */
+.landing-footer {
+  @apply border-t border-border/40 py-16;
+}
+
+/* === SIDEBAR STYLES === */
+.sidebar {
+  @apply bg-sidebar border-r border-sidebar-border;
+  height: 100vh;
+  width: 16rem;
+  position: fixed;
+  left: 0;
+  top: 0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 40;
+}
+
+.sidebar.collapsed {
+  transform: translateX(-100%);
+}
+
+@media (min-width: 768px) {
+  .sidebar.collapsed {
+    transform: translateX(0);
+    width: 5rem;
+  }
+}
+
+.sidebar-link {
+  @apply flex items-center px-4 py-3 text-muted-foreground;
+  border-radius: var(--radius);
+  transition: all 0.2s ease;
+  margin: 0.25rem 0.5rem;
+}
+
+.sidebar-link:hover {
+  @apply bg-sidebar-accent text-primary;
+}
+
+.sidebar-link.active {
+  @apply bg-primary text-primary-foreground;
+}
+
+.sidebar-link.active:hover {
+  @apply bg-primary text-primary-foreground;
+}
+
+.sidebar-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-right: 0.75rem;
+  flex-shrink: 0;
+}
+
+.sidebar-toggle-icon {
+  transition: transform 0.3s ease;
+}
+
+@media (min-width: 768px) {
+  .sidebar.collapsed .sidebar-toggle-btn {
+    position: absolute;
+    right: -48px;
+    top: 24px;
+    border-radius: 50%;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+
+  .sidebar.collapsed .sidebar-toggle-icon {
+    transform: rotate(180deg);
+  }
+
+  .sidebar.collapsed .sidebar-link {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 0;
+    margin: 0.125rem 0;
+  }
+
+  .sidebar.collapsed .sidebar-icon {
+    width: 1.5rem !important;
+    height: 1.5rem !important;
+    margin: 0 !important;
+  }
+
+  .sidebar.collapsed .sidebar-compact-logo {
+    width: 3rem !important;
+    height: 3rem !important;
+  }
+
+  .sidebar.collapsed .sidebar-logout-icon {
+    display: block !important;
+    width: 1.25rem !important;
+    height: 1.25rem !important;
+  }
+
+  .sidebar.collapsed .sidebar-logout-btn .sidebar-text {
+    display: none !important;
+  }
+
+  .sidebar.collapsed .sidebar-logout-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.625rem;
+    margin-top: 0.5rem;
+  }
+
+  .sidebar.collapsed .sidebar-user-info {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+  }
+
+  .sidebar.collapsed .sidebar-user-info > div {
+    margin: 0 !important;
+  }
+
+  .sidebar.collapsed .sidebar-full-logo {
+    display: none !important;
+  }
+
+  .sidebar.collapsed .sidebar-compact-logo {
+    display: block !important;
+  }
+
+  .sidebar.collapsed .sidebar-topbar {
+    display: none !important;
+  }
+
+  .sidebar.collapsed .sidebar-text {
+    display: none;
+  }
+
+  .sidebar.collapsed .sidebar-link svg {
+    margin-right: 0;
+  }
+}
+
+/* === NAVBAR === */
+.navbar {
+  @apply bg-card/80 backdrop-blur-md border-b border-border;
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 30;
+}
+
+.top-navbar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 16rem;
+  height: 4rem;
+  background: rgba(20, 20, 20, 0.8);
+  border-bottom: 1px solid var(--border);
+  z-index: 40;
+  transition: left 0.3s ease, background 0.3s ease;
+  backdrop-filter: blur(12px);
+}
+
+html.light .top-navbar,
+[data-theme="light"] .top-navbar {
+  background: rgba(250, 248, 245, 0.9);
+}
+
+@media (max-width: 768px) {
+  .top-navbar {
+    left: 0 !important;
+  }
+}
+
+.sidebar.collapsed ~ .top-navbar {
+  left: 5rem;
+}
+
+@media (max-width: 768px) {
+  .sidebar.collapsed ~ .top-navbar {
+    left: 0;
+  }
+}
+
+/* === AVAILABILITY TOGGLE === */
+.availability-toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 48px;
+  height: 26px;
+}
+
+.availability-toggle-checkbox {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
+}
+
+.availability-toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--secondary);
+  border: 1px solid var(--border);
+  transition: all 0.3s ease;
+  border-radius: 26px;
+}
+
+.availability-toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 2px;
+  bottom: 2px;
+  background: var(--foreground);
+  transition: all 0.3s ease;
+  border-radius: 50%;
+}
+
+.availability-toggle-checkbox:checked + .availability-toggle-slider {
+  background: var(--success);
+  border-color: var(--success);
+}
+
+.availability-toggle-checkbox:checked + .availability-toggle-slider:before {
+  transform: translateX(22px);
+}
+
+.availability-toggle-slider:hover {
+  border-color: var(--primary);
+}
+
+/* === ANIMATED BACKGROUND === */
+.animated-background {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.animated-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+  animation: grid-fade 8s ease-in-out infinite;
+}
+
+html.light .animated-grid,
+[data-theme="light"] .animated-grid {
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+}
+
+.animated-glow {
+  position: absolute;
+  top: -50%;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 800px;
+  width: 800px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(122, 143, 92, 0.15) 0%, transparent 70%);
+  animation: pulse-glow 4s ease-in-out infinite;
+}
+
+html.light .animated-glow,
+[data-theme="light"] .animated-glow {
+  background: radial-gradient(circle, rgba(107, 125, 78, 0.12) 0%, transparent 70%);
+}
+
+.floating-particle {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--primary);
+  opacity: 0.2;
+}
+
+.decorative-line {
+  position: absolute;
+  left: 0;
+  height: 1px;
+  width: 100%;
+  background: linear-gradient(90deg, transparent, rgba(122, 143, 92, 0.3), transparent);
+}
+
+.vignette-overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 0%, var(--background) 80%);
+  transition: background 0.3s ease;
+}
+
+/* === ANIMATIONS === */
+@keyframes float {
+  0%, 100% { transform: translateY(0) translateX(0); }
+  25% { transform: translateY(-20px) translateX(10px); }
+  50% { transform: translateY(-10px) translateX(-5px); }
+  75% { transform: translateY(-25px) translateX(5px); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.3; transform: translateX(-50%) scale(1); }
+  50% { opacity: 0.6; transform: translateX(-50%) scale(1.05); }
+}
+
+@keyframes grid-fade {
+  0%, 100% { opacity: 0.03; }
+  50% { opacity: 0.06; }
+}
+
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes slide-in-left {
+  from { opacity: 0; transform: translateX(-30px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slide-in-right {
+  from { opacity: 0; transform: translateX(30px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* Animation utility classes */
+.animate-float { animation: float 20s ease-in-out infinite; }
+.animate-float-delayed { animation: float 25s ease-in-out infinite; animation-delay: -5s; }
+.animate-float-slow { animation: float 30s ease-in-out infinite; animation-delay: -10s; }
+.animate-pulse-glow { animation: pulse-glow 4s ease-in-out infinite; }
+.animate-grid-fade { animation: grid-fade 8s ease-in-out infinite; }
+.animate-fade-in-up { animation: fade-in-up 0.6s ease-out forwards; }
+.animate-fade-in { animation: fade-in 0.6s ease-out forwards; }
+.animate-scale-in { animation: scale-in 0.5s ease-out forwards; }
+.animate-slide-in-left { animation: slide-in-left 0.6s ease-out forwards; }
+.animate-slide-in-right { animation: slide-in-right 0.6s ease-out forwards; }
+
+/* Scroll animation states */
+.scroll-animate {
+  opacity: 0;
+}
+
+.scroll-animate.is-visible {
+  opacity: 1;
+}
+
+/* Animation delays */
+.delay-100 { animation-delay: 100ms; }
+.delay-150 { animation-delay: 150ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+.delay-400 { animation-delay: 400ms; }
+
+/* === SCROLLBAR === */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--muted-foreground);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+  .main-content {
+    margin-left: 0 !important;
+  }
+
+  .navbar {
+    margin-left: 0 !important;
+  }
+}
+
+.sidebar.collapsed ~ .main-content {
+  margin-left: 5rem;
+}
+
+@media (max-width: 768px) {
+  .sidebar.collapsed ~ .main-content {
+    margin-left: 0;
+  }
+}
+
+/* === BADGE/TAG STYLES === */
+.badge {
+  @apply inline-flex items-center px-3 py-1 text-sm font-medium;
+  border-radius: 9999px;
+}
+
+.badge-primary {
+  @apply bg-primary text-primary-foreground;
+}
+
+.badge-secondary {
+  @apply bg-secondary text-secondary-foreground;
+}
+
+.badge-muted {
+  @apply bg-muted text-muted-foreground;
+}
+
+/* === STATUS BADGES === */
+.status-open {
+  @apply bg-primary text-primary-foreground;
+}
+
+.status-in-progress {
+  @apply bg-chart-2 text-white;
+}
+
+.status-completed {
+  @apply bg-success text-white;
+}
+
+.status-archived {
+  @apply bg-muted text-muted-foreground;
+}
+
+/* === FLASH MESSAGES === */
+.flash-notice {
+  @apply bg-primary/20 border border-primary/30 text-foreground p-4 mb-6;
+  border-radius: var(--radius);
+  animation: fade-in-up 0.3s ease-out;
+}
+
+.flash-alert {
+  @apply bg-destructive/20 border border-destructive/30 text-foreground p-4 mb-6;
+  border-radius: var(--radius);
+  animation: fade-in-up 0.3s ease-out;
+}
+
+/* === MOBILE MENU === */
+.mobile-menu {
+  @apply border-t border-border/40 bg-background px-6 py-4;
+}
+
+.mobile-menu-link {
+  @apply block py-2 text-sm text-muted-foreground transition-colors;
+}
+
+.mobile-menu-link:hover {
+  @apply text-foreground;
+}
+
+/* === GRADIENTS === */
+.gradient-radial-primary {
+  background: radial-gradient(ellipse at top, rgba(122, 143, 92, 0.2) 0%, transparent 60%);
+}
+
+.gradient-radial-center {
+  background: radial-gradient(circle, rgba(122, 143, 92, 0.15) 0%, transparent 70%);
+}
+
+/* === FORM STYLES === */
+.form-label {
+  @apply block text-sm font-medium text-foreground mb-2;
+}
+
+.form-input {
+  @apply w-full px-4 py-3 bg-secondary border border-border text-foreground placeholder-muted-foreground;
+  border-radius: var(--radius);
+  transition: all 0.2s ease;
+}
+
+.form-input:focus {
+  @apply outline-none border-primary ring-2 ring-primary/20;
+}
+
+.form-error {
+  @apply text-sm text-destructive mt-1;
+}
+
+/* === DIVIDER === */
+.divider {
+  @apply border-t border-border/40;
+}
+
+/* === CHECK LIST === */
+.check-item {
+  @apply flex items-center gap-3 text-sm;
+}
+
+.check-icon {
+  @apply h-4 w-4 text-muted-foreground transition-colors group-hover:text-primary;
+}
+
+/* === BULLET POINT === */
+.bullet-point {
+  @apply h-1 w-1 rounded-full bg-primary transition-transform group-hover:scale-150;
+}
+
+/* === STAT GRADIENTS (Dashboard) === */
+.stat-gradient-primary {
+  background: linear-gradient(135deg, var(--primary) 0%, rgba(122, 143, 92, 0.7) 100%);
+}
+
+.stat-gradient-blue {
+  background: linear-gradient(135deg, #3b82f6 0%, rgba(59, 130, 246, 0.7) 100%);
+}
+
+.stat-gradient-purple {
+  background: linear-gradient(135deg, #8b5cf6 0%, rgba(139, 92, 246, 0.7) 100%);
+}
+
+.stat-gradient-orange {
+  background: linear-gradient(135deg, #f59e0b 0%, rgba(245, 158, 11, 0.7) 100%);
+}
+
+/* === LIGHT MODE TEXT FIX === */
+/* Ensure text-foreground is visible in light mode */
+html.light,
+[data-theme="light"] {
+  /* Force foreground colors to be dark in light mode */
+  --foreground: #1a1a1a;
+  --card-foreground: #1a1a1a;
+  --secondary-foreground: #1a1a1a;
+  --sidebar-foreground: #1a1a1a;
+  --sidebar-accent-foreground: #1a1a1a;
+}
+
+/* Explicit light mode text overrides for maximum specificity */
+html.light .text-foreground,
+[data-theme="light"] .text-foreground {
+  color: #1a1a1a !important;
+}
+
+html.light .text-card-foreground,
+[data-theme="light"] .text-card-foreground {
+  color: #1a1a1a !important;
+}
+
+html.light h1,
+html.light h2,
+html.light h3,
+html.light h4,
+html.light h5,
+html.light h6,
+[data-theme="light"] h1,
+[data-theme="light"] h2,
+[data-theme="light"] h3,
+[data-theme="light"] h4,
+[data-theme="light"] h5,
+[data-theme="light"] h6 {
+  color: #1a1a1a;
+}
+
+/* Ensure card content text is visible in light mode */
+html.light .card,
+[data-theme="light"] .card {
+  color: #1a1a1a;
+}
+
+html.light .card p,
+html.light .card h1,
+html.light .card h2,
+html.light .card h3,
+html.light .card span:not(.badge):not(.badge-primary):not(.badge-secondary),
+[data-theme="light"] .card p,
+[data-theme="light"] .card h1,
+[data-theme="light"] .card h2,
+[data-theme="light"] .card h3,
+[data-theme="light"] .card span:not(.badge):not(.badge-primary):not(.badge-secondary) {
+  color: inherit;
+}
+
+/* Accent button for light mode */
+html.light .btn-accent,
+[data-theme="light"] .btn-accent {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  border-radius: var(--radius);
+  transition: all 0.2s ease;
+}
+
+html.light .btn-accent:hover,
+[data-theme="light"] .btn-accent:hover {
+  background-color: rgba(107, 125, 78, 0.9);
+}
+
+/* === CRITICAL LIGHT MODE TEXT OVERRIDES === */
+/* These override any Tailwind-generated or inherited styles */
+
+/* All elements with text-foreground class */
+html.light *[class*="text-foreground"],
+[data-theme="light"] *[class*="text-foreground"],
+.light *[class*="text-foreground"] {
+  color: #1a1a1a !important;
+}
+
+/* Dashboard specific elements */
+html.light .main-content h1,
+html.light .main-content h2,
+html.light .main-content h3,
+html.light .main-content .text-4xl,
+html.light .main-content .text-3xl,
+html.light .main-content .text-2xl,
+html.light .main-content .text-xl,
+html.light .main-content .font-bold,
+html.light .main-content .font-semibold,
+[data-theme="light"] .main-content h1,
+[data-theme="light"] .main-content h2,
+[data-theme="light"] .main-content h3,
+[data-theme="light"] .main-content .text-4xl,
+[data-theme="light"] .main-content .text-3xl,
+[data-theme="light"] .main-content .text-2xl,
+[data-theme="light"] .main-content .text-xl,
+[data-theme="light"] .main-content .font-bold,
+[data-theme="light"] .main-content .font-semibold {
+  color: #1a1a1a !important;
+}
+
+/* Card content in light mode */
+html.light .card h3,
+html.light .card .font-semibold,
+[data-theme="light"] .card h3,
+[data-theme="light"] .card .font-semibold {
+  color: #1a1a1a !important;
+}
+
+/* Links should use primary color */
+html.light a.text-primary,
+[data-theme="light"] a.text-primary {
+  color: var(--primary) !important;
+}
+
+html.light .text-primary,
+[data-theme="light"] .text-primary {
+  color: var(--primary) !important;
+}
+
+/* Muted text stays muted */
+html.light .text-muted-foreground,
+[data-theme="light"] .text-muted-foreground {
+  color: #6b6b6b !important;
+}

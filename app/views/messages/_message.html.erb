@@ -1,0 +1,13 @@
+<div class="<%= message.sender == current_user ? 'flex justify-end' : 'flex justify-start' %>">
+  <div class="<%= message.sender == current_user ? 'bg-accent text-white' : 'bg-secondary text-primary' %> rounded-lg px-4 py-3 max-w-md">
+    <div class="flex items-center gap-2 mb-1">
+      <span class="font-semibold text-sm">
+        <%= message.sender.display_name %>
+      </span>
+      <span class="text-xs <%= message.sender == current_user ? 'text-white opacity-75' : 'text-muted' %>">
+        <%= time_ago_in_words(message.created_at) %> ago
+      </span>
+    </div>
+    <p class="text-sm"><%= simple_format(message.content) %></p>
+  </div>
+</div>

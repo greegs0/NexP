@@ -1,0 +1,19 @@
+<% skills_by_category.each do |category, skills| %>
+  <div class="card mb-6" data-category="<%= category %>">
+    <h3 class="text-lg font-semibold text-primary mb-4"><%= category %></h3>
+
+    <% if skills.any? %>
+      <div class="flex flex-wrap gap-2">
+        <% skills.each do |skill| %>
+          <%= button_to user_skills_path(skill_id: skill.id),
+              method: :post,
+              class: "px-4 py-2 bg-secondary text-secondary rounded-lg hover:bg-accent hover:text-white transition" do %>
+            <%= skill.name %>
+          <% end %>
+        <% end %>
+      </div>
+    <% else %>
+      <p class="text-muted text-center py-8">Aucune compétence disponible dans cette catégorie.</p>
+    <% end %>
+  </div>
+<% end %>

@@ -1,0 +1,116 @@
+<% content_for :page_title, "Portfolio de #{@user.display_name}" %>
+
+<div class="max-w-7xl mx-auto">
+  <!-- Header -->
+  <div class="card mb-8 animate-fade-in-up">
+    <div class="flex flex-col md:flex-row gap-6 items-center">
+      <!-- Avatar -->
+      <div class="flex-shrink-0">
+        <% if @user.avatar_url.present? %>
+          <%= image_tag @user.avatar_url, alt: @user.display_name, class: "w-24 h-24 rounded-full object-cover ring-4 ring-primary/20" %>
+        <% else %>
+          <div class="w-24 h-24 rounded-full stat-gradient-primary text-white flex items-center justify-center text-3xl font-bold ring-4 ring-primary/20">
+            <%= @user.display_name.first.upcase %>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="text-center md:text-left">
+        <h1 class="text-3xl font-bold text-foreground tracking-tight mb-2">
+          Portfolio de <%= @user.display_name %><span class="text-primary">.</span>
+        </h1>
+        <p class="text-muted-foreground">@<%= @user.username %></p>
+        <div class="mt-4">
+          <%= link_to user_path(@user), class: "btn-secondary inline-flex items-center gap-2" do %>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+            Retour au profil
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Skills -->
+  <% if @user_skills.any? %>
+    <div class="card mb-8 animate-fade-in-up" style="animation-delay: 100ms;">
+      <h2 class="text-2xl font-bold text-foreground mb-6 flex items-center gap-2">
+        <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+        </svg>
+        Compétences
+      </h2>
+      <div class="flex flex-wrap gap-2">
+        <% @user_skills.each do |skill| %>
+          <span class="badge badge-primary"><%= skill.name %></span>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- All Projects -->
+  <div class="card animate-fade-in-up" style="animation-delay: 150ms;">
+    <h2 class="text-2xl font-bold text-foreground mb-6 flex items-center gap-2">
+      <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+      </svg>
+      Tous les projets (<%= @all_projects.count %>)
+    </h2>
+
+    <% if @all_projects.any? %>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <% @all_projects.each do |project| %>
+          <div class="card group hover:shadow-lg transition-shadow">
+            <div class="flex items-start justify-between mb-3">
+              <h3 class="text-lg font-bold text-foreground group-hover:text-primary transition-colors">
+                <%= link_to project.title, project_path(project) %>
+              </h3>
+              <span class="px-2 py-1 text-xs rounded-full font-medium <%= %w[open in_progress].include?(project.status) ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground' %>">
+                <%= translate_status(project.status) %>
+              </span>
+            </div>
+
+            <p class="text-muted-foreground text-sm mb-4"><%= truncate(project.description, length: 120) %></p>
+
+            <% if project.skills.any? %>
+              <div class="flex flex-wrap gap-1 mb-4">
+                <% project.skills.limit(4).each do |skill| %>
+                  <span class="text-xs px-2 py-1 bg-secondary text-secondary-foreground rounded">
+                    <%= skill.name %>
+                  </span>
+                <% end %>
+                <% if project.skills.count > 4 %>
+                  <span class="text-xs px-2 py-1 text-muted-foreground">+<%= project.skills.count - 4 %></span>
+                <% end %>
+              </div>
+            <% end %>
+
+            <div class="flex items-center justify-between text-sm">
+              <span class="text-muted-foreground">
+                <% if project.owner == @user %>
+                  <span class="text-primary font-medium">Créateur</span>
+                <% else %>
+                  Membre
+                <% end %>
+              </span>
+              <%= link_to project_path(project), class: "text-primary hover:text-primary/80 font-medium inline-flex items-center gap-1" do %>
+                Voir
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="text-center py-12">
+        <svg class="w-16 h-16 text-muted-foreground mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+        </svg>
+        <p class="text-muted-foreground text-lg">Aucun projet dans ce portfolio</p>
+      </div>
+    <% end %>
+  </div>
+</div>

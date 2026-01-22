@@ -1,0 +1,85 @@
+<% content_for :page_title, "Messages - #{@project.title}" %>
+
+<div class="max-w-5xl mx-auto">
+  <!-- Header -->
+  <div class="mb-6">
+    <div class="flex items-center gap-2 text-sm text-muted mb-2">
+      <%= link_to "← Retour au projet", project_path(@project), class: "text-accent hover:text-accent-light" %>
+    </div>
+    <h1 class="text-3xl font-bold text-primary">💬 Messages</h1>
+    <p class="text-secondary mt-2"><%= @project.title %></p>
+  </div>
+
+  <!-- Messages Container -->
+  <div class="card mb-6">
+    <div class="space-y-4" id="messages" style="max-height: 60vh; overflow-y: auto;">
+      <% if @messages.any? %>
+        <%= render @messages %>
+      <% else %>
+        <div class="text-center py-12">
+          <p class="text-muted">Aucun message pour le moment. Soyez le premier à écrire !</p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Message Form -->
+  <div class="card">
+    <h2 class="text-lg font-bold text-primary mb-4">Écrire un message</h2>
+    <%= form_with(model: [@project, @message], id: "message_form", class: "space-y-4") do |f| %>
+      <% if @message.errors.any? %>
+        <div class="p-4 bg-error bg-opacity-10 border border-error rounded-lg">
+          <h3 class="font-bold text-error mb-2">
+            <%= pluralize(@message.errors.count, "erreur") %> empêche l'envoi du message :
+          </h3>
+          <ul class="list-disc list-inside text-sm text-error">
+            <% @message.errors.full_messages.each do |msg| %>
+              <li><%= msg %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div>
+        <%= f.label :content, "Message", class: "block text-sm font-medium text-secondary mb-2" %>
+        <%= f.text_area :content,
+            rows: 4,
+            class: "input",
+            placeholder: "Écrivez votre message...",
+            required: true %>
+      </div>
+
+      <div class="flex gap-3">
+        <%= f.submit "Envoyer", class: "btn-accent" %>
+        <%= link_to "Annuler", project_path(@project), class: "btn-secondary" %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Team Members -->
+  <div class="card mt-6">
+    <h2 class="text-lg font-bold text-primary mb-4">👥 Membres du projet</h2>
+    <div class="flex flex-wrap gap-2">
+      <% @project.members.each do |member| %>
+        <div class="px-3 py-2 bg-secondary rounded-lg">
+          <span class="text-sm text-primary">
+            <%= member.display_name %>
+            <% if member == @project.owner %>
+              <span class="ml-1 text-xs text-accent">👑</span>
+            <% end %>
+          </span>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Auto-scroll to bottom of messages
+  document.addEventListener('DOMContentLoaded', () => {
+    const messagesContainer = document.querySelector('.space-y-4');
+    if (messagesContainer) {
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+  });
+</script>

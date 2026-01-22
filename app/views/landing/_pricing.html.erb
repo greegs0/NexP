@@ -1,0 +1,104 @@
+<section id="tarifs" class="py-24 md:py-32">
+  <div class="section-container">
+    <div class="scroll-animate" data-controller="scroll-animate" data-scroll-animate-animation-value="fade-up">
+      <div class="mx-auto mb-16 max-w-2xl text-center">
+        <h2 class="text-3xl font-bold tracking-tight md:text-4xl">Tarifs</h2>
+        <p class="mt-4 text-muted-foreground">Simple. Pas de surprise.</p>
+      </div>
+    </div>
+
+    <div class="mx-auto grid max-w-3xl gap-8 md:grid-cols-2">
+      <div class="scroll-animate" data-controller="scroll-animate" data-scroll-animate-animation-value="slide-left" data-scroll-animate-delay-value="0">
+        <div class="pricing-card pricing-card-default">
+          <div class="relative mb-6">
+            <h3 class="text-lg font-semibold">Gratuit</h3>
+            <div class="mt-2 flex items-baseline gap-1">
+              <span class="text-4xl font-bold">0€</span>
+            </div>
+            <p class="mt-2 text-sm text-muted-foreground">Pour explorer et tester la plateforme. Suffisant pour démarrer.</p>
+          </div>
+
+          <ul class="relative mb-8 flex-grow space-y-3">
+            <li class="check-item">
+              <svg class="check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+              1 projet actif
+            </li>
+            <li class="check-item">
+              <svg class="check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+              Profil builder complet
+            </li>
+            <li class="check-item">
+              <svg class="check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+              5 messages par mois
+            </li>
+            <li class="check-item">
+              <svg class="check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+              Recherche par critères
+            </li>
+          </ul>
+
+          <%= link_to "Commencer gratuitement", new_user_registration_path, class: "btn-secondary w-full text-center" %>
+        </div>
+      </div>
+
+      <div class="scroll-animate" data-controller="scroll-animate" data-scroll-animate-animation-value="slide-right" data-scroll-animate-delay-value="150">
+        <div class="pricing-card pricing-card-popular">
+          <div class="pricing-card-glow"></div>
+          <div class="pricing-badge">Recommandé</div>
+
+          <div class="relative mb-6">
+            <h3 class="text-lg font-semibold">Builder</h3>
+            <div class="mt-2 flex items-baseline gap-1">
+              <span class="text-4xl font-bold">19€</span>
+              <span class="text-muted-foreground">/mois</span>
+            </div>
+            <p class="mt-2 text-sm text-muted-foreground">Pour ceux qui veulent vraiment avancer. Projets illimités, discussions illimitées.</p>
+          </div>
+
+          <ul class="relative mb-8 flex-grow space-y-3">
+            <li class="check-item">
+              <svg class="check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+              Projets illimités
+            </li>
+            <li class="check-item">
+              <svg class="check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+              Messages illimités
+            </li>
+            <li class="check-item">
+              <svg class="check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+              Mise en avant du profil
+            </li>
+            <li class="check-item">
+              <svg class="check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+              Notifications prioritaires
+            </li>
+            <li class="check-item">
+              <svg class="check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+              Support réactif
+            </li>
+          </ul>
+
+          <%= link_to "Passer à Builder", new_user_registration_path, class: "btn-primary w-full text-center" %>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

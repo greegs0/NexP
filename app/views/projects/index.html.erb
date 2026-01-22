@@ -1,58 +1,133 @@
-<div class="projects-page">
-  <div class="header">
-    <h1>Projets collaboratifs</h1>
-    <%= link_to "Créer un projet", new_project_path, class: "btn btn-primary" %>
-  </div>
+<% content_for :page_title, "Projets" %>
 
-  <div class="filters">
-    <%= form_with url: projects_path, method: :get, class: "filter-form" do |f| %>
-      <%= f.select :status,
-          options_for_select(Project::STATUSES.map { |s| [s.titleize, s] }, params[:status]),
-          { include_blank: "Tous les statuts" },
-          class: "form-select" %>
-
-      <%= f.submit "Filtrer", class: "btn btn-secondary" %>
+<div class="max-w-7xl mx-auto">
+  <!-- Header -->
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 animate-fade-in-up">
+    <div>
+      <div class="inline-flex items-center gap-2 text-sm font-mono text-muted-foreground mb-2">
+        Projets collaboratifs
+      </div>
+      <h1 class="text-3xl md:text-4xl font-bold text-foreground tracking-tight">
+        Découvre les projets<span class="text-primary">.</span>
+      </h1>
+      <p class="text-muted-foreground mt-2">Rejoins des projets passionnants et trouve ton équipe</p>
+    </div>
+    <%= link_to new_project_path, class: "btn-primary inline-flex items-center gap-2 self-start" do %>
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+      </svg>
+      Créer un projet
     <% end %>
   </div>
 
-  <% if @projects.any? %>
-    <div class="projects-grid">
-      <% @projects.each do |project| %>
-        <div class="project-card">
-          <div class="project-header">
-            <h3><%= link_to project.title, project_path(project) %></h3>
-            <span class="badge <%= project.status %>"><%= project.status.titleize %></span>
-          </div>
-
-          <p class="project-description"><%= truncate(project.description, length: 150) %></p>
-
-          <div class="project-meta">
-            <div class="owner">
-              Par <%= link_to project.owner.display_name, user_path(project.owner) %>
-            </div>
-            <div class="members">
-              <%= project.current_members_count %> / <%= project.max_members %> membres
-            </div>
-          </div>
-
-          <% if project.skills.any? %>
-            <div class="skills-tags">
-              <% project.skills.limit(5).each do |skill| %>
-                <span class="skill-tag"><%= skill.name %></span>
-              <% end %>
-            </div>
-          <% end %>
-
-          <div class="project-actions">
-            <%= link_to "Voir le projet", project_path(project), class: "btn btn-sm btn-outline" %>
-          </div>
+  <!-- Barre de recherche -->
+  <div class="card mb-8 animate-fade-in-up" style="animation-delay: 100ms;" data-controller="search" data-search-url-value="<%= projects_path %>">
+    <form data-action="submit->search#preventSubmit" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="relative group">
+        <div class="absolute left-0 top-0 bottom-0 w-12 flex items-center justify-center pointer-events-none">
+          <svg class="w-5 h-5 text-muted-foreground group-focus-within:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          </svg>
         </div>
-      <% end %>
-    </div>
-  <% else %>
-    <div class="empty-state">
-      <p>Aucun projet trouvé.</p>
-      <%= link_to "Créer le premier projet", new_project_path, class: "btn btn-primary" %>
-    </div>
-  <% end %>
+        <input type="text"
+               name="search"
+               placeholder="Rechercher un projet..."
+               value="<%= params[:search] %>"
+               class="w-full bg-secondary border border-border text-foreground placeholder:text-muted-foreground py-3 pl-12 pr-12 rounded transition-all focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+               autocomplete="off"
+               aria-label="Rechercher un projet"
+               data-search-target="input"
+               data-action="input->search#search">
+        <div data-search-target="spinner" class="hidden absolute right-0 top-0 bottom-0 w-12 flex items-center justify-center pointer-events-none">
+          <svg class="w-5 h-5 text-primary animate-spin" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+        </div>
+      </div>
+
+      <select name="status"
+              class="input py-3"
+              aria-label="Filtrer par statut"
+              data-action="change->search#searchNow">
+        <option value="">Tous les statuts</option>
+        <% Project::STATUSES.each do |s| %>
+          <option value="<%= s %>" <%= 'selected' if params[:status] == s %>><%= translate_status(s) %></option>
+        <% end %>
+      </select>
+    </form>
+  </div>
+
+  <div id="projects_results" data-search-target="results">
+    <% if @projects.any? %>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        <% @projects.each_with_index do |project, index| %>
+          <div class="card group animate-fade-in-up" style="animation-delay: <%= 150 + (index * 50) %>ms;">
+            <div class="flex items-start justify-between mb-4">
+              <h3 class="text-lg font-bold text-foreground flex-1 group-hover:text-primary transition-colors">
+                <%= link_to project.title, project_path(project) %>
+              </h3>
+              <span class="px-3 py-1 text-xs rounded-full font-medium <%= %w[open in_progress].include?(project.status) ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground' %>">
+                <%= translate_status(project.status) %>
+              </span>
+            </div>
+
+            <p class="text-muted-foreground text-sm mb-4 line-clamp-3"><%= truncate(project.description, length: 120) %></p>
+
+            <div class="flex items-center justify-between mb-4 text-sm">
+              <span class="text-muted-foreground">
+                Par <%= link_to project.owner.display_name, user_path(project.owner), class: "text-primary hover:text-primary/80" %>
+              </span>
+              <span class="text-muted-foreground flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                </svg>
+                <%= project.current_members_count %>/<%= project.max_members %>
+              </span>
+            </div>
+
+            <% if project.skills.any? %>
+              <div class="flex flex-wrap gap-1 mb-4">
+                <% project.skills.limit(4).each do |skill| %>
+                  <span class="text-xs px-2 py-1 bg-secondary text-secondary-foreground rounded">
+                    <%= skill.name %>
+                  </span>
+                <% end %>
+                <% if project.skills.count > 4 %>
+                  <span class="text-xs px-2 py-1 bg-muted text-muted-foreground rounded">
+                    +<%= project.skills.count - 4 %>
+                  </span>
+                <% end %>
+              </div>
+            <% end %>
+
+            <%= link_to project_path(project), class: "text-primary hover:text-primary/80 text-sm font-medium inline-flex items-center gap-1 group-hover:gap-2 transition-all" do %>
+              Voir le projet
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- Pagination -->
+      <div class="flex justify-center animate-fade-in">
+        <%= paginate @projects %>
+      </div>
+    <% else %>
+      <div class="card text-center py-16 animate-fade-in-up">
+        <svg class="w-16 h-16 text-muted-foreground mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+        </svg>
+        <p class="text-muted-foreground mb-6">Aucun projet trouvé.</p>
+        <%= link_to new_project_path, class: "btn-primary inline-flex items-center gap-2" do %>
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+          </svg>
+          Créer le premier projet
+        <% end %>
+      </div>
+    <% end %>
+  </div>
 </div>

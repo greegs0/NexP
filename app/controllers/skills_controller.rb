@@ -18,6 +18,13 @@ class SkillsController < ApplicationController
 
     # Grouper par catégorie
     @skills_by_category = @available_skills.order(:category, :name).group_by(&:category)
+
+    respond_to do |format|
+      format.html
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.update("available_skills", partial: "skills/available_skills", locals: { skills_by_category: @skills_by_category })
+      end
+    end
   end
 
   def show

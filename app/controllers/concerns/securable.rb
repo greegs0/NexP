@@ -13,6 +13,7 @@ module Securable
   end
 
   private
+  
 
   def set_security_headers
     response.headers['X-Frame-Options'] = 'SAMEORIGIN'

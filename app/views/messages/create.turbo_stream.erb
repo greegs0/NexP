@@ -1,0 +1,17 @@
+<%= turbo_stream.append "messages", partial: "messages/message", locals: { message: @message } %>
+<%= turbo_stream.replace "message_form" do %>
+  <%= form_with(model: [@project, @project.messages.build], id: "message_form", class: "space-y-4") do |f| %>
+    <div>
+      <%= f.label :content, "Message", class: "block text-sm font-medium text-secondary mb-2" %>
+      <%= f.text_area :content,
+          rows: 4,
+          class: "input",
+          placeholder: "Écrivez votre message...",
+          required: true %>
+    </div>
+
+    <div class="flex gap-3">
+      <%= f.submit "Envoyer", class: "btn-accent" %>
+    </div>
+  <% end %>
+<% end %>

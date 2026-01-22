@@ -1,0 +1,69 @@
+<svg width="500" height="120" viewBox="0 0 500 120" xmlns="http://www.w3.org/2000/svg">
+  <!-- Réseau de neurones raffiné (à gauche) -->
+  <g id="network">
+    <!-- Lignes de connexion fines -->
+    <line x1="60" y1="60" x2="30" y2="30" stroke="#8B8B8B" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+    <line x1="60" y1="60" x2="70" y2="20" stroke="#8B8B8B" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+    <line x1="60" y1="60" x2="100" y2="50" stroke="#8B8B8B" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+    <line x1="60" y1="60" x2="90" y2="90" stroke="#8B8B8B" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+    <line x1="60" y1="60" x2="35" y2="95" stroke="#8B8B8B" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+
+    <!-- Satellites (petits nodes périphériques) -->
+    <circle cx="30" cy="30" r="6" fill="#62754C" opacity="0.8"/>
+    <circle cx="70" cy="20" r="6" fill="#62754C" opacity="0.8"/>
+    <circle cx="100" cy="50" r="6" fill="#62754C" opacity="0.8"/>
+    <circle cx="90" cy="90" r="6" fill="#62754C" opacity="0.8"/>
+    <circle cx="35" cy="95" r="6" fill="#62754C" opacity="0.8"/>
+
+    <!-- Node central (plus raffiné) -->
+    <circle cx="60" cy="60" r="16" fill="#62754C"/>
+    <circle cx="60" cy="60" r="12" fill="#2D2D2D"/>
+
+    <!-- Points internes (détails subtils) -->
+    <circle cx="60" cy="54" r="2" fill="#62754C" opacity="0.9"/>
+    <circle cx="56" cy="60" r="2" fill="#62754C" opacity="0.9"/>
+    <circle cx="60" cy="60" r="2.5" fill="#62754C"/>
+    <circle cx="64" cy="60" r="2" fill="#62754C" opacity="0.9"/>
+    <circle cx="60" cy="66" r="2" fill="#62754C" opacity="0.9"/>
+  </g>
+
+  <!-- Texte "NexP" -->
+  <text
+    x="135"
+    y="75"
+    font-family="'Arial Black', 'Arial Bold', sans-serif"
+    font-size="52"
+    font-weight="900"
+    fill="#2D2D2D"
+    letter-spacing="-1"
+  >
+    NexP
+  </text>
+
+  <!-- Point accent après "NexP" (carré accent) -->
+  <rect x="295" y="65" width="10" height="10" fill="#62754C" rx="1"/>
+
+  <!-- Tagline "BUILD - TOGETHER." -->
+  <text
+    x="135"
+    y="100"
+    font-family="Arial, sans-serif"
+    font-size="16"
+    font-weight="700"
+    fill="#62754C"
+    letter-spacing="2"
+  >
+    BUILD
+  </text>
+  <text
+    x="200"
+    y="100"
+    font-family="Arial, sans-serif"
+    font-size="16"
+    font-weight="400"
+    fill="#8B8B8B"
+    letter-spacing="0.5"
+  >
+    - TOGETHER.
+  </text>
+</svg>

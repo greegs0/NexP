@@ -1,0 +1,63 @@
+<% content_for :page_title, @skill.name %>
+
+<div class="max-w-7xl mx-auto">
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold text-primary"><%= @skill.name %></h1>
+    <p class="text-secondary mt-2">Catégorie: <%= @skill.category %></p>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- Section: Utilisateurs avec cette compétence -->
+    <div class="card">
+      <h2 class="text-xl font-bold text-primary mb-4">👥 Utilisateurs (<%= @users.count %>)</h2>
+
+      <% if @users.any? %>
+        <div class="space-y-3">
+          <% @users.each do |user| %>
+            <div class="flex items-center justify-between p-3 bg-secondary rounded-lg hover:bg-tertiary transition">
+              <div>
+                <%= link_to user_path(user), class: "font-semibold text-primary hover:text-accent" do %>
+                  <%= user.display_name %>
+                <% end %>
+                <p class="text-sm text-muted">Niveau <%= user.level %></p>
+              </div>
+              <span class="text-sm px-3 py-1 rounded-full <%= user.available ? 'bg-success text-white' : 'bg-secondary text-secondary-foreground' %>">
+                <%= user.available ? 'Disponible' : 'Occupé' %>
+              </span>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <p class="text-muted text-center py-8">Aucun utilisateur n'a encore cette compétence.</p>
+      <% end %>
+    </div>
+
+    <!-- Section: Projets utilisant cette compétence -->
+    <div class="card">
+      <h2 class="text-xl font-bold text-primary mb-4">🚀 Projets (<%= @projects.count %>)</h2>
+
+      <% if @projects.any? %>
+        <div class="space-y-3">
+          <% @projects.each do |project| %>
+            <div class="p-3 bg-secondary rounded-lg hover:bg-tertiary transition">
+              <%= link_to project_path(project), class: "font-semibold text-primary hover:text-accent block mb-1" do %>
+                <%= project.title %>
+              <% end %>
+              <p class="text-sm text-secondary mb-2"><%= truncate(project.description, length: 100) %></p>
+              <div class="flex items-center justify-between text-xs text-muted">
+                <span>Par <%= project.owner.display_name %></span>
+                <span><%= project.current_members_count %>/<%= project.max_members %> membres</span>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <p class="text-muted text-center py-8">Aucun projet n'utilise cette compétence pour le moment.</p>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="mt-6">
+    <%= link_to "← Retour aux compétences", skills_path, class: "text-accent hover:text-accent-light" %>
+  </div>
+</div>

@@ -4,6 +4,9 @@ class Message < ApplicationRecord
 
   validates :content, presence: true, length: { minimum: 1, maximum: 1000 }
 
+  # Sanitize le contenu avant sauvegarde pour prévenir XSS
+  before_save :sanitize_content
+
   scope :unread, -> { where(read_at: nil) }
   scope :read, -> { where.not(read_at: nil) }
   scope :recent, -> { order(created_at: :desc) }
@@ -14,6 +17,15 @@ class Message < ApplicationRecord
   end
 
   def mark_as_read!
-    update_column(:read_at, Time.current) unless read?
+    update(read_at: Time.current) if read_at.blank?
+  end
+
+  private
+
+  def sanitize_content
+    return if content.blank?
+
+    # Supprime toutes les balises HTML pour prévenir XSS
+    self.content = Rails::HTML5::FullSanitizer.new.sanitize(content)
   end
 end

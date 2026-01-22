@@ -11,8 +11,16 @@ class ProjectsController < ApplicationController
     # Filtres optionnels
     @projects = @projects.where(status: params[:status]) if params[:status].present?
     @projects = @projects.joins(:skills).where(skills: { id: params[:skill_id] }) if params[:skill_id].present?
+    @projects = @projects.where("title ILIKE ?", "%#{params[:search]}%") if params[:search].present?
 
     @projects = @projects.distinct.page(params[:page]).per(12)
+
+    respond_to do |format|
+      format.html
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.update("projects_results", partial: "projects/results", locals: { projects: @projects })
+      end
+    end
   end
 
   def show
@@ -79,19 +87,33 @@ class ProjectsController < ApplicationController
       return
     end
 
-    @team = @project.teams.build(
-      user: current_user,
-      role: 'member',
-      status: 'accepted',
-      joined_at: Time.current
-    )
+    # Transaction pour éviter les race conditions
+    Project.transaction do
+      # Verrouillage pessimiste pour éviter les doubles joins
+      @project.lock!
 
-    if @team.save
+      # Re-vérifier après le lock
+      if @project.current_members_count >= @project.max_members
+        redirect_to @project, alert: 'Ce projet est complet.'
+        return
+      end
+
+      @team = @project.teams.build(
+        user: current_user,
+        role: 'member',
+        status: 'accepted',
+        joined_at: Time.current
+      )
+
+      @team.save!
       @project.increment!(:current_members_count)
-      redirect_to @project, notice: 'Vous avez rejoint le projet.'
-    else
-      redirect_to @project, alert: "Erreur : #{@team.errors.full_messages.join(', ')}"
     end
+
+    redirect_to @project, notice: 'Vous avez rejoint le projet.'
+  rescue ActiveRecord::RecordInvalid => e
+    redirect_to @project, alert: "Impossible de rejoindre le projet."
+  rescue ActiveRecord::RecordNotUnique
+    redirect_to @project, alert: 'Vous êtes déjà membre de ce projet.'
   end
 
   def leave
@@ -107,12 +129,16 @@ class ProjectsController < ApplicationController
       return
     end
 
-    if @team.destroy
+    # Transaction pour éviter les race conditions
+    Project.transaction do
+      @project.lock!
+      @team.destroy!
       @project.decrement!(:current_members_count)
-      redirect_to projects_path, notice: 'Vous avez quitté le projet.'
-    else
-      redirect_to @project, alert: 'Impossible de quitter le projet.'
     end
+
+    redirect_to projects_path, notice: 'Vous avez quitté le projet.'
+  rescue ActiveRecord::RecordNotDestroyed
+    redirect_to @project, alert: 'Impossible de quitter le projet.'
   end
 
   private

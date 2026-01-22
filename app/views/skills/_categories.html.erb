@@ -1,10 +1,10 @@
-<div class="categories">
+<div class="flex flex-wrap gap-2 mb-6 animate-fade-in-up" style="animation-delay: 150ms;">
   <%= link_to "Toutes", skills_path,
-      class: "category-tag #{'active' if current_category.nil?}" %>
+      class: "px-4 py-2 rounded-lg transition font-medium #{ current_category.nil? ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground hover:bg-muted' }" %>
 
   <% categories.each do |category| %>
     <%= link_to category,
         skills_path(category: category),
-        class: "category-tag #{'active' if current_category == category}" %>
+        class: "px-4 py-2 rounded-lg transition font-medium #{ current_category == category ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground hover:bg-muted' }" %>
   <% end %>
 </div>

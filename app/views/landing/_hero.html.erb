@@ -1,0 +1,43 @@
+<section class="relative overflow-hidden pt-32 pb-20 md:pt-40 md:pb-32">
+  <div class="absolute inset-0 pointer-events-none">
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 h-[500px] w-[800px] opacity-30 gradient-radial-primary"></div>
+  </div>
+
+  <div class="relative section-container">
+    <div class="mx-auto max-w-3xl text-center">
+      <div class="scroll-animate mb-6 inline-flex items-center gap-2 text-sm font-mono text-muted-foreground" data-controller="scroll-animate" data-scroll-animate-animation-value="fade-in">
+        Build. Together.
+      </div>
+
+      <div class="scroll-animate" data-controller="scroll-animate" data-scroll-animate-animation-value="fade-up" data-scroll-animate-delay-value="100">
+        <h1 class="text-balance text-4xl font-bold tracking-tight md:text-6xl lg:text-7xl">
+          Trouve ton équipe.
+          <br>
+          <span class="text-muted-foreground">Lance ton projet.</span>
+        </h1>
+      </div>
+
+      <div class="scroll-animate" data-controller="scroll-animate" data-scroll-animate-animation-value="fade-up" data-scroll-animate-delay-value="200">
+        <p class="mx-auto mt-6 max-w-xl text-pretty text-lg text-muted-foreground md:text-xl">
+          NexP connecte les porteurs d'idées avec les développeurs, designers et builders qui cherchent un projet, pas un job. Critères clairs. Mise en relation directe.
+        </p>
+      </div>
+
+      <div class="scroll-animate" data-controller="scroll-animate" data-scroll-animate-animation-value="fade-up" data-scroll-animate-delay-value="300">
+        <div class="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+          <%= link_to new_project_path, class: "btn-primary btn-lg" do %>
+            Proposer un projet
+            <svg class="ml-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+            </svg>
+          <% end %>
+          <%= link_to "Rejoindre un projet", projects_path, class: "btn-secondary btn-lg" %>
+        </div>
+      </div>
+
+      <div class="scroll-animate" data-controller="scroll-animate" data-scroll-animate-animation-value="fade-in" data-scroll-animate-delay-value="400">
+        <p class="mt-8 text-sm text-muted-foreground/60">Pas un job board. Pas du freelance. Des projets.</p>
+      </div>
+    </div>
+  </div>
+</section>

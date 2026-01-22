@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <title><%= content_for(:title) || "NexP - Build. Together." %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="description" content="NexP connecte les porteurs d'idées avec les développeurs, designers et builders qui cherchent un projet.">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body class="bg-background text-foreground min-h-screen flex flex-col">
+    <%= render 'shared/animated_background' %>
+
+    <header class="landing-header">
+      <div class="landing-header-inner">
+        <%= link_to root_path, class: "flex items-center gap-2" do %>
+          <span class="logo">NexP<span class="logo-accent">.</span></span>
+        <% end %>
+
+        <div class="flex items-center gap-4">
+          <% if controller_name == 'sessions' %>
+            <%= link_to "Créer un compte", new_registration_path(resource_name), class: "btn-primary btn-sm" %>
+          <% elsif controller_name == 'registrations' %>
+            <%= link_to "Se connecter", new_session_path(resource_name), class: "btn-ghost text-sm" %>
+          <% else %>
+            <%= link_to "Se connecter", new_user_session_path, class: "btn-ghost text-sm" %>
+            <%= link_to "Rejoindre", new_user_registration_path, class: "btn-primary btn-sm" %>
+          <% end %>
+        </div>
+      </div>
+    </header>
+
+    <main class="flex-1 flex items-center justify-center relative z-10 pt-16">
+      <div class="w-full max-w-md px-6 py-12">
+        <%= yield %>
+      </div>
+    </main>
+
+    <footer class="border-t border-border/40 py-8 relative z-10">
+      <div class="section-container text-center">
+        <p class="text-sm text-muted-foreground">&copy; <%= Time.current.year %> NexP. Build. Together.</p>
+      </div>
+    </footer>
+  </body>
+</html>

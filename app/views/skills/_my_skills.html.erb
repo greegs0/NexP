@@ -1,19 +1,31 @@
-<div class="my-skills">
-  <h2>Mes compétences (<%= user_skills.count %>)</h2>
+<div class="card mb-6 animate-fade-in-up" style="animation-delay: 200ms;" id="my_skills">
+  <div class="flex items-center gap-2 mb-4">
+    <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
+    </svg>
+    <h2 class="text-xl font-bold text-foreground">Mes compétences (<%= user_skills.count %>)</h2>
+  </div>
 
   <% if user_skills.any? %>
-    <div class="skills-grid">
+    <div class="flex flex-wrap gap-2">
       <% user_skills.each do |user_skill| %>
         <%= button_to user_skill_path(user_skill),
             method: :delete,
-            class: "skill-pill selected",
-            data: { turbo_confirm: "Retirer cette compétence ?" } do %>
+            class: "inline-flex items-center px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/80 transition group" do %>
           <%= user_skill.skill.name %>
-          <span class="remove">×</span>
+          <svg class="ml-2 w-4 h-4 opacity-60 group-hover:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
         <% end %>
       <% end %>
     </div>
   <% else %>
-    <p class="empty-state">Aucune compétence sélectionnée pour l'instant.</p>
+    <div class="text-center py-8">
+      <svg class="w-12 h-12 text-muted-foreground mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+      </svg>
+      <p class="text-muted-foreground">Aucune compétence sélectionnée pour l'instant.</p>
+      <p class="text-sm text-muted-foreground mt-1">Clique sur une compétence ci-dessous pour l'ajouter.</p>
+    </div>
   <% end %>
 </div>
