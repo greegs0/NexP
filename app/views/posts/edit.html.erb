@@ -1,0 +1,55 @@
+<% content_for :page_title, "Modifier le post" %>
+
+<div class="max-w-2xl mx-auto">
+  <div class="mb-8 animate-fade-in-up">
+    <h1 class="text-3xl font-bold text-foreground mb-2">
+      Modifier le post<span class="text-primary">.</span>
+    </h1>
+    <p class="text-muted-foreground">Mets à jour ton contenu</p>
+  </div>
+
+  <div class="card animate-fade-in-up" style="animation-delay: 100ms;">
+    <%= form_with(model: @post, class: "space-y-6") do |form| %>
+      <% if @post.errors.any? %>
+        <div class="bg-destructive/10 border border-destructive/20 rounded-md p-4">
+          <h2 class="text-sm font-semibold text-destructive mb-2"><%= pluralize(@post.errors.count, "erreur") %> à corriger :</h2>
+          <ul class="list-disc list-inside text-sm text-destructive space-y-1">
+            <% @post.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div>
+        <%= form.label :content, "Contenu", class: "block text-sm font-medium text-foreground mb-2" %>
+        <%= form.text_area :content,
+          rows: 10,
+          class: "input w-full",
+          required: true %>
+        <p class="text-sm text-muted-foreground mt-2">Maximum 5000 caractères</p>
+      </div>
+
+      <div>
+        <%= form.label :image, "Image (optionnelle)", class: "block text-sm font-medium text-foreground mb-2" %>
+        <% if @post.image.attached? %>
+          <div class="mb-2">
+            <%= image_tag @post.image.variant(resize_to_limit: [400, 400]), class: "rounded border border-border" %>
+            <p class="text-sm text-muted-foreground mt-1">Image actuelle - télécharge une nouvelle pour la remplacer</p>
+          </div>
+        <% end %>
+        <%= form.file_field :image,
+          accept: "image/png,image/jpg,image/jpeg,image/gif,image/webp",
+          class: "input w-full",
+          direct_upload: true %>
+        <p class="text-sm text-muted-foreground mt-2">JPEG, PNG, GIF ou WebP - Maximum 5 Mo</p>
+      </div>
+
+      <div class="flex gap-3">
+        <%= form.submit "Mettre à jour", class: "btn-primary" %>
+        <%= link_to "Annuler", @post, class: "btn-secondary" %>
+        <%= button_to "Supprimer", @post, method: :delete, data: { confirm: "Êtes-vous sûr ?" }, class: "btn-destructive ml-auto" %>
+      </div>
+    <% end %>
+  </div>
+</div>

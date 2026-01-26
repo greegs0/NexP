@@ -33,7 +33,7 @@
                name="search"
                placeholder="Rechercher un projet..."
                value="<%= params[:search] %>"
-               class="w-full bg-secondary border border-border text-foreground placeholder:text-muted-foreground py-3 pl-12 pr-12 rounded transition-all focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+               class="input pl-12 pr-12"
                autocomplete="off"
                aria-label="Rechercher un projet"
                data-search-target="input"
@@ -67,9 +67,19 @@
               <h3 class="text-lg font-bold text-foreground flex-1 group-hover:text-primary transition-colors">
                 <%= link_to project.title, project_path(project) %>
               </h3>
-              <span class="px-3 py-1 text-xs rounded-full font-medium <%= %w[open in_progress].include?(project.status) ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground' %>">
-                <%= translate_status(project.status) %>
-              </span>
+              <div class="flex gap-2">
+                <span class="px-3 py-1 text-xs rounded-full font-medium <%= %w[open in_progress].include?(project.status) ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground' %>">
+                  <%= translate_status(project.status) %>
+                </span>
+                <% if project.accepting_members? %>
+                  <span class="px-3 py-1 text-xs rounded-full font-medium bg-green-500/10 text-green-500 flex items-center gap-1">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                    Recrute
+                  </span>
+                <% end %>
+              </div>
             </div>
 
             <p class="text-muted-foreground text-sm mb-4 line-clamp-3"><%= truncate(project.description, length: 120) %></p>

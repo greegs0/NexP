@@ -1,0 +1,13 @@
+<div id="like_button_post_<%= post.id %>">
+  <%= button_to post_likes_path(post),
+    method: :post,
+    class: "inline-flex items-center gap-2 hover:text-primary transition-colors group" do %>
+    <svg class="w-<%= size || 5 %> h-<%= size || 5 %> group-hover:scale-110 transition-transform"
+         fill="<%= post.likes.exists?(user: current_user) ? 'currentColor' : 'none' %>"
+         stroke="currentColor"
+         viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+    </svg>
+    <span class="<%= show_count_label ? 'font-medium' : 'text-sm font-medium' %> like-count"><%= post.likes_count %><%= show_count_label ? " #{post.likes_count == 1 ? 'like' : 'likes'}" : '' %></span>
+  <% end %>
+</div>

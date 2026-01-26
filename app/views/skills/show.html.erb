@@ -21,8 +21,15 @@
                 <% end %>
                 <p class="text-sm text-muted">Niveau <%= user.level %></p>
               </div>
-              <span class="text-sm px-3 py-1 rounded-full <%= user.available ? 'bg-success text-white' : 'bg-secondary text-secondary-foreground' %>">
-                <%= user.available ? 'Disponible' : 'Occupé' %>
+              <span class="text-sm px-3 py-1 rounded-full <%= user.available ? 'bg-success text-white' : 'bg-secondary text-secondary-foreground' %> flex items-center gap-1">
+                <% if user.available %>
+                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                  </svg>
+                  En recherche
+                <% else %>
+                  Pas en recherche
+                <% end %>
               </span>
             </div>
           <% end %>

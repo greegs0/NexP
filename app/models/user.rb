@@ -1,4 +1,6 @@
 class User < ApplicationRecord
+  include StatsCacheable
+
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
@@ -15,11 +17,23 @@ class User < ApplicationRecord
   has_many :posts, dependent: :destroy
   has_many :likes, dependent: :destroy
   has_many :liked_posts, through: :likes, source: :post
+  has_many :comments, dependent: :destroy
 
   has_many :sent_messages, class_name: 'Message', foreign_key: 'sender_id', dependent: :destroy
+  has_many :received_messages, class_name: 'Message', foreign_key: 'recipient_id', dependent: :destroy
 
   has_many :user_badges, dependent: :destroy
   has_many :badges, through: :user_badges
+
+  has_many :notifications, dependent: :destroy
+  has_many :sent_notifications, class_name: 'Notification', foreign_key: 'actor_id', dependent: :destroy
+
+  has_many :active_follows, class_name: 'Follow', foreign_key: 'follower_id', dependent: :destroy
+  has_many :passive_follows, class_name: 'Follow', foreign_key: 'following_id', dependent: :destroy
+  has_many :following, through: :active_follows, source: :following
+  has_many :followers, through: :passive_follows, source: :follower
+
+  has_many :bookmarks, dependent: :destroy
 
   # Validations
   validates :username, presence: true, uniqueness: { case_sensitive: false },
@@ -51,6 +65,23 @@ class User < ApplicationRecord
   def add_experience(points)
     increment!(:experience_points, points)
     level_up_if_needed
+    check_badges
+  end
+
+  def check_badges
+    BadgeService.check_and_award_badges(self)
+  end
+
+  def follow(other_user)
+    active_follows.create(following: other_user) unless self == other_user
+  end
+
+  def unfollow(other_user)
+    active_follows.find_by(following: other_user)&.destroy
+  end
+
+  def following?(other_user)
+    following.include?(other_user)
   end
 
   private

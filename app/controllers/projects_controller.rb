@@ -32,7 +32,7 @@ class ProjectsController < ApplicationController
 
   def new
     @project = current_user.owned_projects.build
-    @available_skills = Skill.order(:category, :name)
+    @available_skills = Skill.all_cached
   end
 
   def create
@@ -47,13 +47,13 @@ class ProjectsController < ApplicationController
 
       redirect_to @project, notice: 'Projet créé avec succès.'
     else
-      @available_skills = Skill.order(:category, :name)
+      @available_skills = Skill.all_cached
       render :new, status: :unprocessable_entity
     end
   end
 
   def edit
-    @available_skills = Skill.order(:category, :name)
+    @available_skills = Skill.all_cached
   end
 
   def update
@@ -66,7 +66,7 @@ class ProjectsController < ApplicationController
 
       redirect_to @project, notice: 'Projet mis à jour avec succès.'
     else
-      @available_skills = Skill.order(:category, :name)
+      @available_skills = Skill.all_cached
       render :edit, status: :unprocessable_entity
     end
   end

@@ -1,0 +1,91 @@
+<% content_for :page_title, "Favoris" %>
+
+<div class="max-w-4xl mx-auto">
+  <!-- Header -->
+  <div class="mb-8 animate-fade-in-up">
+    <h1 class="text-3xl md:text-4xl font-bold text-foreground tracking-tight mb-2">
+      Favoris<span class="text-primary">.</span>
+    </h1>
+    <p class="text-muted-foreground">Tes posts et projets sauvegardés</p>
+  </div>
+
+  <!-- Liste des favoris -->
+  <% if @bookmarks.any? %>
+    <div class="space-y-6 mb-8">
+      <% @bookmarks.each_with_index do |bookmark, index| %>
+        <div class="card animate-fade-in-up" style="animation-delay: <%= 100 + (index * 50) %>ms;">
+          <div class="flex items-start justify-between">
+            <div class="flex-1">
+              <!-- Type de favori -->
+              <div class="inline-flex items-center gap-2 text-sm text-muted-foreground mb-2">
+                <% if bookmark.bookmarkable_type == 'Post' %>
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                  </svg>
+                  Post
+                <% elsif bookmark.bookmarkable_type == 'Project' %>
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                  </svg>
+                  Projet
+                <% end %>
+                • Sauvegardé <%= time_ago_in_words(bookmark.created_at) %> ago
+              </div>
+
+              <!-- Contenu du favori -->
+              <% if bookmark.bookmarkable_type == 'Post' && bookmark.bookmarkable %>
+                <% post = bookmark.bookmarkable %>
+                <p class="text-foreground mb-2"><%= truncate(post.content, length: 200) %></p>
+                <div class="flex items-center gap-2 text-sm text-muted-foreground">
+                  Par <%= link_to post.user.display_name, user_path(post.user), class: "text-primary hover:text-primary/80" %>
+                </div>
+                <%= link_to post_path(post), class: "text-primary hover:text-primary/80 text-sm font-medium inline-flex items-center gap-1 mt-2" do %>
+                  Voir le post
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                  </svg>
+                <% end %>
+              <% elsif bookmark.bookmarkable_type == 'Project' && bookmark.bookmarkable %>
+                <% project = bookmark.bookmarkable %>
+                <h3 class="text-lg font-bold text-foreground mb-2"><%= project.title %></h3>
+                <p class="text-muted-foreground text-sm mb-2"><%= truncate(project.description, length: 150) %></p>
+                <div class="flex items-center gap-2 text-sm text-muted-foreground">
+                  Par <%= link_to project.owner.display_name, user_path(project.owner), class: "text-primary hover:text-primary/80" %>
+                </div>
+                <%= link_to project_path(project), class: "text-primary hover:text-primary/80 text-sm font-medium inline-flex items-center gap-1 mt-2" do %>
+                  Voir le projet
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                  </svg>
+                <% end %>
+              <% else %>
+                <p class="text-muted-foreground italic">Contenu supprimé</p>
+              <% end %>
+            </div>
+
+            <!-- Bouton supprimer -->
+            <div class="ml-4 flex-shrink-0">
+              <%= button_to bookmark_path(bookmark), method: :delete, class: "text-muted-foreground hover:text-destructive p-2", data: { confirm: "Retirer des favoris ?" } do %>
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                </svg>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Pagination -->
+    <div class="flex justify-center animate-fade-in">
+      <%= paginate @bookmarks %>
+    </div>
+  <% else %>
+    <div class="card text-center py-16 animate-fade-in-up">
+      <svg class="w-16 h-16 text-muted-foreground mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path>
+      </svg>
+      <p class="text-muted-foreground">Aucun favori pour le moment.</p>
+    </div>
+  <% end %>
+</div>

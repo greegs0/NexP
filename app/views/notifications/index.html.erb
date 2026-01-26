@@ -1,0 +1,57 @@
+<% content_for :page_title, "Notifications" %>
+
+<div class="max-w-4xl mx-auto">
+  <!-- Header -->
+  <div class="mb-8 animate-fade-in-up">
+    <h1 class="text-3xl md:text-4xl font-bold text-foreground tracking-tight mb-2">
+      Notifications<span class="text-primary">.</span>
+    </h1>
+    <p class="text-muted-foreground">Reste informé de l'activité sur ton profil</p>
+  </div>
+
+  <!-- Notifications List -->
+  <% if @notifications.any? %>
+    <div class="space-y-4 mb-8">
+      <% @notifications.each_with_index do |notification, index| %>
+        <div class="card flex items-start gap-4 animate-fade-in-up <%= 'bg-secondary/50' unless notification.read? %>" style="animation-delay: <%= 100 + (index * 50) %>ms;">
+          <!-- Avatar de l'acteur -->
+          <div class="w-12 h-12 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-bold flex-shrink-0">
+            <%= notification.actor.display_name[0].upcase %>
+          </div>
+
+          <!-- Contenu de la notification -->
+          <div class="flex-1 min-w-0">
+            <p class="text-foreground">
+              <%= link_to notification.actor.display_name, user_path(notification.actor), class: "font-bold hover:text-primary" %>
+              <span class="text-muted-foreground"><%= notification.message %></span>
+            </p>
+            <p class="text-sm text-muted-foreground mt-1">
+              <%= time_ago_in_words(notification.created_at) %> ago
+            </p>
+          </div>
+
+          <!-- Actions -->
+          <div class="flex gap-2 flex-shrink-0">
+            <%= button_to notification_path(notification), method: :delete, class: "text-muted-foreground hover:text-destructive p-2", data: { confirm: "Supprimer cette notification ?" } do %>
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+              </svg>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Pagination -->
+    <div class="flex justify-center animate-fade-in">
+      <%= paginate @notifications %>
+    </div>
+  <% else %>
+    <div class="card text-center py-16 animate-fade-in-up">
+      <svg class="w-16 h-16 text-muted-foreground mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+      </svg>
+      <p class="text-muted-foreground">Aucune notification pour le moment.</p>
+    </div>
+  <% end %>
+</div>

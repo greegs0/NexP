@@ -1,0 +1,19 @@
+<%= turbo_stream.append "messages_list" do %>
+  <div class="flex <%= @message.sender == current_user ? 'justify-end' : 'justify-start' %>">
+    <div class="max-w-[70%] <%= @message.sender == current_user ? 'bg-primary text-primary-foreground' : 'bg-card border border-border' %> rounded-lg p-3">
+      <p class="text-sm whitespace-pre-wrap"><%= @message.content %></p>
+      <div class="flex items-center gap-2 mt-1 text-xs opacity-70">
+        <span><%= @message.created_at.strftime('%H:%M') %></span>
+        <% if @message.sender == current_user %>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+          </svg>
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<%= turbo_stream.replace "message_form" do %>
+  <%= render partial: "form", locals: { recipient: @recipient } %>
+<% end %>

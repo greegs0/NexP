@@ -1,0 +1,80 @@
+<% content_for :page_title, "Conversation avec #{@recipient.display_name}" %>
+
+<div class="max-w-4xl mx-auto">
+  <!-- Header -->
+  <div class="flex items-center justify-between mb-6 animate-fade-in-up">
+    <div class="flex items-center gap-3">
+      <%= link_to conversations_path, class: "text-muted-foreground hover:text-primary p-2" do %>
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+        </svg>
+      <% end %>
+      <div class="w-12 h-12 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-bold text-lg">
+        <%= @recipient.display_name[0].upcase %>
+      </div>
+      <div>
+        <h1 class="text-xl font-bold text-foreground"><%= @recipient.display_name %></h1>
+        <p class="text-sm text-muted-foreground">@<%= @recipient.username %></p>
+      </div>
+    </div>
+    <%= link_to user_path(@recipient), class: "btn-secondary" do %>
+      Voir le profil
+    <% end %>
+  </div>
+
+  <!-- Messages -->
+  <div class="card mb-6 animate-fade-in-up" style="animation-delay: 100ms;">
+    <div id="messages_container" class="space-y-4 max-h-[500px] overflow-y-auto mb-6 p-4 bg-secondary/20 rounded">
+      <div id="messages_list" class="space-y-4">
+        <% if @messages.any? %>
+          <% @messages.each do |message| %>
+            <div class="flex <%= message.sender == current_user ? 'justify-end' : 'justify-start' %>">
+              <div class="max-w-[70%] <%= message.sender == current_user ? 'bg-primary text-primary-foreground' : 'bg-card border border-border' %> rounded-lg p-3">
+                <p class="text-sm whitespace-pre-wrap"><%= message.content %></p>
+                <div class="flex items-center gap-2 mt-1 text-xs opacity-70">
+                  <span><%= message.created_at.strftime('%H:%M') %></span>
+                  <% if message.sender == current_user && message.read? %>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        <% else %>
+          <div class="text-center py-8">
+            <p class="text-muted-foreground">Début de votre conversation avec <%= @recipient.display_name %></p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Formulaire de nouveau message -->
+    <%= render partial: "form", locals: { recipient: @recipient } %>
+  </div>
+</div>
+
+<script>
+  // Auto-scroll vers le bas des messages au chargement initial
+  function scrollToBottom() {
+    const messagesContainer = document.getElementById('messages_container');
+    if (messagesContainer) {
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+  }
+
+  // Scroll au chargement de la page
+  document.addEventListener('DOMContentLoaded', scrollToBottom);
+
+  // Scroll après navigation Turbo
+  document.addEventListener('turbo:load', scrollToBottom);
+
+  // Scroll après l'ajout d'un nouveau message via Turbo Stream
+  document.addEventListener('turbo:before-stream-render', function(event) {
+    // Scroll uniquement si c'est un message ajouté à la liste
+    if (event.target.getAttribute('target') === 'messages_list') {
+      setTimeout(scrollToBottom, 50);
+    }
+  });
+</script>

@@ -1,0 +1,12 @@
+<%= form_with(url: conversation_messages_path(recipient), scope: :message, id: "message_form", class: "flex gap-3", data: { controller: "message-form", message_form_target: "form" }) do |form| %>
+  <%= form.text_area :content,
+    rows: 2,
+    class: "input flex-1",
+    placeholder: "Écris ton message... (Entrée pour envoyer, Shift+Entrée pour nouvelle ligne)",
+    required: true,
+    data: {
+      message_form_target: "textarea",
+      action: "keydown->message-form#handleKeydown"
+    } %>
+  <%= form.submit "Envoyer", class: "btn-primary self-end" %>
+<% end %>

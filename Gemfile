@@ -31,6 +31,19 @@ gem "devise"
 gem "kaminari"
 gem "rack-attack"
 gem "rails-html-sanitizer"
+gem "jwt"
+gem "active_storage_validations"
+gem "image_processing", "~> 1.2"
+
+# OAuth integrations (problème réseau - à réessayer plus tard)
+# gem "omniauth"
+# gem "omniauth-github"
+# gem "omniauth-gitlab"
+# gem "omniauth-rails_csrf_protection"
+
+# API clients (problème réseau - à réessayer plus tard)
+# gem "octokit" # GitHub API
+# gem "gitlab" # GitLab API
 
 # Use Redis adapter to run Action Cable in production
 # gem "redis", ">= 4.0.1"

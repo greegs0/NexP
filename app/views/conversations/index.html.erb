@@ -1,0 +1,68 @@
+<% content_for :page_title, "Messages" %>
+
+<div class="max-w-4xl mx-auto">
+  <!-- Header -->
+  <div class="mb-8 animate-fade-in-up">
+    <h1 class="text-3xl md:text-4xl font-bold text-foreground tracking-tight mb-2">
+      Messages<span class="text-primary">.</span>
+    </h1>
+    <p class="text-muted-foreground">Tes conversations privées</p>
+  </div>
+
+  <!-- Liste des conversations -->
+  <% if @conversations.any? %>
+    <div class="space-y-4 mb-8">
+      <% @conversations.each_with_index do |user, index| %>
+        <% last_message = Message.conversation_between(current_user, user).last %>
+        <%= link_to conversation_path(user), class: "card flex items-center gap-4 hover:border-primary transition-colors animate-fade-in-up", style: "animation-delay: #{100 + (index * 50)}ms;" do %>
+          <!-- Avatar -->
+          <div class="w-14 h-14 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-bold text-xl flex-shrink-0">
+            <%= user.display_name[0].upcase %>
+          </div>
+
+          <!-- Info de la conversation -->
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center justify-between mb-1">
+              <h3 class="font-bold text-foreground truncate"><%= user.display_name %></h3>
+              <% if last_message %>
+                <span class="text-sm text-muted-foreground"><%= time_ago_in_words(last_message.created_at) %> ago</span>
+              <% end %>
+            </div>
+            <% if last_message %>
+              <p class="text-sm text-muted-foreground truncate">
+                <%= last_message.sender == current_user ? 'Vous: ' : '' %>
+                <%= truncate(last_message.content, length: 60) %>
+              </p>
+            <% end %>
+          </div>
+
+          <!-- Indicateur de message non lu -->
+          <% unread_count = Message.conversation_between(current_user, user).where(recipient: current_user, read_at: nil).count %>
+          <% if unread_count > 0 %>
+            <div class="w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">
+              <%= unread_count %>
+            </div>
+          <% end %>
+        <% end %>
+      <% end %>
+    </div>
+
+    <!-- Pagination -->
+    <div class="flex justify-center animate-fade-in">
+      <%= paginate @conversations %>
+    </div>
+  <% else %>
+    <div class="card text-center py-16 animate-fade-in-up">
+      <svg class="w-16 h-16 text-muted-foreground mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+      </svg>
+      <p class="text-muted-foreground mb-6">Aucune conversation pour le moment.</p>
+      <%= link_to users_path, class: "btn-primary inline-flex items-center gap-2" do %>
+        Trouver des développeurs
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+        </svg>
+      <% end %>
+    </div>
+  <% end %>
+</div>

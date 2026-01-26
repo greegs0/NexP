@@ -4,7 +4,7 @@ class Project < ApplicationRecord
   VISIBILITIES = %w[public private].freeze
 
   # Associations
-  belongs_to :owner, class_name: 'User'
+  belongs_to :owner, class_name: 'User', counter_cache: :owned_projects_count
 
   has_many :teams, dependent: :destroy
   has_many :members, through: :teams, source: :user
@@ -12,7 +12,9 @@ class Project < ApplicationRecord
   has_many :project_skills, dependent: :destroy
   has_many :skills, through: :project_skills
 
-  has_many :messages, dependent: :destroy
+  has_many :messages, dependent: :destroy, counter_cache: true
+
+  has_many :bookmarks, as: :bookmarkable, dependent: :destroy, counter_cache: true
 
   # Validations
   validates :title, presence: true, length: { minimum: 3, maximum: 100 }

@@ -1,6 +1,6 @@
-<%= link_to_unless current_page.first?, url, class: "px-4 py-2 bg-secondary text-secondary-foreground hover:bg-muted rounded-lg transition inline-flex items-center gap-1", remote: remote do %>
-  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<%= link_to url, class: "px-4 py-2 bg-secondary text-secondary-foreground hover:bg-muted rounded-lg transition inline-flex items-center gap-1", remote: remote, "aria-label": "Première page" do %>
+  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"></path>
   </svg>
-  Premier
+  <span class="hidden sm:inline">Premier</span>
 <% end %>

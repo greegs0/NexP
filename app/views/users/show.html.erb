@@ -52,11 +52,14 @@
                 <input type="checkbox" <%= @user.available ? 'checked' : '' %> data-controller="availability-toggle" data-availability-toggle-user-id-value="<%= @user.id %>" data-action="change->availability-toggle#toggle" class="availability-toggle-checkbox">
                 <span class="availability-toggle-slider"></span>
               </label>
-              <span class="text-sm text-muted-foreground" data-availability-toggle-target="label"><%= @user.available ? 'Disponible' : 'Non disponible' %></span>
+              <span class="text-sm text-muted-foreground" data-availability-toggle-target="label"><%= @user.available ? 'En recherche de projet' : 'Pas en recherche' %></span>
             </span>
           <% elsif @user.available %>
-            <span class="px-3 py-1 bg-success text-white rounded-full text-xs font-medium">
-              Disponible
+            <span class="px-3 py-1 bg-success text-white rounded-full text-xs font-medium flex items-center gap-1">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+              </svg>
+              En recherche de projet
             </span>
           <% end %>
         </div>
@@ -88,17 +91,82 @@
           <% end %>
         </div>
 
-        <% if @is_current_user %>
-          <%= link_to edit_user_registration_path, class: "btn-primary inline-flex items-center gap-2" do %>
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-            </svg>
-            Modifier mon profil
+        <div class="flex flex-wrap gap-3">
+          <% if @is_current_user %>
+            <%= link_to edit_user_registration_path, class: "btn-primary inline-flex items-center gap-2" do %>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+              </svg>
+              Modifier mon profil
+            <% end %>
+          <% else %>
+            <!-- Bouton Follow/Unfollow -->
+            <% if current_user.following?(@user) %>
+              <%= button_to unfollow_user_path(@user), method: :delete, class: "btn-secondary inline-flex items-center gap-2", data: { turbo_confirm: "Ne plus suivre #{@user.display_name} ?" } do %>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7a4 4 0 11-8 0 4 4 0 018 0zM9 14a6 6 0 00-6 6v1h12v-1a6 6 0 00-6-6zM21 12h-6"></path>
+                </svg>
+                Ne plus suivre
+              <% end %>
+            <% else %>
+              <%= button_to follow_user_path(@user), method: :post, class: "btn-primary inline-flex items-center gap-2" do %>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+                </svg>
+                Suivre
+              <% end %>
+            <% end %>
+
+            <!-- Bouton Envoyer un message -->
+            <%= link_to conversation_path(@user), class: "btn-secondary inline-flex items-center gap-2" do %>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+              </svg>
+              Envoyer un message
+            <% end %>
           <% end %>
-        <% end %>
+        </div>
       </div>
     </div>
   </div>
+
+  <!-- Badges Section -->
+  <% if @badges.any? %>
+    <div class="card mb-8 animate-fade-in-up" style="animation-delay: 50ms;">
+      <div class="flex items-center gap-2 mb-6">
+        <svg class="w-5 h-5 text-primary" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+        </svg>
+        <h2 class="text-2xl font-bold text-foreground">Badges (<%= @badges.count %>)</h2>
+      </div>
+
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <% @badges.each do |badge| %>
+          <% user_badge = badge.user_badges.find_by(user: @user) %>
+          <div class="flex flex-col items-center p-4 bg-secondary/20 rounded-lg border border-border hover:border-primary transition-colors">
+            <% if badge.icon_url.present? %>
+              <%= image_tag badge.icon_url, class: "w-16 h-16 mb-2", alt: badge.name %>
+            <% else %>
+              <div class="w-16 h-16 mb-2 rounded-full bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center">
+                <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                </svg>
+              </div>
+            <% end %>
+            <h3 class="font-bold text-foreground text-sm text-center mb-1"><%= badge.name %></h3>
+            <% if badge.description.present? %>
+              <p class="text-xs text-muted-foreground text-center"><%= truncate(badge.description, length: 50) %></p>
+            <% end %>
+            <% if user_badge&.earned_at %>
+              <p class="text-xs text-muted-foreground mt-2">
+                <%= time_ago_in_words(user_badge.earned_at) %> ago
+              </p>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
 
   <!-- Skills Section -->
   <div class="card mb-8 animate-fade-in-up" style="animation-delay: 100ms;">
@@ -240,32 +308,4 @@
       </div>
     <% end %>
   </div>
-
-  <!-- Badges Section -->
-  <% if @badges.any? %>
-    <div class="card animate-fade-in-up" style="animation-delay: 200ms;">
-      <div class="flex items-center gap-2 mb-6">
-        <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
-        </svg>
-        <h2 class="text-2xl font-bold text-foreground">Badges (<%= @badges.count %>)</h2>
-      </div>
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <% @badges.each do |badge| %>
-          <div class="card text-center group" title="<%= badge.description %>">
-            <% if badge.icon_url.present? %>
-              <%= image_tag badge.icon_url, alt: badge.name, class: "w-16 h-16 mx-auto mb-2" %>
-            <% else %>
-              <div class="w-16 h-16 mx-auto mb-2 rounded-full stat-gradient-primary text-white flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
-                <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
-                </svg>
-              </div>
-            <% end %>
-            <span class="text-sm font-medium text-foreground"><%= badge.name %></span>
-          </div>
-        <% end %>
-      </div>
-    </div>
-  <% end %>
 </div>
