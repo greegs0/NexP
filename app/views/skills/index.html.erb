@@ -12,13 +12,19 @@
     <p class="text-muted-foreground mt-2">Ajoute ou retire tes compétences pour matcher avec des projets</p>
   </div>
 
-  <%= render 'search_bar' %>
-
-  <%= render 'categories', categories: @categories, current_category: @current_category %>
-
   <%= render 'my_skills', user_skills: @user_skills %>
 
-  <div id="available_skills">
-    <%= render 'available_skills', skills_by_category: @skills_by_category %>
+  <%= render 'search_bar' %>
+
+  <!-- Suggestions (statiques, ne changent pas pendant la recherche) -->
+  <div id="suggestions">
+    <%= render 'suggestions', suggestions: @suggestions %>
+  </div>
+
+  <!-- Résultats de recherche uniquement -->
+  <div id="search_results">
+    <% if params[:search].present? && @skills_by_category.any? %>
+      <%= render 'search_results_only', skills_by_category: @skills_by_category %>
+    <% end %>
   </div>
 </div>

@@ -1,17 +1,42 @@
 <% content_for :page_title, "Fil d'actualité" %>
 
 <div class="max-w-7xl mx-auto">
+  <!-- Header -->
+  <div class="mb-6 animate-fade-in-up">
+    <h1 class="text-3xl md:text-4xl font-bold text-foreground tracking-tight mb-2">
+      Fil d'actualité<span class="text-primary">.</span>
+    </h1>
+    <p class="text-muted-foreground">Découvre ce qui se passe dans ta communauté</p>
+  </div>
+
+  <!-- Filtres - Compact Pills -->
+  <div class="mb-6 animate-fade-in-up relative z-20" style="animation-delay: 50ms;">
+    <div class="inline-flex items-center gap-1 p-1 bg-secondary/50 rounded-xl">
+      <%= link_to "Tous", feed_path, class: "px-4 py-2 text-sm font-medium rounded-lg whitespace-nowrap transition-all #{@active_filter.blank? ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}" %>
+      <%= link_to "Images", feed_path(filter: 'images'), class: "px-4 py-2 text-sm font-medium rounded-lg whitespace-nowrap transition-all #{@active_filter == 'images' ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}" %>
+      <%= link_to "Populaires", feed_path(filter: 'popular'), class: "px-4 py-2 text-sm font-medium rounded-lg whitespace-nowrap transition-all #{@active_filter == 'popular' ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}" %>
+      <%= link_to "Commentés", feed_path(filter: 'commented'), class: "px-4 py-2 text-sm font-medium rounded-lg whitespace-nowrap transition-all #{@active_filter == 'commented' ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}" %>
+      <%= link_to "Mes posts", feed_path(filter: 'mine'), class: "px-4 py-2 text-sm font-medium rounded-lg whitespace-nowrap transition-all #{@active_filter == 'mine' ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}" %>
+
+      <% if @filter_skills.any? %>
+        <div class="relative" data-controller="dropdown">
+          <button data-action="click->dropdown#toggle" class="px-4 py-2 text-sm font-medium rounded-lg whitespace-nowrap transition-all inline-flex items-center gap-1 <%= @active_filter == 'skill' ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground' %>">
+            <%= @active_filter == 'skill' && @active_skill.present? ? Skill.find_by(id: @active_skill)&.name || 'Compétence' : 'Compétence' %>
+            <svg class="w-3 h-3 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+          </button>
+          <div data-dropdown-target="menu" class="hidden absolute top-full left-0 mt-2 w-48 bg-card border border-border rounded-lg shadow-lg z-50 max-h-64 overflow-y-auto py-1">
+            <% @filter_skills.each do |skill| %>
+              <%= link_to skill.name, feed_path(filter: 'skill', skill_id: skill.id), class: "block px-4 py-2 text-sm hover:bg-secondary/50 transition-colors #{'text-primary font-medium' if @active_skill.to_s == skill.id.to_s}" %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
     <!-- Colonne principale : Feed -->
     <div class="lg:col-span-2">
-      <!-- Header -->
-      <div class="mb-6 animate-fade-in-up">
-        <h1 class="text-3xl md:text-4xl font-bold text-foreground tracking-tight mb-2">
-          Fil d'actualité<span class="text-primary">.</span>
-        </h1>
-        <p class="text-muted-foreground">Découvre ce qui se passe dans ta communauté</p>
-      </div>
-
       <!-- Créer un post -->
       <div class="card mb-6 animate-fade-in-up" style="animation-delay: 100ms;">
         <%= link_to new_post_path, class: "flex items-center gap-3 p-4 bg-secondary/20 rounded hover:bg-secondary/30 transition-colors" do %>

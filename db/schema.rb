@@ -10,8 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_01_25_101339) do
+ActiveRecord::Schema[7.1].define(version: 2026_01_27_231721) do
   # These are extensions that must be enabled in order to support this database
+  enable_extension "pg_trgm"
   enable_extension "plpgsql"
 
   create_table "active_storage_attachments", force: :cascade do |t|
@@ -179,8 +180,14 @@ ActiveRecord::Schema[7.1].define(version: 2026_01_25_101339) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "category"
+    t.text "aliases", default: [], array: true
+    t.integer "users_count", default: 0
+    t.integer "popularity_score", default: 0
     t.index ["category"], name: "index_skills_on_category"
     t.index ["name"], name: "index_skills_on_name", unique: true
+    t.index ["name"], name: "index_skills_on_name_trgm", opclass: :gin_trgm_ops, using: :gin
+    t.index ["popularity_score"], name: "index_skills_on_popularity_score"
+    t.index ["users_count"], name: "index_skills_on_users_count"
   end
 
   create_table "teams", force: :cascade do |t|
@@ -205,6 +212,7 @@ ActiveRecord::Schema[7.1].define(version: 2026_01_25_101339) do
     t.datetime "updated_at", null: false
     t.index ["badge_id"], name: "index_user_badges_on_badge_id"
     t.index ["user_id", "badge_id"], name: "index_user_badges_on_user_id_and_badge_id", unique: true
+    t.index ["user_id", "badge_id"], name: "index_user_badges_uniqueness", unique: true
     t.index ["user_id"], name: "index_user_badges_on_user_id"
   end
 
@@ -213,7 +221,10 @@ ActiveRecord::Schema[7.1].define(version: 2026_01_25_101339) do
     t.bigint "skill_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "proficiency_level", default: 0, null: false
+    t.integer "position", default: 0, null: false
     t.index ["skill_id"], name: "index_user_skills_on_skill_id"
+    t.index ["user_id", "position"], name: "index_user_skills_on_user_id_and_position"
     t.index ["user_id", "skill_id"], name: "index_user_skills_on_user_id_and_skill_id", unique: true
     t.index ["user_id"], name: "index_user_skills_on_user_id"
   end

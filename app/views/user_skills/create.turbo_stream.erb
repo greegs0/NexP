@@ -1,13 +1,27 @@
+<%
+  # Recharger les données
+  user_skills = current_user.user_skills.includes(:skill).order(:position)
+  suggestions = Skill.suggestions_for(current_user)
+
+  # Résultats de recherche si query présente
+  user_skill_ids = current_user.skills.pluck(:id)
+  if params[:search].present?
+    search_results = Skill.smart_search(params[:search], user: current_user, limit: 30)
+    available_skills = search_results.reject { |s| user_skill_ids.include?(s.id) }
+    skills_by_category = available_skills.group_by(&:category)
+  else
+    skills_by_category = {}
+  end
+%>
+
 <%= turbo_stream.update "my_skills" do %>
-  <%= render 'skills/my_skills', user_skills: current_user.user_skills.includes(:skill) %>
+  <%= render 'skills/my_skills', user_skills: user_skills %>
 <% end %>
 
-<%= turbo_stream.update "available_skills" do %>
-  <%
-    available_skills = Skill.where.not(id: current_user.skills.pluck(:id))
-    available_skills = available_skills.by_category(params[:category]) if params[:category].present?
-    available_skills = available_skills.search(params[:search]) if params[:search].present?
-    skills_by_category = available_skills.order(:category, :name).group_by(&:category)
-  %>
-  <%= render 'skills/available_skills', skills_by_category: skills_by_category %>
+<%= turbo_stream.update "suggestions" do %>
+  <%= render 'skills/suggestions', suggestions: suggestions %>
+<% end %>
+
+<%= turbo_stream.update "search_results" do %>
+  <%= render 'skills/search_results_only', skills_by_category: skills_by_category %>
 <% end %>

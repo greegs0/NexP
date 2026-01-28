@@ -1,0 +1,9 @@
+<% color ||= 'primary' %>
+<% btn_class = "suggestion-skill-btn suggestion-skill-btn-#{color} group" %>
+<%= button_to user_skills_path(skill_id: skill.id), method: :post, form_class: "inline", class: btn_class do %>
+  <%= skill_logo(skill, size: 16) %>
+  <span><%= skill.name %></span>
+  <svg class="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+  </svg>
+<% end %>

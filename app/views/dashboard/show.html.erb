@@ -3,35 +3,70 @@
 <div class="max-w-7xl mx-auto">
 
   <!-- Header du Dashboard -->
-  <div class="mb-8 animate-fade-in-up">
-    <div class="inline-flex items-center gap-2 text-sm font-mono text-muted-foreground mb-4">
+  <div class="mb-6 animate-fade-in-up">
+    <div class="inline-flex items-center gap-2 text-sm font-mono text-muted-foreground mb-2">
       Build. Together.
     </div>
     <h1 class="text-3xl md:text-4xl font-bold text-foreground tracking-tight">
       Bienvenue, <%= @user.name %><span class="text-primary">.</span>
     </h1>
-    <p class="text-muted-foreground mt-2">
+    <p class="text-muted-foreground mt-1">
       Voici un aperçu de ton profil et de tes activités
     </p>
   </div>
 
-  <!-- Cards des Stats -->
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+  <!-- Quick Actions -->
+  <div class="flex flex-wrap gap-3 mb-6 animate-fade-in-up" style="animation-delay: 50ms;">
+    <%= link_to new_project_path, class: "btn-primary btn-sm inline-flex items-center gap-2" do %>
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+      </svg>
+      Créer un projet
+    <% end %>
+    <%= link_to new_post_path, class: "btn-secondary btn-sm inline-flex items-center gap-2" do %>
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+      </svg>
+      Nouveau post
+    <% end %>
+    <%= link_to users_path, class: "btn-secondary btn-sm inline-flex items-center gap-2" do %>
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+      </svg>
+      Trouver un dev
+    <% end %>
+    <%= link_to projects_path, class: "btn-secondary btn-sm inline-flex items-center gap-2" do %>
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+      </svg>
+      Parcourir les projets
+    <% end %>
+  </div>
 
-    <!-- Card Niveau -->
+  <!-- Cards des Stats -->
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+
+    <!-- Card Niveau avec Sparkline -->
     <div class="card group animate-fade-in-up" style="animation-delay: 100ms;">
       <div class="flex items-center justify-between">
         <div>
           <p class="text-sm text-muted-foreground">Niveau</p>
-          <p class="text-4xl font-bold text-foreground mt-1"><%= @user.level %></p>
+          <p class="text-3xl font-bold text-foreground mt-1"><%= @user.level %></p>
         </div>
-        <div class="w-14 h-14 rounded-xl stat-gradient-primary flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-          <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="w-12 h-12 rounded-xl stat-gradient-primary flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
           </svg>
         </div>
       </div>
+      <!-- Mini Sparkline XP -->
       <div class="mt-3 pt-3 border-t border-border">
+        <div class="flex items-end gap-1 h-6 mb-1">
+          <% @xp_progression.each_with_index do |xp, i| %>
+            <% height = @xp_progression.max > 0 ? (xp.to_f / @xp_progression.max * 100).round : 10 %>
+            <div class="flex-1 bg-primary/30 rounded-sm transition-all hover:bg-primary" style="height: <%= [height, 10].max %>%;"></div>
+          <% end %>
+        </div>
         <p class="text-xs text-muted-foreground"><%= @user.experience_points %> XP accumulés</p>
       </div>
     </div>
@@ -41,10 +76,10 @@
       <div class="flex items-center justify-between">
         <div>
           <p class="text-sm text-muted-foreground">Compétences</p>
-          <p class="text-4xl font-bold text-foreground mt-1"><%= @total_skills %></p>
+          <p class="text-3xl font-bold text-foreground mt-1"><%= @total_skills %></p>
         </div>
-        <div class="w-14 h-14 rounded-xl stat-gradient-blue flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-          <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="w-12 h-12 rounded-xl stat-gradient-blue flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
           </svg>
         </div>
@@ -59,10 +94,10 @@
       <div class="flex items-center justify-between">
         <div>
           <p class="text-sm text-muted-foreground">Projets rejoints</p>
-          <p class="text-4xl font-bold text-foreground mt-1"><%= @total_projects %></p>
+          <p class="text-3xl font-bold text-foreground mt-1"><%= @total_projects %></p>
         </div>
-        <div class="w-14 h-14 rounded-xl stat-gradient-purple flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-          <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="w-12 h-12 rounded-xl stat-gradient-purple flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
           </svg>
         </div>
@@ -77,10 +112,10 @@
       <div class="flex items-center justify-between">
         <div>
           <p class="text-sm text-muted-foreground">Mes créations</p>
-          <p class="text-4xl font-bold text-foreground mt-1"><%= @total_owned_projects %></p>
+          <p class="text-3xl font-bold text-foreground mt-1"><%= @total_owned_projects %></p>
         </div>
-        <div class="w-14 h-14 rounded-xl stat-gradient-orange flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-          <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="w-12 h-12 rounded-xl stat-gradient-orange flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
           </svg>
         </div>
@@ -92,133 +127,272 @@
 
   </div>
 
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-
-    <!-- Section : Mes compétences récentes -->
-    <div class="card animate-fade-in-up" style="animation-delay: 300ms;">
-      <div class="flex items-center justify-between mb-6">
-        <h2 class="text-xl font-bold text-foreground">Mes compétences</h2>
-        <%= link_to "Gérer", skills_path, class: "text-sm text-primary hover:text-primary/80 font-medium" %>
-      </div>
-
-      <% if @recent_skills.any? %>
-        <div class="flex flex-wrap gap-2">
-          <% @recent_skills.each do |skill| %>
-            <span class="badge badge-primary">
-              <%= skill.name %>
-            </span>
-          <% end %>
-          <% if @total_skills > 5 %>
-            <span class="badge badge-secondary">
-              +<%= @total_skills - 5 %> autres
-            </span>
-          <% end %>
-        </div>
-      <% else %>
-        <div class="text-center py-8">
-          <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-secondary flex items-center justify-center">
-            <svg class="w-8 h-8 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
-            </svg>
-          </div>
-          <p class="text-foreground font-medium mb-2">Ajoute tes compétences</p>
-          <p class="text-muted-foreground text-sm mb-4">Les compétences t'aident à matcher avec des projets qui te correspondent.</p>
-          <%= link_to skills_path, class: "btn-primary inline-flex items-center gap-2" do %>
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-            </svg>
-            Ajouter des compétences
-          <% end %>
-        </div>
-      <% end %>
+  <!-- Badges - Minimal Pills with SVG Icons -->
+  <div class="card mb-6 animate-fade-in-up" style="animation-delay: 280ms;">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-lg font-bold text-foreground">Badges</h2>
+      <span class="text-sm text-muted-foreground"><%= @total_badges %> obtenus</span>
     </div>
 
-    <!-- Section : Mes projets créés -->
-    <div class="card animate-fade-in-up" style="animation-delay: 350ms;">
-      <div class="flex items-center justify-between mb-6">
-        <h2 class="text-xl font-bold text-foreground">Mes projets</h2>
-        <%= link_to "Créer", new_project_path, class: "text-sm text-primary hover:text-primary/80 font-medium" %>
+    <% if @user_badges.any? %>
+      <div class="flex flex-wrap gap-2">
+        <% @user_badges.each do |badge| %>
+          <%
+            # Nettoyer le nom du badge (supprimer tous les emojis)
+            clean_name = badge.name.gsub(/[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE00}-\u{FE0F}\u{1F000}-\u{1F02F}\u{1F0A0}-\u{1F0FF}\u{200D}\u{20E3}\u{E0020}-\u{E007F}]+\s*/u, '').strip
+
+            badge_data = {
+              'First Launch' => { color: '#f59e0b', icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>' },
+              'Team Player' => { color: '#ec4899', icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>' },
+              'Rising Star' => { color: '#eab308', icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>' },
+              'On Fire' => { color: '#ef4444', icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z"/>' },
+              'Expert' => { color: '#10b981', icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>' },
+              'Code Ninja' => { color: '#8b5cf6', icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>' },
+              'Legend' => { color: '#fbbf24', icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>' },
+              'Design Master' => { color: '#f472b6', icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>' },
+              'AI Pioneer' => { color: '#06b6d4', icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>' },
+              'Community Champion' => { color: '#22c55e', icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>' },
+              'Débutant' => { color: '#94a3b8', icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>' },
+              'Apprenti' => { color: '#64748b', icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>' },
+              'Intermédiaire' => { color: '#3b82f6', icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>' },
+              'Avancé' => { color: '#8b5cf6', icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>' },
+              'Maître' => { color: '#f59e0b', icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>' },
+              'Premier Projet' => { color: '#10b981', icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>' },
+              'Première Publication' => { color: '#ec4899', icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>' },
+              'Polyvalent' => { color: '#6366f1', icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"/>' },
+              'Expert Multi-Domaines' => { color: '#ef4444', icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>' }
+            }
+            data = badge_data[clean_name] || { color: '#8fa66b', icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>' }
+          %>
+          <span class="badge-pill" style="--badge-color: <%= data[:color] %>;">
+            <svg class="badge-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color: <%= data[:color] %>;">
+              <%= data[:icon].html_safe %>
+            </svg>
+            <%= clean_name %>
+          </span>
+        <% end %>
       </div>
-
-      <% if @owned_projects.any? %>
-        <div class="space-y-4">
-          <% @owned_projects.each do |project| %>
-            <div class="border-l-2 border-primary pl-4 py-2 hover:border-l-4 transition-all">
-              <h3 class="font-semibold text-foreground">
-                <%= link_to project.title, project_path(project), class: "hover:text-primary transition-colors" %>
-              </h3>
-              <p class="text-sm text-muted-foreground mt-1">
-                <%= project.current_members_count %>/<%= project.max_members %> membres ·
-                <span class="capitalize"><%= project.status %></span>
-              </p>
-            </div>
-          <% end %>
-        </div>
-      <% else %>
-        <div class="text-center py-8">
-          <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-secondary flex items-center justify-center">
-            <svg class="w-8 h-8 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
-            </svg>
-          </div>
-          <p class="text-foreground font-medium mb-2">Lance ton premier projet</p>
-          <p class="text-muted-foreground text-sm mb-4">Crée un projet et trouve des collaborateurs motivés.</p>
-          <%= link_to new_project_path, class: "btn-primary inline-flex items-center gap-2" do %>
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-            </svg>
-            Créer un projet
-          <% end %>
-        </div>
-      <% end %>
-    </div>
-
+    <% else %>
+      <p class="text-sm text-muted-foreground text-center py-4">Continue pour débloquer des badges</p>
+    <% end %>
   </div>
 
-  <!-- Section : Projets que j'ai rejoints -->
-  <div class="card animate-fade-in-up" style="animation-delay: 400ms;">
-    <div class="flex items-center justify-between mb-6">
-      <h2 class="text-xl font-bold text-foreground">Projets rejoints</h2>
-      <%= link_to "Parcourir", projects_path, class: "btn-accent" %>
+  <!-- Layout 2 colonnes -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+
+    <!-- Colonne gauche -->
+    <div class="space-y-6">
+
+      <!-- Section : Mes compétences -->
+      <div class="card animate-fade-in-up" style="animation-delay: 300ms;">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-lg font-bold text-foreground">Mes compétences</h2>
+          <%= link_to "Gérer", skills_path, class: "text-sm text-primary hover:text-primary/80 font-medium" %>
+        </div>
+
+        <% if @recent_skills.any? %>
+          <div class="flex flex-wrap gap-2">
+            <% @recent_skills.each do |skill| %>
+              <span class="badge badge-primary"><%= skill.name %></span>
+            <% end %>
+            <% if @total_skills > 5 %>
+              <span class="badge badge-secondary">+<%= @total_skills - 5 %> autres</span>
+            <% end %>
+          </div>
+        <% else %>
+          <div class="text-center py-4">
+            <p class="text-muted-foreground text-sm mb-3">Ajoute tes compétences pour matcher avec des projets</p>
+            <%= link_to skills_path, class: "btn-primary btn-sm" do %>Ajouter<% end %>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- Section : Mes projets créés -->
+      <div class="card animate-fade-in-up" style="animation-delay: 350ms;">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-lg font-bold text-foreground">Mes projets</h2>
+          <%= link_to "Créer", new_project_path, class: "text-sm text-primary hover:text-primary/80 font-medium" %>
+        </div>
+
+        <% if @owned_projects.any? %>
+          <div class="space-y-3">
+            <% @owned_projects.each do |project| %>
+              <div class="border-l-2 border-primary pl-4 py-2 hover:border-l-4 transition-all">
+                <h3 class="font-semibold text-foreground">
+                  <%= link_to project.title, project_path(project), class: "hover:text-primary transition-colors" %>
+                </h3>
+                <p class="text-sm text-muted-foreground mt-1">
+                  <%= project.current_members_count %>/<%= project.max_members %> membres · <span class="capitalize"><%= project.status %></span>
+                </p>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <div class="text-center py-4">
+            <p class="text-muted-foreground text-sm mb-3">Lance ton premier projet</p>
+            <%= link_to new_project_path, class: "btn-primary btn-sm" do %>Créer<% end %>
+          </div>
+        <% end %>
+      </div>
+
     </div>
 
-    <% if @recent_projects.any? %>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <% @recent_projects.each do |project| %>
-          <div class="card hover:border-primary/50 group">
-            <h3 class="font-semibold text-foreground mb-2 group-hover:text-primary transition-colors">
-              <%= link_to project.title, project_path(project) %>
-            </h3>
-            <p class="text-sm text-muted-foreground mb-3">Par <%= project.owner.display_name %></p>
-            <% if project.skills.any? %>
-              <div class="flex flex-wrap gap-1">
-                <% project.skills.limit(3).each do |skill| %>
-                  <span class="text-xs px-2 py-1 bg-secondary text-secondary-foreground rounded">
-                    <%= skill.name %>
+    <!-- Colonne droite - hauteur égale -->
+    <div class="flex flex-col">
+
+      <!-- Section : Projets en cours -->
+      <div class="card animate-fade-in-up flex-1 flex flex-col" style="animation-delay: 300ms;">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-lg font-bold text-foreground">Projets en cours</h2>
+          <%= link_to "Tous", projects_path, class: "text-sm text-primary hover:text-primary/80 font-medium" %>
+        </div>
+
+        <% if @active_projects.any? %>
+          <div class="space-y-4 flex-1">
+            <% @active_projects.each do |project| %>
+              <div class="p-3 bg-secondary/30 rounded-lg hover:bg-secondary/50 transition-colors">
+                <div class="flex items-center justify-between mb-2">
+                  <h3 class="font-semibold text-foreground">
+                    <%= link_to project.title, project_path(project), class: "hover:text-primary transition-colors" %>
+                  </h3>
+                  <span class="text-xs px-2 py-1 rounded-full <%= project.status == 'open' ? 'bg-primary/20 text-primary' : 'bg-chart-2/20 text-chart-2' %>">
+                    <%= project.status == 'open' ? 'Recrutement' : 'En cours' %>
                   </span>
+                </div>
+                <div class="flex items-center gap-3">
+                  <div class="flex-1 h-2 bg-secondary rounded-full overflow-hidden">
+                    <% progress = (project.current_members_count.to_f / project.max_members * 100).round %>
+                    <div class="h-full bg-primary rounded-full transition-all" style="width: <%= progress %>%;"></div>
+                  </div>
+                  <span class="text-xs text-muted-foreground"><%= project.current_members_count %>/<%= project.max_members %></span>
+                </div>
+                <% if project.skills.any? %>
+                  <div class="flex flex-wrap gap-1 mt-2">
+                    <% project.skills.limit(3).each do |skill| %>
+                      <span class="text-xs px-2 py-0.5 bg-secondary text-secondary-foreground rounded"><%= skill.name %></span>
+                    <% end %>
+                  </div>
                 <% end %>
               </div>
             <% end %>
           </div>
+        <% else %>
+          <div class="flex-1 flex items-center justify-center">
+            <div class="text-center py-6">
+              <p class="text-muted-foreground text-sm mb-3">Aucun projet actif</p>
+              <%= link_to projects_path, class: "btn-primary btn-sm" do %>Parcourir les projets<% end %>
+            </div>
+          </div>
         <% end %>
       </div>
-    <% else %>
-      <div class="text-center py-12">
-        <div class="w-20 h-20 mx-auto mb-6 rounded-full bg-secondary flex items-center justify-center">
-          <svg class="w-10 h-10 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path>
+
+    </div>
+
+  </div>
+
+  <!-- Ligne 2 : Activité + Messages/Deadlines -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+
+    <!-- Activité récente -->
+    <div class="card animate-fade-in-up" style="animation-delay: 400ms;">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-lg font-bold text-foreground">Activité</h2>
+        <%= link_to "Voir tout", notifications_path, class: "text-sm text-primary hover:text-primary/80 font-medium" %>
+      </div>
+
+      <% if @recent_activity.any? %>
+        <div class="space-y-3">
+          <% @recent_activity.take(5).each do |activity| %>
+            <div class="flex items-start gap-3">
+              <div class="w-8 h-8 bg-primary/20 text-primary rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold">
+                <%= activity.actor&.display_name&.first&.upcase || '?' %>
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm text-foreground">
+                  <span class="font-medium"><%= activity.actor&.display_name || 'Quelqu\'un' %></span>
+                  <span class="text-muted-foreground"><%= activity.message %></span>
+                </p>
+                <p class="text-xs text-muted-foreground"><%= time_ago_in_words(activity.created_at) %></p>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <p class="text-sm text-muted-foreground text-center py-4">Aucune activité récente</p>
+      <% end %>
+    </div>
+
+    <!-- Messages + Deadlines côte à côte -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+      <!-- Messages non lus -->
+      <div class="card animate-fade-in-up" style="animation-delay: 400ms;">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-lg font-bold text-foreground">Messages</h2>
+          <% if @unread_messages_count > 0 %>
+            <span class="bg-destructive text-destructive-foreground text-xs font-bold rounded-full px-2 py-0.5">
+              <%= @unread_messages_count %>
+            </span>
+          <% end %>
+        </div>
+
+        <% if @unread_messages.any? %>
+          <div class="space-y-3">
+            <% @unread_messages.each do |message| %>
+              <%= link_to conversation_path(message.sender), class: "flex items-start gap-3 p-2 -mx-2 rounded-lg hover:bg-secondary/50 transition-colors" do %>
+                <div class="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold">
+                  <%= message.sender.display_name.first.upcase %>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-medium text-foreground"><%= message.sender.display_name %></p>
+                  <p class="text-xs text-muted-foreground truncate"><%= truncate(message.content, length: 30) %></p>
+                </div>
+              <% end %>
+            <% end %>
+          </div>
+          <%= link_to conversations_path, class: "block text-center text-sm text-primary hover:text-primary/80 font-medium mt-3" do %>
+            Voir tout
+          <% end %>
+        <% else %>
+          <p class="text-sm text-muted-foreground text-center py-4">Aucun message non lu</p>
+        <% end %>
+      </div>
+
+      <!-- Deadlines à venir -->
+      <div class="card animate-fade-in-up" style="animation-delay: 450ms;">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-lg font-bold text-foreground">Deadlines</h2>
+          <svg class="w-5 h-5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
           </svg>
         </div>
-        <p class="text-foreground font-medium text-lg mb-2">Rejoins ta première équipe</p>
-        <p class="text-muted-foreground mb-6 max-w-md mx-auto">Parcours les projets ouverts et trouve une équipe qui correspond à tes compétences et tes envies.</p>
-        <%= link_to projects_path, class: "btn-primary inline-flex items-center gap-2" do %>
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-          </svg>
-          Parcourir les projets
+
+        <% if @upcoming_deadlines.any? %>
+          <div class="space-y-3">
+            <% @upcoming_deadlines.each do |project| %>
+              <% days_left = (project.deadline - Date.today).to_i %>
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg <%= days_left <= 7 ? 'bg-destructive/20' : 'bg-warning/20' %> flex items-center justify-center">
+                  <span class="text-sm font-bold <%= days_left <= 7 ? 'text-destructive' : 'text-warning' %>"><%= days_left %></span>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-medium text-foreground truncate">
+                    <%= link_to project.title, project_path(project), class: "hover:text-primary" %>
+                  </p>
+                  <p class="text-xs text-muted-foreground">
+                    <%= days_left <= 1 ? 'Demain' : "Dans #{days_left} j" %>
+                  </p>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <p class="text-sm text-muted-foreground text-center py-4">Aucune deadline proche</p>
         <% end %>
       </div>
-    <% end %>
+
+    </div>
+
   </div>
 
 </div>

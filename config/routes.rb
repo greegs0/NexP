@@ -14,8 +14,16 @@ Rails.application.routes.draw do
   get 'feed', to: 'feed#index', as: :feed
 
   # Skills management
-  resources :skills, only: [:index, :show]
-  resources :user_skills, only: [:create, :destroy]
+  resources :skills, only: [:index, :show] do
+    collection do
+      get :autocomplete
+    end
+  end
+  resources :user_skills, only: [:create, :destroy, :update] do
+    collection do
+      patch :reorder
+    end
+  end
 
   # Projects
   resources :projects do
@@ -26,11 +34,12 @@ Rails.application.routes.draw do
     resources :messages, only: [:index, :create]
   end
 
-  # Posts
-  resources :posts do
+  # Posts (index removed - use /feed instead)
+  resources :posts, except: [:index] do
     resources :comments, only: [:create, :destroy]
     resources :likes, only: [:create]
   end
+  get 'posts', to: redirect('/feed')
 
   # Notifications
   resources :notifications, only: [:index, :update, :destroy] do
