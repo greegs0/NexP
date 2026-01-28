@@ -1,0 +1,7 @@
+<div class="proficiency-selector" id="proficiency_selector_<%= user_skill.id %>" data-user-skill-id="<%= user_skill.id %>">
+  <% UserSkill.proficiency_levels.keys.each do |level| %>
+    <%= button_to user_skill_path(user_skill), method: :patch, params: { user_skill: { proficiency_level: level } }, class: "proficiency-btn #{user_skill.proficiency_level == level ? 'active' : ''}", title: user_skill.class.new(proficiency_level: level).proficiency_label do %>
+      <span class="proficiency-dot proficiency-dot-<%= level %>"></span>
+    <% end %>
+  <% end %>
+</div>

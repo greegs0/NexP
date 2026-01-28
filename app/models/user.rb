@@ -9,6 +9,7 @@ class User < ApplicationRecord
   # Associations
   has_many :user_skills, dependent: :destroy
   has_many :skills, through: :user_skills
+  has_many :given_endorsements, class_name: 'SkillEndorsement', foreign_key: 'endorser_id', dependent: :destroy
 
   has_many :owned_projects, class_name: 'Project', foreign_key: 'owner_id', dependent: :destroy
   has_many :teams, dependent: :destroy

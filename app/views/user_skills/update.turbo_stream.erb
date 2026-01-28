@@ -1,0 +1,3 @@
+<%= turbo_stream.replace "proficiency_selector_#{@user_skill.id}" do %>
+  <%= render 'skills/proficiency_selector', user_skill: @user_skill %>
+<% end %>

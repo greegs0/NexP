@@ -1,31 +1,80 @@
-<div class="card mb-6 animate-fade-in-up" style="animation-delay: 200ms;" id="my_skills">
-  <div class="flex items-center gap-2 mb-4">
-    <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
-    </svg>
-    <h2 class="text-xl font-bold text-foreground">Mes compétences (<%= user_skills.count %>)</h2>
-  </div>
+<div class="card mb-6 animate-fade-in-up" style="animation-delay: 100ms;" id="my_skills"
+     data-controller="collapse"
+     data-collapse-key-value="my_skills"
+     data-collapse-open-value="true">
 
-  <% if user_skills.any? %>
-    <div class="flex flex-wrap gap-2">
-      <% user_skills.each do |user_skill| %>
-        <%= button_to user_skill_path(user_skill),
-            method: :delete,
-            class: "inline-flex items-center px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/80 transition group" do %>
-          <%= user_skill.skill.name %>
-          <svg class="ml-2 w-4 h-4 opacity-60 group-hover:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-          </svg>
-        <% end %>
-      <% end %>
-    </div>
-  <% else %>
-    <div class="text-center py-8">
-      <svg class="w-12 h-12 text-muted-foreground mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+  <!-- Header cliquable -->
+  <button type="button"
+          class="w-full flex items-center justify-between cursor-pointer group"
+          data-action="click->collapse#toggle">
+    <div class="flex items-center gap-2">
+      <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
       </svg>
-      <p class="text-muted-foreground">Aucune compétence sélectionnée pour l'instant.</p>
-      <p class="text-sm text-muted-foreground mt-1">Clique sur une compétence ci-dessous pour l'ajouter.</p>
+      <h2 class="text-xl font-bold text-foreground">Mes compétences (<%= user_skills.count %>)</h2>
     </div>
-  <% end %>
+    <div class="flex items-center gap-3">
+      <% if user_skills.any? %>
+        <span class="text-xs text-muted-foreground hidden sm:inline">Glisse pour réorganiser</span>
+      <% end %>
+      <svg data-collapse-target="icon"
+           class="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-all duration-200"
+           fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+      </svg>
+    </div>
+  </button>
+
+  <!-- Contenu collapsible -->
+  <div data-collapse-target="content" class="collapse-content overflow-hidden transition-all duration-300 ease-in-out">
+    <% if user_skills.any? %>
+      <div data-controller="sortable-skills" data-sortable-skills-url-value="<%= reorder_user_skills_path %>" class="mt-4">
+        <div class="space-y-2" data-sortable-skills-target="list">
+          <% user_skills.each do |user_skill| %>
+            <div class="skill-card-editable" data-skill-id="<%= user_skill.id %>">
+              <div class="drag-handle">
+                <svg class="w-4 h-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"/>
+                </svg>
+              </div>
+
+              <div class="flex items-center gap-2 flex-1 min-w-0">
+                <%= skill_logo(user_skill.skill, size: 20) %>
+                <span class="font-medium text-foreground truncate"><%= user_skill.skill.name %></span>
+              </div>
+
+              <!-- Sélecteur de niveau -->
+              <%= render 'skills/proficiency_selector', user_skill: user_skill %>
+
+              <%= button_to user_skill_path(user_skill), method: :delete, class: "skill-remove-btn", title: "Retirer cette compétence" do %>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Légende des niveaux -->
+      <div class="proficiency-legend">
+        <span class="proficiency-legend-item">
+          <span class="proficiency-dot proficiency-dot-beginner"></span>
+          Débutant
+        </span>
+        <span class="proficiency-legend-item">
+          <span class="proficiency-dot proficiency-dot-intermediate"></span>
+          Intermédiaire
+        </span>
+        <span class="proficiency-legend-item">
+          <span class="proficiency-dot proficiency-dot-expert"></span>
+          Expert
+        </span>
+      </div>
+    <% else %>
+      <div class="text-center py-6 mt-4">
+        <p class="text-muted-foreground text-sm">Aucune compétence. Utilise la recherche ci-dessous.</p>
+      </div>
+    <% end %>
+  </div>
 </div>

@@ -1,10 +1,17 @@
-<div class="flex flex-wrap gap-2 mb-6 animate-fade-in-up" style="animation-delay: 150ms;">
-  <%= link_to "Toutes", skills_path,
-      class: "px-4 py-2 rounded-lg transition font-medium #{ current_category.nil? ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground hover:bg-muted' }" %>
+<div class="mb-6 animate-fade-in-up" style="animation-delay: 150ms;">
+  <div class="flex flex-wrap gap-2">
+    <%= link_to skills_path, class: "inline-flex items-center gap-2 px-4 py-2 rounded-lg transition font-medium text-sm #{ current_category.nil? ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground hover:bg-muted' }" do %>
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
+      </svg>
+      Toutes
+    <% end %>
 
-  <% categories.each do |category| %>
-    <%= link_to category,
-        skills_path(category: category),
-        class: "px-4 py-2 rounded-lg transition font-medium #{ current_category == category ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground hover:bg-muted' }" %>
-  <% end %>
+    <% categories.each do |category| %>
+      <%= link_to skills_path(category: category), class: "inline-flex items-center gap-2 px-4 py-2 rounded-lg transition font-medium text-sm #{ current_category == category ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground hover:bg-muted' }" do %>
+        <%= category_icon(category, size: 16) %>
+        <%= category %>
+      <% end %>
+    <% end %>
+  </div>
 </div>

@@ -1,10 +1,16 @@
 class UserSkillsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_skill, only: [:create]
-  before_action :set_user_skill, only: [:destroy]
+  before_action :set_user_skill, only: [:destroy, :update]
 
   def create
-    @user_skill = current_user.user_skills.build(skill: @skill)
+    # Assigner la position à la fin
+    max_position = current_user.user_skills.maximum(:position) || -1
+    @user_skill = current_user.user_skills.build(
+      skill: @skill,
+      position: max_position + 1,
+      proficiency_level: params[:proficiency_level] || :beginner
+    )
 
     respond_to do |format|
       if @user_skill.save
@@ -16,6 +22,19 @@ class UserSkillsController < ApplicationController
     end
   rescue ActiveRecord::RecordNotUnique
     redirect_to skills_path, alert: "Vous possédez déjà cette compétence."
+  end
+
+  def update
+    respond_to do |format|
+      if @user_skill.update(user_skill_params)
+        format.html { redirect_to skills_path, notice: "Niveau mis à jour." }
+        format.json { render json: { success: true, proficiency: @user_skill.proficiency_label } }
+        format.turbo_stream
+      else
+        format.html { redirect_to skills_path, alert: "Impossible de mettre à jour." }
+        format.json { render json: { success: false }, status: :unprocessable_entity }
+      end
+    end
   end
 
   def destroy
@@ -31,6 +50,22 @@ class UserSkillsController < ApplicationController
     end
   end
 
+  # Réorganiser l'ordre des compétences
+  def reorder
+    skill_ids = params[:skill_ids] || []
+
+    ActiveRecord::Base.transaction do
+      skill_ids.each_with_index do |id, index|
+        current_user.user_skills.find_by(id: id)&.update_column(:position, index)
+      end
+    end
+
+    respond_to do |format|
+      format.json { render json: { success: true } }
+      format.html { redirect_to skills_path, notice: "Ordre mis à jour." }
+    end
+  end
+
   private
 
   def set_skill
@@ -43,5 +78,9 @@ class UserSkillsController < ApplicationController
     @user_skill = current_user.user_skills.find(params[:id])
   rescue ActiveRecord::RecordNotFound
     redirect_to skills_path, alert: "Vous ne possédez pas cette compétence."
+  end
+
+  def user_skill_params
+    params.require(:user_skill).permit(:proficiency_level)
   end
 end

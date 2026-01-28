@@ -1,18 +1,415 @@
-/* app/assets/stylesheets/application.css */
-
-/* ... ton CSS existant ... */
-
 /* ========================================
-   SKILLS PAGE
+   SKILLS PAGE STYLES
+   Uses theme CSS variables for dark mode compatibility
    ======================================== */
 
+/* ----------------------------------------
+   SVG Icons - Force sizing
+   ---------------------------------------- */
+svg.skill-logo,
+svg.category-icon {
+  flex-shrink: 0;
+  display: inline-block;
+  vertical-align: middle;
+  overflow: visible;
+}
+
+svg.skill-logo {
+  width: 16px;
+  height: 16px;
+  min-width: 16px;
+  min-height: 16px;
+}
+
+svg.category-icon {
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
+  min-height: 20px;
+}
+
+/* ----------------------------------------
+   Skill Card Editable (drag & drop items)
+   ---------------------------------------- */
+.skill-card-editable {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  transition: all 0.2s ease;
+}
+
+.skill-card-editable:hover {
+  border-color: var(--primary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.drag-handle {
+  cursor: grab;
+  padding: 0.25rem;
+  opacity: 0.5;
+  transition: opacity 0.2s;
+}
+
+.drag-handle:hover {
+  opacity: 1;
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+}
+
+/* ----------------------------------------
+   Proficiency Selector (level buttons)
+   ---------------------------------------- */
+.proficiency-selector {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem;
+  background: var(--secondary);
+  border-radius: var(--radius);
+}
+
+/* button_to generates a form, so we need to style it as inline-flex */
+.proficiency-selector form {
+  display: inline-flex;
+  margin: 0;
+  padding: 0;
+}
+
+.proficiency-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border: 2px solid transparent;
+  background: transparent;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  padding: 0;
+  margin: 0;
+}
+
+.proficiency-btn:hover {
+  background: var(--muted);
+}
+
+.proficiency-btn.active {
+  border-color: var(--foreground);
+  background: var(--secondary);
+  transform: scale(1.1);
+}
+
+.proficiency-dot {
+  display: block !important;
+  width: 0.625rem !important;
+  height: 0.625rem !important;
+  min-width: 0.625rem !important;
+  min-height: 0.625rem !important;
+  border-radius: 50% !important;
+  transition: all 0.15s ease;
+  opacity: 0.4 !important;
+  visibility: visible !important;
+}
+
+/* Active dot is bigger and fully opaque */
+.proficiency-btn.active .proficiency-dot {
+  width: 0.875rem !important;
+  height: 0.875rem !important;
+  min-width: 0.875rem !important;
+  min-height: 0.875rem !important;
+  opacity: 1 !important;
+  box-shadow: 0 0 6px currentColor;
+}
+
+/* Hover state for non-active buttons */
+.proficiency-btn:not(.active):hover .proficiency-dot {
+  opacity: 0.7 !important;
+  transform: scale(1.15);
+}
+
+/* Dot colors by level */
+.proficiency-dot-beginner {
+  background-color: #94a3b8 !important;
+}
+
+.proficiency-dot-intermediate {
+  background-color: #3b82f6 !important;
+}
+
+.proficiency-dot-expert {
+  background-color: #10b981 !important;
+}
+
+/* Legend dots - always full opacity */
+.proficiency-legend .proficiency-dot {
+  opacity: 1 !important;
+  width: 0.625rem !important;
+  height: 0.625rem !important;
+}
+
+/* ----------------------------------------
+   Proficiency Legend
+   ---------------------------------------- */
+.proficiency-legend {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.proficiency-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+}
+
+/* ----------------------------------------
+   Remove Skill Button
+   ---------------------------------------- */
+.skill-remove-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  color: var(--muted-foreground);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.skill-remove-btn:hover {
+  color: var(--destructive);
+  background: rgba(239, 68, 68, 0.1);
+}
+
+/* ----------------------------------------
+   Available Skill Button
+   ---------------------------------------- */
+.available-skill-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.875rem;
+  background: var(--secondary);
+  color: var(--secondary-foreground);
+  border: 1px solid var(--border);
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.available-skill-btn:hover {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border-color: var(--primary);
+  transform: translateY(-1px);
+}
+
+/* ----------------------------------------
+   Suggestion Skill Button
+   ---------------------------------------- */
+/* Form wrapper must be inline */
+form.inline {
+  display: inline;
+}
+
+.suggestion-skill-btn {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.875rem;
+  border: 1px dashed;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* Primary (Recommandé pour toi) */
+.suggestion-skill-btn.suggestion-skill-btn-primary {
+  background: rgba(168, 162, 132, 0.1) !important;
+  color: var(--primary) !important;
+  border-color: rgba(168, 162, 132, 0.5) !important;
+}
+.suggestion-skill-btn.suggestion-skill-btn-primary:hover {
+  background: var(--primary) !important;
+  color: var(--primary-foreground) !important;
+  border-style: solid;
+  border-color: var(--primary) !important;
+}
+
+/* Emerald (Complete ta stack) */
+.suggestion-skill-btn.suggestion-skill-btn-emerald {
+  background: rgba(16, 185, 129, 0.1) !important;
+  color: #10b981 !important;
+  border-color: rgba(16, 185, 129, 0.5) !important;
+}
+.suggestion-skill-btn.suggestion-skill-btn-emerald:hover {
+  background: #10b981 !important;
+  color: white !important;
+  border-style: solid;
+  border-color: #10b981 !important;
+}
+
+/* Blue (Populaires) */
+.suggestion-skill-btn.suggestion-skill-btn-blue {
+  background: rgba(59, 130, 246, 0.1) !important;
+  color: #3b82f6 !important;
+  border-color: rgba(59, 130, 246, 0.5) !important;
+}
+.suggestion-skill-btn.suggestion-skill-btn-blue:hover {
+  background: #3b82f6 !important;
+  color: white !important;
+  border-style: solid;
+  border-color: #3b82f6 !important;
+}
+
+/* Orange (Tendances) */
+.suggestion-skill-btn.suggestion-skill-btn-orange {
+  background: rgba(249, 115, 22, 0.1) !important;
+  color: #f97316 !important;
+  border-color: rgba(249, 115, 22, 0.5) !important;
+}
+.suggestion-skill-btn.suggestion-skill-btn-orange:hover {
+  background: #f97316 !important;
+  color: white !important;
+  border-style: solid;
+  border-color: #f97316 !important;
+}
+
+/* ----------------------------------------
+   Skill Profile Card (user profile view)
+   ---------------------------------------- */
+.skill-profile-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.625rem 0.875rem;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  transition: border-color 0.2s ease;
+}
+
+.skill-profile-card:hover {
+  border-color: rgba(168, 162, 132, 0.5);
+}
+
+/* ----------------------------------------
+   Proficiency Badges
+   ---------------------------------------- */
+.skill-proficiency-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.125rem 0.5rem;
+  font-size: 0.625rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-radius: 9999px;
+}
+
+.skill-proficiency-beginner {
+  background: rgba(148, 163, 184, 0.15);
+  color: #94a3b8;
+}
+
+.skill-proficiency-intermediate {
+  background: rgba(59, 130, 246, 0.15);
+  color: #3b82f6;
+}
+
+.skill-proficiency-expert {
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+}
+
+/* ----------------------------------------
+   Endorse Button
+   ---------------------------------------- */
+.endorse-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--muted-foreground);
+  background: var(--secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.endorse-btn:hover {
+  color: var(--primary);
+  border-color: var(--primary);
+  background: rgba(168, 162, 132, 0.1);
+}
+
+.endorse-btn.endorsed {
+  color: var(--primary);
+  background: rgba(168, 162, 132, 0.15);
+  border-color: rgba(168, 162, 132, 0.5);
+}
+
+.endorse-btn.endorsed:hover {
+  color: var(--destructive);
+  border-color: var(--destructive);
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.endorse-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+/* ----------------------------------------
+   Sortable.js animations
+   ---------------------------------------- */
+.sortable-ghost {
+  opacity: 0.4;
+}
+
+.sortable-chosen {
+  background: rgba(168, 162, 132, 0.05);
+  border-color: var(--primary);
+}
+
+.sortable-drag {
+  opacity: 1;
+  background: var(--card);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+/* ----------------------------------------
+   Legacy styles (kept for compatibility)
+   ---------------------------------------- */
 .skills-page {
   max-width: 1200px;
   margin: 2rem auto;
   padding: 0 1rem;
 }
 
-/* Barre de recherche */
 .search-bar {
   margin-bottom: 1.5rem;
 }
@@ -20,17 +417,18 @@
 .search-input {
   width: 100%;
   padding: 1rem;
-  border: 2px solid #e0e0e0;
-  border-radius: 8px;
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
   font-size: 1rem;
+  background: var(--secondary);
+  color: var(--foreground);
 }
 
 .search-input:focus {
   outline: none;
-  border-color: #4CAF50;
+  border-color: var(--primary);
 }
 
-/* Catégories */
 .categories {
   display: flex;
   gap: 0.5rem;
@@ -40,30 +438,29 @@
 
 .category-tag {
   padding: 0.5rem 1rem;
-  background: #f5f5f5;
+  background: var(--secondary);
   border-radius: 20px;
   text-decoration: none;
-  color: #333;
+  color: var(--secondary-foreground);
   transition: all 0.2s;
 }
 
 .category-tag:hover {
-  background: #e0e0e0;
+  background: var(--muted);
 }
 
 .category-tag.active {
-  background: #4CAF50;
-  color: white;
+  background: var(--primary);
+  color: var(--primary-foreground);
 }
 
-/* Sections skills */
 .skills-section {
   margin-bottom: 2rem;
 }
 
 .skills-section h3 {
   margin-bottom: 1rem;
-  color: #333;
+  color: var(--foreground);
 }
 
 .skills-grid {
@@ -72,12 +469,12 @@
   gap: 0.75rem;
 }
 
-/* Pastilles */
 .skill-pill {
   padding: 0.75rem 1.25rem;
-  border: 2px solid #e0e0e0;
+  border: 2px solid var(--border);
   border-radius: 25px;
-  background: white;
+  background: var(--card);
+  color: var(--card-foreground);
   cursor: pointer;
   transition: all 0.2s;
   font-size: 0.95rem;
@@ -85,15 +482,15 @@
 }
 
 .skill-pill.available:hover {
-  border-color: #4CAF50;
-  background: #f1f8f4;
+  border-color: var(--primary);
+  background: rgba(168, 162, 132, 0.1);
   transform: translateY(-2px);
 }
 
 .skill-pill.selected {
-  background: #4CAF50;
-  color: white;
-  border-color: #4CAF50;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border-color: var(--primary);
 }
 
 .skill-pill.selected .remove {
@@ -103,24 +500,104 @@
 }
 
 .skill-pill.selected:hover {
-  background: #d32f2f;
-  border-color: #d32f2f;
+  background: var(--destructive);
+  border-color: var(--destructive);
 }
 
-/* État vide */
 .empty-state {
-  color: #999;
+  color: var(--muted-foreground);
   font-style: italic;
   padding: 2rem;
   text-align: center;
-  background: #f9f9f9;
-  border-radius: 8px;
+  background: var(--secondary);
+  border-radius: var(--radius);
 }
 
-/* Zone "Mes skills" */
 .my-skills {
-  background: #f8fdf9;
+  background: rgba(168, 162, 132, 0.05);
   padding: 1.5rem;
-  border-radius: 12px;
-  border: 2px dashed #4CAF50;
+  border-radius: var(--radius);
+  border: 2px dashed rgba(168, 162, 132, 0.3);
+}
+
+/* ----------------------------------------
+   Autocomplete Dropdown
+   ---------------------------------------- */
+[data-skill-autocomplete-target="dropdown"] {
+  background: var(--card);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  max-height: 320px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--muted) transparent;
+}
+
+.autocomplete-item {
+  border-bottom: 1px solid var(--border);
+  background: var(--card);
+  display: flex !important;
+}
+
+.autocomplete-item:last-child {
+  border-bottom: none;
+}
+
+.autocomplete-item:first-child {
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+
+.autocomplete-item:last-child {
+  border-radius: 0 0 var(--radius) var(--radius);
+}
+
+.autocomplete-item:only-child {
+  border-radius: var(--radius);
+}
+
+/* Scrollbar webkit */
+[data-skill-autocomplete-target="dropdown"]::-webkit-scrollbar {
+  width: 6px;
+}
+
+[data-skill-autocomplete-target="dropdown"]::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+[data-skill-autocomplete-target="dropdown"]::-webkit-scrollbar-thumb {
+  background: var(--muted);
+  border-radius: 3px;
+}
+
+[data-skill-autocomplete-target="dropdown"]::-webkit-scrollbar-thumb:hover {
+  background: var(--muted-foreground);
+}
+
+/* ----------------------------------------
+   Collapse Animation
+   ---------------------------------------- */
+.collapse-content {
+  transition: max-height 0.3s ease-in-out, opacity 0.2s ease-in-out;
+}
+
+[data-collapse-target="icon"] {
+  transition: transform 0.2s ease-in-out;
+}
+
+/* ----------------------------------------
+   Search Results Animation (AJAX)
+   ---------------------------------------- */
+.search-results-card {
+  animation: searchResultFadeIn 0.2s ease-out forwards;
+}
+
+@keyframes searchResultFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

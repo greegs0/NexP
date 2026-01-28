@@ -23,10 +23,10 @@ class UsersController < ApplicationController
   end
 
   def show
-    @user_skills = @user.skills.order(:category, :name)
+    @user_skills = @user.user_skills.includes(:skill).joins(:skill).order('skills.category', 'skills.name')
     @owned_projects = @user.owned_projects.includes(:skills, :owner).order(created_at: :desc).limit(6)
     @participated_projects = @user.projects.where.not(owner: @user).includes(:owner, :skills).order(created_at: :desc).limit(6)
-    @badges = @user.badges.joins(:user_badges).where(user_badges: { user_id: @user.id }).order('user_badges.earned_at DESC')
+    @badges = @user.badges.order('user_badges.earned_at DESC')
 
     @total_projects = @user.owned_projects_count + @participated_projects.size
     @is_current_user = @user == current_user
