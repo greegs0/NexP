@@ -1,4 +1,6 @@
 class Post < ApplicationRecord
+  include Sanitizable
+
   belongs_to :user, counter_cache: true
   has_many :likes, dependent: :destroy
   has_many :comments, dependent: :destroy
@@ -8,9 +10,6 @@ class Post < ApplicationRecord
 
   validates :content, presence: true, length: { minimum: 1, maximum: 5000 }
   validate :acceptable_image
-
-  # Sanitize le contenu avant sauvegarde pour prévenir XSS
-  before_save :sanitize_content
 
   private
 
@@ -25,12 +24,5 @@ class Post < ApplicationRecord
     unless acceptable_types.include?(image.blob.content_type)
       errors.add(:image, "doit être un JPEG, PNG, GIF ou WebP")
     end
-  end
-
-  def sanitize_content
-    return if content.blank?
-
-    # Supprime toutes les balises HTML pour prévenir XSS
-    self.content = Rails::HTML5::FullSanitizer.new.sanitize(content)
   end
 end

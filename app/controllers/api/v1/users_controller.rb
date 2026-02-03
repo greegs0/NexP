@@ -17,16 +17,14 @@ module Api
         @users = @users.distinct.page(params[:page]).per(params[:per_page] || 20)
 
         render json: {
-          users: @users.map { |u| user_summary_json(u) },
+          users: UserSerializer.collection(@users),
           meta: pagination_meta(@users)
         }
       end
 
       # GET /api/v1/users/:id
       def show
-        render json: {
-          user: user_detail_json(@user)
-        }
+        render json: { user: UserSerializer.new(@user).as_json(detail: true) }
       end
 
       # PATCH/PUT /api/v1/users/:id
@@ -37,7 +35,7 @@ module Api
         end
 
         if @user.update(user_params)
-          render json: { user: user_detail_json(@user) }
+          render json: { user: UserSerializer.new(@user).as_json(detail: true) }
         else
           render json: { error: 'Mise à jour échouée', details: @user.errors.full_messages }, status: :unprocessable_entity
         end
@@ -49,15 +47,12 @@ module Api
           render json: { error: 'Vous suivez déjà cet utilisateur' }, status: :unprocessable_entity
         else
           current_api_user.follow(@user)
-          current_api_user.add_experience(5)
-
-          Notification.create(
-            user: @user,
+          ExperienceService.award_with_notification(
             actor: current_api_user,
-            notifiable: @user,
-            action: 'follow'
+            action: :follow_given,
+            target_user: @user,
+            notifiable: @user
           )
-
           render json: { message: 'Utilisateur suivi avec succès' }
         end
       end
@@ -74,7 +69,7 @@ module Api
 
       # GET /api/v1/users/me
       def me
-        render json: { user: user_detail_json(current_api_user) }
+        render json: { user: UserSerializer.new(current_api_user).as_json(detail: true) }
       end
 
       private
@@ -85,37 +80,6 @@ module Api
 
       def user_params
         params.require(:user).permit(:name, :bio, :zipcode, :portfolio_url, :github_url, :linkedin_url, :available, :avatar_url)
-      end
-
-      def user_summary_json(user)
-        {
-          id: user.id,
-          username: user.username,
-          name: user.name,
-          bio: user.bio,
-          level: user.level,
-          available: user.available,
-          avatar_url: user.avatar_url,
-          skills_count: user.skills.count,
-          followers_count: user.followers_count,
-          following_count: user.following_count
-        }
-      end
-
-      def user_detail_json(user)
-        user_summary_json(user).merge(
-          email: user.email,
-          zipcode: user.zipcode,
-          portfolio_url: user.portfolio_url,
-          github_url: user.github_url,
-          linkedin_url: user.linkedin_url,
-          experience_points: user.experience_points,
-          posts_count: user.posts_count,
-          owned_projects_count: user.owned_projects_count,
-          bookmarks_count: user.bookmarks_count,
-          skills: user.skills.map { |s| { id: s.id, name: s.name, category: s.category } },
-          badges: user.badges.map { |b| { id: b.id, name: b.name, description: b.description } }
-        )
       end
     end
   end

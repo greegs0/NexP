@@ -77,7 +77,18 @@ RSpec.describe MatchingService, type: :service do
       users = MatchingService.find_users_for_project(project, limit: 10)
 
       expect(users).to include(other_user)
-      expect(users).not_to include(user) # Owner is excluded
+      expect(users).to include(user) # user has matching skills
+      # Le propriétaire du projet (factory owner) est exclu, pas user
+    end
+
+    it 'excludes project owner' do
+      # Créer un projet dont user est le propriétaire
+      owned_project = create(:project, owner: user, status: 'open', visibility: 'public')
+      owned_project.skills << [backend_skill, frontend_skill]
+
+      users = MatchingService.find_users_for_project(owned_project, limit: 10)
+
+      expect(users).not_to include(user)
     end
 
     it 'returns available users only' do

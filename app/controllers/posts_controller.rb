@@ -1,7 +1,9 @@
 class PostsController < ApplicationController
+  include Authorizable
+
   before_action :authenticate_user!
   before_action :set_post, only: [:show, :edit, :update, :destroy]
-  before_action :authorize_owner!, only: [:edit, :update, :destroy]
+  before_action -> { authorize_owner!(@post, :user) }, only: [:edit, :update, :destroy]
 
   def index
     @posts = Post.includes(:user, :likes, comments: :user, image_attachment: :blob)
@@ -23,8 +25,7 @@ class PostsController < ApplicationController
     @post = current_user.posts.build(post_params)
 
     if @post.save
-      # Attribution de XP pour la création d'un post
-      current_user.add_experience(10)
+      ExperienceService.award(user: current_user, action: :post_created)
       redirect_to posts_path, notice: 'Post créé avec succès.'
     else
       render :new, status: :unprocessable_entity
@@ -51,14 +52,6 @@ class PostsController < ApplicationController
 
   def set_post
     @post = Post.includes(:user, :likes, comments: :user, image_attachment: :blob).find(params[:id])
-  rescue ActiveRecord::RecordNotFound
-    redirect_to posts_path, alert: "Ce post n'existe pas."
-  end
-
-  def authorize_owner!
-    unless @post.user == current_user
-      redirect_to @post, alert: "Vous n'êtes pas autorisé à modifier ce post."
-    end
   end
 
   def post_params

@@ -1,0 +1,25 @@
+<%# Avatar utilisateur réutilisable
+    Paramètres:
+    - user: L'utilisateur dont on affiche l'avatar (requis)
+    - size: Taille (:xs, :sm, :md, :lg, :xl) - défaut: :md
+    - classes: Classes CSS additionnelles
+%>
+<%
+  sizes = {
+    xs: 'w-6 h-6 text-xs',
+    sm: 'w-8 h-8 text-sm',
+    md: 'w-12 h-12 text-lg',
+    lg: 'w-16 h-16 text-xl',
+    xl: 'w-32 h-32 text-4xl'
+  }
+  size ||= :md
+  classes ||= ''
+  size_class = sizes[size] || sizes[:md]
+%>
+<% if user.respond_to?(:avatar_url) && user.avatar_url.present? %>
+  <%= image_tag user.avatar_url, alt: user.display_name, class: "#{size_class} rounded-full object-cover #{classes}" %>
+<% else %>
+  <div class="<%= size_class %> rounded-full stat-gradient-primary text-white flex items-center justify-center font-bold <%= classes %>">
+    <%= user.display_name.first.upcase %>
+  </div>
+<% end %>

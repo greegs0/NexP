@@ -1,0 +1,36 @@
+<%# Liste de compétences réutilisable
+    Paramètres:
+    - skills: Collection de skills (requis)
+    - limit: Nombre max de skills à afficher (optionnel)
+    - show_count: Afficher le compteur "+X" si limit dépassé (défaut: true)
+    - size: Taille des badges (:sm, :md) - défaut: :sm
+%>
+<%
+  limit ||= nil
+  show_count = true if !local_assigns.key?(:show_count)
+  size ||= :sm
+
+  size_classes = {
+    sm: 'text-xs px-2 py-0.5',
+    md: 'text-sm px-3 py-1'
+  }
+  badge_class = size_classes[size] || size_classes[:sm]
+
+  displayed_skills = limit ? skills.limit(limit) : skills
+  total_count = skills.respond_to?(:count) ? skills.count : skills.size
+  remaining = limit && total_count > limit ? total_count - limit : 0
+%>
+<% if displayed_skills.any? %>
+  <div class="flex flex-wrap gap-1">
+    <% displayed_skills.each do |skill| %>
+      <span class="<%= badge_class %> bg-secondary text-secondary-foreground rounded-full">
+        <%= skill.name %>
+      </span>
+    <% end %>
+    <% if show_count && remaining > 0 %>
+      <span class="<%= badge_class %> bg-muted text-muted-foreground rounded-full">
+        +<%= remaining %>
+      </span>
+    <% end %>
+  </div>
+<% end %>

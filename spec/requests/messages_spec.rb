@@ -24,7 +24,7 @@ RSpec.describe "Messages", type: :request do
       end
 
       it "displays project messages" do
-        message = create(:message, project: project, sender: user, content: 'Hello team!')
+        message = create(:message, :project_message, project: project, sender: user, content: 'Hello team!')
 
         get project_messages_path(project)
         expect(response.body).to include('Hello team!')

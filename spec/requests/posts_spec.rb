@@ -8,14 +8,17 @@ RSpec.describe "Posts", type: :request do
 
   describe "GET /posts" do
     it "returns success" do
+      # /posts redirige vers /feed (301)
       get posts_path
+      expect(response).to have_http_status(:moved_permanently)
+      follow_redirect!
       expect(response).to have_http_status(:success)
     end
 
     it "displays posts" do
-      post = create(:post, user: user)
-      get posts_path
-      expect(response.body).to include(post.content)
+      user_post = create(:post, user: user)
+      get feed_path # Utilise directement /feed car /posts redirige
+      expect(response.body).to include(user_post.content)
     end
   end
 
@@ -90,8 +93,7 @@ RSpec.describe "Posts", type: :request do
       it "redirects with alert" do
         get edit_post_path(post)
         expect(response).to redirect_to(post_path(post))
-        follow_redirect!
-        expect(response.body).to include("Vous n'êtes pas autorisé")
+        expect(flash[:alert]).to include("Vous n'êtes pas autorisé")
       end
     end
   end

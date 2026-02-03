@@ -5,7 +5,6 @@ export default class extends Controller {
   static targets = ["textarea", "form"]
 
   connect() {
-    console.log("Message form controller connected")
     // Focus automatique sur le textarea
     this.textareaTarget.focus()
 
