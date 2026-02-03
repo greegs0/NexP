@@ -19,10 +19,10 @@ Ce projet adhère à un code de conduite professionnel. Soyez respectueux et con
 
 ### Prérequis
 
-- Ruby 3.2+
-- PostgreSQL 14+
-- Node.js 18+
-- Redis (optionnel, pour le cache en production)
+- Ruby 3.3.5
+- PostgreSQL 17
+- Node.js 20+
+- Redis 8.4+ (requis pour cache, Sidekiq, et Action Cable)
 
 ### Installation
 

@@ -1,5 +1,22 @@
+require 'sidekiq/web'
+
 Rails.application.routes.draw do
-  devise_for :users
+  # Sidekiq Web UI (protégé par authentification)
+  authenticate :user, ->(user) { user.email == ENV['ADMIN_EMAIL'] } do
+    mount Sidekiq::Web => '/sidekiq'
+  end
+
+  devise_for :users, controllers: {
+    confirmations: 'users/confirmations',
+    registrations: 'users/registrations'
+  }
+
+  # Routes personnalisées pour la confirmation par code
+  devise_scope :user do
+    get 'users/confirmation/verify_code', to: 'users/confirmations#verify_code', as: :verify_code_users_confirmation
+    post 'users/confirmation/confirm_code', to: 'users/confirmations#confirm_code', as: :confirm_code_users_confirmation
+    post 'users/confirmation/resend_code', to: 'users/confirmations#resend_code', as: :resend_code_users_confirmation
+  end
 
   # Root path - Landing page for visitors, dashboard for authenticated users
   authenticated :user do
@@ -126,6 +143,7 @@ Rails.application.routes.draw do
     end
   end
 
-  # Health check
+  # Health checks
   get "up" => "rails/health#show", as: :rails_health_check
+  get "health" => "health#show", as: :health_check
 end

@@ -1,0 +1,16 @@
+:concurrency: 5
+
+:queues:
+  - default
+  - mailers
+  - active_storage_analysis
+  - active_storage_purge
+  - cleanup
+
+:max_retries: 3
+
+production:
+  :concurrency: 10
+
+development:
+  :concurrency: 2

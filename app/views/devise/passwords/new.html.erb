@@ -1,39 +1,16 @@
-<div class="min-h-[calc(100vh-8rem)] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-  <div class="w-full max-w-md animate-fade-in-up">
-    <div class="card">
-      <div class="mb-8 text-center">
-        <div class="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-4">
-          <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path>
-          </svg>
-        </div>
-        <h2 class="text-2xl font-bold text-foreground">Mot de passe oublié ?</h2>
-        <p class="text-muted-foreground mt-2">Pas de panique, ça arrive aux meilleurs.</p>
-      </div>
+<h2>Forgot your password?</h2>
 
-      <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post, class: "space-y-6" }) do |f| %>
-        <%= render "devise/shared/error_messages", resource: resource %>
+<%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post }) do |f| %>
+  <%= render "devise/shared/error_messages", resource: resource %>
 
-        <div>
-          <%= f.label :email, "Email", class: "block text-sm font-medium text-foreground mb-2" %>
-          <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "input", placeholder: "ton@email.com" %>
-          <p class="text-xs text-muted-foreground mt-2">Tu recevras un email avec les instructions pour réinitialiser ton mot de passe.</p>
-        </div>
-
-        <div>
-          <%= f.submit "Envoyer le lien", class: "w-full btn-primary py-3 font-semibold" %>
-        </div>
-      <% end %>
-
-      <!-- Back to login -->
-      <div class="mt-6 text-center">
-        <%= link_to new_session_path(resource_name), class: "text-sm text-primary hover:text-primary/80 transition inline-flex items-center gap-2" do %>
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-          </svg>
-          Retour à la connexion
-        <% end %>
-      </div>
-    </div>
+  <div class="field">
+    <%= f.label :email %><br />
+    <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
   </div>
-</div>
+
+  <div class="actions">
+    <%= f.submit "Send me reset password instructions" %>
+  </div>
+<% end %>
+
+<%= render "devise/shared/links" %>

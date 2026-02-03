@@ -13,7 +13,7 @@ class User < ApplicationRecord
   # Associations
   has_many :user_skills, dependent: :destroy
   has_many :skills, through: :user_skills
-  has_many :given_endorsements, class_name: 'SkillEndorsement', foreign_key: 'endorser_id', dependent: :destroy
+  # has_many :given_endorsements, class_name: 'SkillEndorsement', foreign_key: 'endorser_id', dependent: :destroy
 
   has_many :owned_projects, class_name: 'Project', foreign_key: 'owner_id', dependent: :destroy
   has_many :teams, dependent: :destroy
@@ -87,6 +87,40 @@ class User < ApplicationRecord
 
   def following?(other_user)
     following.include?(other_user)
+  end
+
+  # Générer un code de confirmation à 6 chiffres
+  def generate_confirmation_code
+    self.confirmation_code = rand(100000..999999).to_s
+    self.confirmation_code_sent_at = Time.current
+    save(validate: false)
+  end
+
+  # Vérifier si le code de confirmation est valide (15 minutes max)
+  def confirmation_code_valid?(code)
+    return false if confirmation_code.blank? || confirmation_code_sent_at.blank?
+    return false if confirmation_code != code
+    return false if confirmation_code_sent_at < 15.minutes.ago
+    true
+  end
+
+  # Confirmer avec le code
+  def confirm_with_code(code)
+    if confirmation_code_valid?(code)
+      confirm
+      self.confirmation_code = nil
+      self.confirmation_code_sent_at = nil
+      save(validate: false)
+      true
+    else
+      false
+    end
+  end
+
+  # Override pour générer le code lors de l'envoi de l'email
+  def send_confirmation_instructions
+    generate_confirmation_code
+    super
   end
 
   private

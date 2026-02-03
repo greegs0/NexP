@@ -1,0 +1,197 @@
+<div class="w-full max-w-md mx-auto">
+  <div class="text-center mb-8">
+    <div class="text-6xl mb-4">📧</div>
+    <h1 class="text-3xl font-bold tracking-tight">Confirme ton email</h1>
+    <p class="mt-3 text-muted-foreground">
+      On a envoyé un code à 6 chiffres à
+    </p>
+    <p class="mt-1 text-lg font-semibold text-primary">
+      <%= params[:email] %>
+    </p>
+  </div>
+
+  <% if flash[:alert] %>
+    <div class="flash-alert mb-6">
+      <%= flash[:alert] %>
+    </div>
+  <% end %>
+
+  <% if flash[:notice] %>
+    <div class="flash-notice mb-6">
+      <%= flash[:notice] %>
+    </div>
+  <% end %>
+
+  <div class="card">
+    <%= form_with url: confirm_code_users_confirmation_path, method: :post, html: { id: "code-form", class: "space-y-6" } do |f| %>
+      <%= hidden_field_tag :email, params[:email] %>
+
+      <div>
+        <label class="form-label text-center block mb-4">Entre le code reçu par email</label>
+
+        <div class="flex gap-2 justify-center mb-6" id="code-inputs">
+          <% 6.times do |i| %>
+            <input
+              type="text"
+              maxlength="1"
+              inputmode="numeric"
+              autocomplete="off"
+              class="w-12 h-14 text-center text-2xl font-mono border-2 border-border rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20 transition code-input"
+              data-index="<%= i %>"
+              id="code-<%= i %>"
+            />
+          <% end %>
+        </div>
+
+        <%= hidden_field_tag :code, nil, id: "hidden-code" %>
+
+        <p class="text-xs text-center text-muted-foreground">
+          Le code expire dans 15 minutes
+        </p>
+      </div>
+
+      <div>
+        <%= submit_tag "Confirmer mon compte", class: "w-full btn-primary", id: "submit-btn", disabled: true %>
+      </div>
+    <% end %>
+
+    <div class="mt-6 text-center">
+      <%= form_with url: resend_code_users_confirmation_path, method: :post, html: { class: "inline" } do |f| %>
+        <%= hidden_field_tag :email, params[:email] %>
+        <button type="submit" class="text-sm text-primary hover:text-primary/80 transition">
+          📨 Renvoyer le code
+        </button>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="mt-6 text-center">
+    <%= link_to "← Retour à la connexion", new_session_path(:user), class: "text-sm text-muted-foreground hover:text-foreground transition" %>
+  </div>
+</div>
+
+<%= javascript_tag nonce: true do %>
+window.addEventListener('load', function() {
+  const inputs = document.querySelectorAll('.code-input');
+  const hiddenCode = document.getElementById('hidden-code');
+  const submitBtn = document.getElementById('submit-btn');
+  const form = document.getElementById('code-form');
+
+  console.log('Code inputs trouvés:', inputs.length); // Debug
+
+  // Focus premier champ
+  setTimeout(() => {
+    if (inputs[0]) inputs[0].focus();
+  }, 200);
+
+  inputs.forEach((input, index) => {
+    console.log('Ajout listeners sur input', index); // Debug
+
+    // Bloquer les non-chiffres
+    input.addEventListener('keypress', function(e) {
+      if (!/[0-9]/.test(e.key)) {
+        e.preventDefault();
+        return false;
+      }
+    });
+
+    // Utiliser keyup pour détecter après la saisie
+    input.addEventListener('keyup', function(e) {
+      console.log('Keyup sur input', index, 'valeur:', this.value); // Debug
+
+      // Si c'est backspace, gérer séparément
+      if (e.key === 'Backspace') {
+        if (!this.value && index > 0) {
+          setTimeout(() => inputs[index - 1].focus(), 10);
+        }
+        updateCode();
+        return;
+      }
+
+      // Si flèches, naviguer
+      if (e.key === 'ArrowLeft' && index > 0) {
+        inputs[index - 1].focus();
+        return;
+      }
+      if (e.key === 'ArrowRight' && index < inputs.length - 1) {
+        inputs[index + 1].focus();
+        return;
+      }
+
+      // Si on a tapé un chiffre (et donc le champ a une valeur)
+      if (this.value && /[0-9]/.test(this.value)) {
+        console.log('Chiffre détecté, passage au suivant'); // Debug
+
+        // Passer au champ suivant
+        if (index < inputs.length - 1) {
+          setTimeout(() => {
+            inputs[index + 1].focus();
+            inputs[index + 1].select();
+          }, 10);
+        }
+      }
+
+      updateCode();
+    });
+
+    // Copier-coller
+    input.addEventListener('paste', function(e) {
+      e.preventDefault();
+      console.log('Paste détecté'); // Debug
+
+      const paste = e.clipboardData.getData('text').replace(/\D/g, '');
+      console.log('Code collé:', paste); // Debug
+
+      if (!paste) return;
+
+      // Remplir les cases
+      for (let i = 0; i < paste.length && i < inputs.length; i++) {
+        inputs[i].value = paste[i];
+      }
+
+      // Focus sur la dernière
+      const lastIndex = Math.min(paste.length - 1, inputs.length - 1);
+      setTimeout(() => inputs[lastIndex].focus(), 10);
+
+      updateCode();
+    });
+
+    // Sélection au focus
+    input.addEventListener('focus', function() {
+      setTimeout(() => this.select(), 10);
+    });
+  });
+
+  function updateCode() {
+    const code = Array.from(inputs).map(i => i.value).join('');
+    hiddenCode.value = code;
+    console.log('Code mis à jour:', code); // Debug
+
+    if (code.length === 6 && /^\d{6}$/.test(code)) {
+      submitBtn.disabled = false;
+      submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+      console.log('Code complet, auto-submit dans 0.5s'); // Debug
+
+      // Auto-submit
+      setTimeout(() => {
+        const finalCode = Array.from(inputs).map(i => i.value).join('');
+        if (finalCode.length === 6) {
+          console.log('Soumission du formulaire'); // Debug
+          form.submit();
+        }
+      }, 500);
+    } else {
+      submitBtn.disabled = true;
+      submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+    }
+  }
+});
+<% end %>
+
+<%= content_tag :style, nonce: true do %>
+  #code-inputs input::-webkit-inner-spin-button,
+  #code-inputs input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+<% end %>

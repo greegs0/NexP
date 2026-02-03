@@ -8,12 +8,13 @@
 [![Rails](https://img.shields.io/badge/Rails-7.1.6-red.svg)](https://rubyonrails.org/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-blue.svg)](https://www.postgresql.org/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/Version-0.7-blue.svg)]()
-[![Status](https://img.shields.io/badge/Status-MVP%20Ready-green.svg)]()
+[![Version](https://img.shields.io/badge/Version-1.0-blue.svg)]()
+[![Status](https://img.shields.io/badge/Status-Production%20Ready-brightgreen.svg)]()
+[![Redis](https://img.shields.io/badge/redis-8.4-red.svg)](https://redis.io/)
 
-*"LinkedIn meets GitHub for collaborative projects"*
+*"Pas un job board. Pas du freelance. Des projets."*
 
-[Documentation technique](TECHNICAL_RECAP.md) | [Documentation API](docs/API.md) | [Contribuer](CONTRIBUTING.md)
+[Documentation technique](TECHNICAL_RECAP.md) | [Guide Production](PRODUCTION_READY_CHECKLIST.md) | [Setup Production](PRODUCTION_SETUP.md)
 
 </div>
 

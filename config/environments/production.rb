@@ -36,13 +36,16 @@ Rails.application.configure do
   # config.action_dispatch.x_sendfile_header = "X-Sendfile" # for Apache
   # config.action_dispatch.x_sendfile_header = "X-Accel-Redirect" # for NGINX
 
-  # Store uploaded files on the local file system (see config/storage.yml for options).
-  config.active_storage.service = :local
+  # Store uploaded files on Cloudflare R2 (S3-compatible, gratuit jusqu'à 10GB)
+  config.active_storage.service = :cloudflare
 
-  # Mount Action Cable outside main process or domain.
-  # config.action_cable.mount_path = nil
-  # config.action_cable.url = "wss://example.com/cable"
-  # config.action_cable.allowed_request_origins = [ "http://example.com", /http:\/\/example.*/ ]
+  # Configure Action Cable to use Redis
+  config.action_cable.mount_path = '/cable'
+  config.action_cable.url = "wss://#{ENV.fetch('APP_HOST', 'localhost:3000')}/cable"
+  config.action_cable.allowed_request_origins = [
+    "https://#{ENV.fetch('APP_HOST', 'localhost:3000')}",
+    /https:\/\/.*\.#{ENV.fetch('APP_HOST', 'localhost:3000').split('.').last(2).join('\.')}/
+  ]
 
   # Assume all access to the app is happening through a SSL-terminating reverse proxy.
   # Can be used together with config.force_ssl for Strict-Transport-Security and secure cookies.
@@ -64,12 +67,16 @@ Rails.application.configure do
   # want to log everything, set the level to "debug".
   config.log_level = ENV.fetch("RAILS_LOG_LEVEL", "info")
 
-  # Use a different cache store in production.
-  # config.cache_store = :mem_cache_store
+  # Use Redis for caching in production
+  config.cache_store = :redis_cache_store, {
+    url: ENV.fetch('REDIS_URL', 'redis://localhost:6379/0'),
+    namespace: 'nexp_cache',
+    expires_in: 90.minutes,
+    reconnect_attempts: 3
+  }
 
-  # Use a real queuing backend for Active Job (and separate queues per environment).
-  # config.active_job.queue_adapter = :resque
-  # config.active_job.queue_name_prefix = "nex_p_production"
+  # Use Sidekiq for background jobs
+  config.active_job.queue_adapter = :sidekiq
 
   config.action_mailer.perform_caching = false
 

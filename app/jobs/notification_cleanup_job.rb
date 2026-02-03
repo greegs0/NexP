@@ -1,5 +1,5 @@
 class NotificationCleanupJob < ApplicationJob
-  queue_as :default
+  queue_as :cleanup
 
   # Nettoie les anciennes notifications
   # Peut être lancé quotidiennement ou hebdomadairement via un cron job

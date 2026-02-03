@@ -736,7 +736,8 @@ users_data.each do |user_data|
     portfolio_url: user_data[:portfolio_url],
     experience_points: user_data[:experience_points] || 0,
     level: user_data[:level] || 1,
-    available: user_data[:available]
+    available: user_data[:available],
+    confirmed_at: Time.current  # Auto-confirmer les utilisateurs du seed
   )
 
   # Associer les skills

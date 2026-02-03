@@ -1,0 +1,26 @@
+Bienvenue sur NexP !
+================================================================================
+
+Bonjour <%= @resource.username.presence || @email %>,
+
+Merci de vous être inscrit sur NexP, la plateforme collaborative pour 
+développeurs qui souhaitent travailler sur des projets ensemble !
+
+Pour activer votre compte et commencer à explorer les projets, entrez
+ce code de confirmation sur la page d'activation :
+
+════════════════════════════════════════════════════════════════════════
+
+                    CODE : <%= @resource.confirmation_code %>
+
+════════════════════════════════════════════════════════════════════════
+
+Ce code expire dans 15 minutes.
+
+Page de confirmation : <%= verify_code_users_confirmation_url(email: @resource.email) %>
+
+Si vous n'avez pas créé de compte sur NexP, vous pouvez ignorer cet email.
+
+---
+NexP - Trouvez votre prochain projet collaboratif
+© <%= Time.current.year %> NexP. Tous droits réservés.

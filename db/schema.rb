@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_02_03_101119) do
+ActiveRecord::Schema[7.1].define(version: 2026_02_03_110556) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "plpgsql"
@@ -283,7 +283,10 @@ ActiveRecord::Schema[7.1].define(version: 2026_02_03_101119) do
     t.datetime "confirmed_at"
     t.datetime "confirmation_sent_at"
     t.string "unconfirmed_email"
+    t.string "confirmation_code"
+    t.datetime "confirmation_code_sent_at"
     t.index ["available"], name: "index_users_on_available"
+    t.index ["confirmation_code"], name: "index_users_on_confirmation_code"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["created_at"], name: "index_users_on_created_at"
     t.index ["email"], name: "index_users_on_email", unique: true
