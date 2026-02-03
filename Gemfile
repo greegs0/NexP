@@ -34,6 +34,7 @@ gem "rails-html-sanitizer"
 gem "jwt"
 gem "active_storage_validations"
 gem "image_processing", "~> 1.2"
+gem "attr_encrypted", "~> 4.0"
 
 # OAuth integrations (problème réseau - à réessayer plus tard)
 # gem "omniauth"

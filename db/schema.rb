@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_02_02_165423) do
+ActiveRecord::Schema[7.1].define(version: 2026_02_03_101119) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "plpgsql"
@@ -114,6 +114,17 @@ ActiveRecord::Schema[7.1].define(version: 2026_02_02_165423) do
     t.index ["sender_id"], name: "index_messages_on_sender_id"
   end
 
+  create_table "notification_preferences", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "notification_type", null: false
+    t.boolean "enabled", default: true, null: false
+    t.boolean "email_enabled", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id", "notification_type"], name: "index_notif_prefs_on_user_and_type", unique: true
+    t.index ["user_id"], name: "index_notification_preferences_on_user_id"
+  end
+
   create_table "notifications", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "actor_id", null: false
@@ -123,9 +134,14 @@ ActiveRecord::Schema[7.1].define(version: 2026_02_02_165423) do
     t.boolean "read", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "url"
+    t.integer "grouped_count", default: 1
+    t.jsonb "metadata", default: {}
     t.index ["actor_id"], name: "index_notifications_on_actor_id"
+    t.index ["grouped_count"], name: "index_notifications_on_grouped_count"
     t.index ["notifiable_type", "notifiable_id"], name: "index_notifications_on_notifiable"
     t.index ["notifiable_type", "notifiable_id"], name: "index_notifications_on_notifiable_type_and_notifiable_id"
+    t.index ["url"], name: "index_notifications_on_url"
     t.index ["user_id", "read", "created_at"], name: "index_notifications_on_user_id_and_read_and_created_at"
     t.index ["user_id"], name: "index_notifications_on_user_id"
   end
@@ -258,10 +274,17 @@ ActiveRecord::Schema[7.1].define(version: 2026_02_02_165423) do
     t.string "uid"
     t.string "github_username"
     t.string "gitlab_username"
-    t.string "oauth_token"
-    t.string "oauth_refresh_token"
+    t.string "encrypted_oauth_token"
+    t.string "encrypted_oauth_refresh_token"
     t.datetime "oauth_expires_at"
+    t.string "encrypted_oauth_token_iv"
+    t.string "encrypted_oauth_refresh_token_iv"
+    t.string "confirmation_token"
+    t.datetime "confirmed_at"
+    t.datetime "confirmation_sent_at"
+    t.string "unconfirmed_email"
     t.index ["available"], name: "index_users_on_available"
+    t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["created_at"], name: "index_users_on_created_at"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["github_username"], name: "index_users_on_github_username"
@@ -285,6 +308,7 @@ ActiveRecord::Schema[7.1].define(version: 2026_02_02_165423) do
   add_foreign_key "messages", "projects"
   add_foreign_key "messages", "users", column: "recipient_id"
   add_foreign_key "messages", "users", column: "sender_id"
+  add_foreign_key "notification_preferences", "users"
   add_foreign_key "notifications", "users"
   add_foreign_key "notifications", "users", column: "actor_id"
   add_foreign_key "posts", "users"

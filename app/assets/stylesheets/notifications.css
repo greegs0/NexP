@@ -1,0 +1,478 @@
+/* ===========================
+   NOTIFICATIONS STYLES
+   =========================== */
+
+/* Boutons de filtres améliorés */
+.filter-btn {
+  @apply px-4 py-2 text-sm rounded-lg transition-all duration-200;
+  @apply text-muted-foreground hover:text-foreground;
+  @apply hover:bg-secondary/50;
+  @apply border border-transparent;
+  @apply font-medium;
+  position: relative;
+  overflow: hidden;
+}
+
+.filter-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.5s;
+}
+
+.filter-btn:hover::before {
+  left: 100%;
+}
+
+.filter-btn.active {
+  @apply bg-gradient-to-r from-primary/10 to-primary/5 text-primary border-primary/30;
+  @apply font-semibold shadow-sm;
+  box-shadow: 0 0 0 3px rgba(var(--primary-rgb, 59, 130, 246), 0.1);
+}
+
+/* Toast de notifications */
+.notification-toast {
+  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+}
+
+.notification-toast.toast-visible {
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Cartes de notifications avec hover améliorées */
+.notification-card {
+  @apply relative;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.notification-card:hover {
+  transform: translateY(-2px) scale(1.01);
+  box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.15);
+}
+
+.notification-card:hover .notification-actions {
+  @apply opacity-100;
+}
+
+.notification-actions {
+  @apply opacity-0 transition-all duration-200;
+  transform: translateX(10px);
+}
+
+.notification-card:hover .notification-actions {
+  transform: translateX(0);
+}
+
+/* Icônes de notifications avec animations */
+.notification-icon {
+  @apply transition-transform duration-200;
+}
+
+.notification-icon:hover {
+  @apply scale-110;
+}
+
+/* Badge de notification non lue avec glow effect */
+.notification-unread-dot {
+  @apply w-2.5 h-2.5 bg-primary rounded-full flex-shrink-0;
+  animation: pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  box-shadow: 0 0 0 0 rgba(var(--primary-rgb, 59, 130, 246), 0.7);
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 1;
+    box-shadow: 0 0 0 0 rgba(var(--primary-rgb, 59, 130, 246), 0.7);
+  }
+  50% {
+    opacity: 0.8;
+    box-shadow: 0 0 0 4px rgba(var(--primary-rgb, 59, 130, 246), 0);
+  }
+}
+
+/* Toggle switch pour les préférences */
+.toggle-switch {
+  @apply relative inline-block w-11 h-6;
+}
+
+.toggle-switch input {
+  @apply sr-only;
+}
+
+.toggle-switch .slider {
+  @apply absolute cursor-pointer top-0 left-0 right-0 bottom-0;
+  @apply bg-muted rounded-full transition-all duration-200;
+}
+
+.toggle-switch .slider:before {
+  @apply absolute content-[''] h-5 w-5 left-0.5 bottom-0.5;
+  @apply bg-white rounded-full transition-all duration-200;
+}
+
+.toggle-switch input:checked + .slider {
+  @apply bg-primary;
+}
+
+.toggle-switch input:checked + .slider:before {
+  transform: translateX(20px);
+}
+
+.toggle-switch input:focus + .slider {
+  @apply ring-2 ring-primary ring-offset-2;
+}
+
+/* Groupement de notifications */
+.notification-group-badge {
+  @apply inline-flex items-center justify-center;
+  @apply px-2 py-0.5 text-xs font-medium;
+  @apply bg-primary/10 text-primary rounded-full;
+}
+
+/* Panel dropdown de notifications avec effet glassmorphism */
+.notifications-dropdown {
+  @apply absolute right-0 mt-2 w-96;
+  @apply border border-border rounded-xl overflow-hidden;
+  @apply animate-fade-in-up;
+  z-index: 50;
+  background: rgba(var(--card-rgb, 255, 255, 255), 0.95);
+  backdrop-filter: blur(12px);
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04),
+    0 0 0 1px rgba(0, 0, 0, 0.05);
+  max-height: 600px;
+}
+
+.notifications-dropdown-tabs {
+  @apply flex border-b border-border;
+}
+
+.notifications-dropdown-tab {
+  @apply flex-1 px-4 py-3 text-sm font-medium text-muted-foreground;
+  @apply hover:text-foreground hover:bg-secondary/30;
+  @apply transition-all duration-200 cursor-pointer;
+  @apply border-b-2 border-transparent;
+}
+
+.notifications-dropdown-tab.active {
+  @apply text-primary border-primary;
+}
+
+.notifications-list {
+  @apply overflow-y-auto max-h-96;
+}
+
+/* Scrollbar personnalisée */
+.notifications-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.notifications-list::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+.notifications-list::-webkit-scrollbar-thumb {
+  @apply bg-border rounded-full;
+}
+
+.notifications-list::-webkit-scrollbar-thumb:hover {
+  @apply bg-muted-foreground;
+}
+
+/* États de chargement */
+.notification-skeleton {
+  @apply animate-pulse;
+}
+
+.notification-skeleton-avatar {
+  @apply w-10 h-10 bg-muted rounded-full;
+}
+
+.notification-skeleton-text {
+  @apply h-4 bg-muted rounded;
+}
+
+/* Transitions fluides */
+.notification-item {
+  @apply transition-all duration-200;
+}
+
+.notification-item:hover {
+  @apply transform scale-[1.02];
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .notifications-dropdown {
+    @apply w-screen max-w-full left-0 right-0;
+    @apply mx-4;
+  }
+
+  .filter-btn {
+    @apply text-xs px-2 py-1;
+  }
+}
+
+/* Dark mode adjustments (si nécessaire) */
+@media (prefers-color-scheme: dark) {
+  .notification-toast {
+    box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.6);
+  }
+}
+
+/* Animation pour les actions en masse */
+.bulk-actions-toolbar {
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* États interactifs améliorés */
+.notification-checkbox {
+  @apply w-4 h-4 rounded border-border text-primary;
+  @apply focus:ring-primary focus:ring-offset-0;
+  @apply cursor-pointer transition-all duration-150;
+}
+
+.notification-checkbox:hover {
+  @apply border-primary;
+}
+
+/* Amélioration visuelle des icônes colorées */
+.notification-icon-wrapper {
+  @apply transition-all duration-200;
+}
+
+.notification-icon-wrapper:hover {
+  @apply shadow-lg;
+}
+
+/* Indicateur de notification importante */
+.notification-important {
+  @apply border-l-4 border-l-primary;
+}
+
+/* Animation de suppression */
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+}
+
+.notification-removing {
+  animation: fadeOut 0.2s ease-out forwards;
+}
+
+/* Avatars professionnels avec ring et glow */
+.notification-avatar {
+  @apply relative;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.notification-avatar:hover {
+  transform: scale(1.1);
+  filter: brightness(1.1);
+}
+
+.notification-avatar img {
+  @apply ring-2 ring-border;
+  transition: ring-color 0.3s ease;
+}
+
+.notification-avatar:hover img {
+  @apply ring-primary/50;
+}
+
+/* Badge de groupe stylisé */
+.notification-group-badge {
+  @apply inline-flex items-center justify-center;
+  @apply px-2.5 py-1 text-xs font-bold;
+  @apply bg-gradient-to-br from-primary to-primary/80 text-primary-foreground rounded-full;
+  @apply shadow-sm;
+  box-shadow: 0 2px 8px rgba(var(--primary-rgb, 59, 130, 246), 0.3);
+}
+
+/* Icônes de notifications colorées avec effet */
+.notification-icon-colored {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.notification-icon-colored:hover {
+  transform: scale(1.15) rotate(5deg);
+  filter: brightness(1.2);
+}
+
+/* Amélioration des checkboxes */
+.notification-checkbox {
+  @apply w-5 h-5 rounded-md border-2 border-border;
+  @apply text-primary cursor-pointer;
+  @apply transition-all duration-200;
+  @apply focus:ring-2 focus:ring-primary focus:ring-offset-2;
+}
+
+.notification-checkbox:hover {
+  @apply border-primary/50 scale-110;
+}
+
+.notification-checkbox:checked {
+  @apply bg-gradient-to-br from-primary to-primary/80 border-primary;
+  box-shadow: 0 2px 8px rgba(var(--primary-rgb, 59, 130, 246), 0.3);
+}
+
+/* Preview images avec hover effect */
+.notification-preview-img {
+  @apply transition-all duration-300;
+  @apply border border-border rounded-lg;
+}
+
+.notification-preview-img:hover {
+  @apply border-primary/50 scale-105;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Toolbar d'actions en masse améliorée */
+.bulk-actions-toolbar {
+  animation: slideDown 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  @apply backdrop-blur-sm;
+  background: linear-gradient(135deg, rgba(var(--primary-rgb, 59, 130, 246), 0.15), rgba(var(--primary-rgb, 59, 130, 246), 0.05));
+}
+
+/* Amélioration des boutons d'action */
+.notification-action-btn {
+  @apply p-2.5 rounded-lg transition-all duration-200;
+  @apply text-muted-foreground hover:text-foreground;
+  @apply hover:scale-110;
+  position: relative;
+  overflow: hidden;
+}
+
+.notification-action-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(var(--primary-rgb, 59, 130, 246), 0.2);
+  transform: translate(-50%, -50%);
+  transition: width 0.3s ease, height 0.3s ease;
+}
+
+.notification-action-btn:hover::before {
+  width: 100%;
+  height: 100%;
+}
+
+.notification-action-btn svg {
+  position: relative;
+  z-index: 1;
+}
+
+/* État vide stylisé */
+.notification-empty-state {
+  @apply backdrop-blur-sm;
+  background: linear-gradient(135deg, rgba(var(--card-rgb, 255, 255, 255), 0.8), rgba(var(--card-rgb, 255, 255, 255), 0.6));
+}
+
+.notification-empty-state-icon {
+  @apply transition-transform duration-300;
+}
+
+.notification-empty-state:hover .notification-empty-state-icon {
+  transform: scale(1.1) rotate(-5deg);
+}
+
+/* Amélioration des tabs dropdown */
+.notifications-dropdown-tab {
+  @apply relative;
+  transition: all 0.2s ease;
+}
+
+.notifications-dropdown-tab::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: var(--primary);
+  transform: translateX(-50%);
+  transition: width 0.3s ease;
+}
+
+.notifications-dropdown-tab.active::after {
+  width: 60%;
+}
+
+.notifications-dropdown-tab:hover:not(.active) {
+  @apply text-foreground;
+  background: rgba(var(--secondary-rgb, 244, 244, 245), 0.5);
+}
+
+/* Animation smooth pour les notifications individuelles */
+.notification-item {
+  @apply transition-all duration-300;
+  animation: slideInNotif 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideInNotif {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Badge earned special styling */
+.notification-badge-icon {
+  @apply transition-all duration-300;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.notification-badge-icon:hover {
+  transform: scale(1.2) rotate(10deg);
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
+}

@@ -1,10 +1,14 @@
 class User < ApplicationRecord
   include StatsCacheable
 
+  # Chiffrement des tokens OAuth avec attr_encrypted
+  attr_encrypted :oauth_token, key: Rails.application.credentials.encryption_key
+  attr_encrypted :oauth_refresh_token, key: Rails.application.credentials.encryption_key
+
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :validatable
+         :recoverable, :rememberable, :validatable, :confirmable
 
   # Associations
   has_many :user_skills, dependent: :destroy

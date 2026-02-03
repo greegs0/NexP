@@ -73,9 +73,31 @@ Rails.application.configure do
 
   config.action_mailer.perform_caching = false
 
-  # Ignore bad email addresses and do not raise email delivery errors.
-  # Set this to true and configure the email server for immediate delivery to raise delivery errors.
-  # config.action_mailer.raise_delivery_errors = false
+  # Configuration SMTP pour l'envoi d'emails (Devise confirmable, notifications, etc.)
+  config.action_mailer.raise_delivery_errors = true
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.default_url_options = {
+    host: ENV.fetch('APP_HOST', 'localhost:3000'),
+    protocol: 'https'
+  }
+
+  # Configuration SMTP (SendGrid, Mailgun, AWS SES, etc.)
+  # Variables d'environnement requises:
+  # - SMTP_ADDRESS: smtp.sendgrid.net (ou autre provider)
+  # - SMTP_USERNAME: apikey (pour SendGrid) ou votre username
+  # - SMTP_PASSWORD: votre API key ou mot de passe
+  # - SMTP_DOMAIN: votre domaine (optionnel)
+  config.action_mailer.smtp_settings = {
+    address:              ENV.fetch('SMTP_ADDRESS', 'smtp.sendgrid.net'),
+    port:                 ENV.fetch('SMTP_PORT', 587).to_i,
+    user_name:            ENV['SMTP_USERNAME'],
+    password:             ENV['SMTP_PASSWORD'],
+    domain:               ENV.fetch('SMTP_DOMAIN', ENV.fetch('APP_HOST', 'localhost')),
+    authentication:       :plain,
+    enable_starttls_auto: true,
+    open_timeout:         5,
+    read_timeout:         5
+  }
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation cannot be found).

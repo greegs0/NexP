@@ -1,0 +1,81 @@
+<%
+  action_data = Notification::ACTIONS[type.to_sym]
+  label = action_data ? action_data[:message].capitalize : type.humanize
+  icon_name = action_data ? action_data[:icon] : 'bell'
+  color = action_data ? action_data[:color] : 'gray'
+
+  # Get icon path from helper
+  icon_path = NotificationsHelper::NOTIFICATION_ICONS[icon_name] || NotificationsHelper::NOTIFICATION_ICONS['bell']
+  color_classes = NotificationsHelper::NOTIFICATION_COLORS[color] || NotificationsHelper::NOTIFICATION_COLORS['gray']
+
+  # Descriptions pour chaque type
+  descriptions = {
+    'like' => 'Quand quelqu\'un aime ton post',
+    'comment' => 'Quand quelqu\'un commente ton post',
+    'comment_reply' => 'Quand quelqu\'un répond à ton commentaire',
+    'follow' => 'Quand quelqu\'un te suit',
+    'mention' => 'Quand quelqu\'un te mentionne',
+    'post_mention' => 'Quand ton post est mentionné',
+    'project_join' => 'Quand quelqu\'un rejoint ton projet',
+    'project_invite' => 'Quand tu es invité à un projet',
+    'project_update' => 'Mises à jour de tes projets',
+    'team_join' => 'Quand quelqu\'un rejoint ton équipe',
+    'skill_add' => 'Quand quelqu\'un ajoute une compétence',
+    'skill_level_up' => 'Quand une compétence progresse',
+    'badge_earned' => 'Quand tu débloques un badge',
+    'message' => 'Nouveaux messages privés',
+    'bookmark_update' => 'Activité sur tes favoris',
+    'weekly_summary' => 'Résumé hebdomadaire'
+  }
+  description = descriptions[type] || ''
+%>
+
+<div class="group flex items-center justify-between p-4 bg-gradient-to-r from-secondary/20 to-secondary/10 rounded-xl hover:from-secondary/40 hover:to-secondary/20 transition-all duration-200 border border-transparent hover:border-<%= color %>-500/20">
+  <div class="flex items-center gap-4 flex-1">
+    <!-- Icône colorée avec effet -->
+    <div class="notification-icon-colored w-10 h-10 rounded-xl <%= color_classes[:bg] %> flex items-center justify-center flex-shrink-0 shadow-sm group-hover:shadow-md transition-shadow">
+      <svg class="w-5 h-5 <%= color_classes[:text] %>" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <%= raw icon_path %>
+      </svg>
+    </div>
+
+    <!-- Label et description -->
+    <div class="flex-1 min-w-0">
+      <p class="text-sm font-semibold text-foreground mb-0.5"><%= label %></p>
+      <% if description.present? %>
+        <p class="text-xs text-muted-foreground"><%= description %></p>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Toggles améliorés -->
+  <div class="flex items-center gap-6">
+    <!-- Toggle app -->
+    <div class="flex items-center gap-2.5">
+      <label class="text-xs font-medium text-muted-foreground select-none cursor-pointer" for="pref_<%= type %>_enabled">
+        App
+      </label>
+      <label class="relative inline-block w-11 h-6 cursor-pointer">
+        <%= hidden_field_tag "preferences[#{type}][enabled]", "0" %>
+        <%= check_box_tag "preferences[#{type}][enabled]", "1", pref.enabled,
+          class: "sr-only peer",
+          id: "pref_#{type}_enabled" %>
+        <div class="w-11 h-6 bg-muted peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary peer-focus:ring-offset-2 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-primary peer-checked:to-primary/80 cursor-pointer shadow-inner"></div>
+      </label>
+    </div>
+
+    <!-- Toggle email -->
+    <div class="flex items-center gap-2.5">
+      <label class="text-xs font-medium text-muted-foreground select-none cursor-pointer" for="pref_<%= type %>_email">
+        Email
+      </label>
+      <label class="relative inline-block w-11 h-6 cursor-pointer">
+        <%= hidden_field_tag "preferences[#{type}][email_enabled]", "0" %>
+        <%= check_box_tag "preferences[#{type}][email_enabled]", "1", pref.email_enabled,
+          class: "sr-only peer",
+          id: "pref_#{type}_email" %>
+        <div class="w-11 h-6 bg-muted peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary peer-focus:ring-offset-2 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-primary peer-checked:to-primary/80 cursor-pointer shadow-inner"></div>
+      </label>
+    </div>
+  </div>
+</div>
