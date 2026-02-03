@@ -37,7 +37,8 @@ Rails.application.configure do
   # config.action_dispatch.x_sendfile_header = "X-Accel-Redirect" # for NGINX
 
   # Store uploaded files on Cloudflare R2 (S3-compatible, gratuit jusqu'à 10GB)
-  config.active_storage.service = :cloudflare
+  # Temporairement désactivé - utilise local disk
+  config.active_storage.service = :local
 
   # Configure Action Cable to use Redis
   config.action_cable.mount_path = '/cable'
