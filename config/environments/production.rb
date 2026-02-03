@@ -71,8 +71,9 @@ Rails.application.configure do
   # Use a simple memory store for now (Redis cache commented due to deployment issue)
   config.cache_store = :memory_store
 
-  # Use Sidekiq for background jobs
-  config.active_job.queue_adapter = :sidekiq
+  # Use inline for background jobs (send emails synchronously)
+  # TODO: Fix Sidekiq and switch back to :sidekiq for better performance
+  config.active_job.queue_adapter = :inline
 
   config.action_mailer.perform_caching = false
 
