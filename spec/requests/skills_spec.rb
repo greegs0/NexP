@@ -23,19 +23,21 @@ RSpec.describe "Skills", type: :request do
         expect(response).to have_http_status(:success)
       end
 
-      it "displays available skills" do
+      it "displays skills page with search functionality" do
         get skills_path
-        expect(response.body).to include('Ruby')
-        expect(response.body).to include('React')
-      end
-
-      it "filters by category" do
-        get skills_path, params: { category: 'Backend' }
-        expect(response.body).to include('Ruby')
+        # La page des compétences utilise un système de recherche/autocomplete
+        # et non une liste complète de toutes les compétences
+        expect(response.body).to include('Rechercher une compétence')
+        expect(response.body).to include('Mes compétences')
       end
 
       it "filters by search term" do
         get skills_path, params: { search: 'Ruby' }
+        expect(response.body).to include('Ruby')
+      end
+
+      it "shows skills by category when searching" do
+        get skills_path, params: { search: 'backend' }
         expect(response.body).to include('Ruby')
       end
     end

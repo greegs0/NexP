@@ -174,7 +174,7 @@
           %>
           <span class="badge-pill" style="--badge-color: <%= data[:color] %>;">
             <svg class="badge-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color: <%= data[:color] %>;">
-              <%= data[:icon].html_safe %>
+              <%= safe_svg(data[:icon]) %>
             </svg>
             <%= clean_name %>
           </span>

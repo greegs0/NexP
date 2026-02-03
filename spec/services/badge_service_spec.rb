@@ -5,20 +5,15 @@ RSpec.describe BadgeService, type: :service do
 
   describe '.check_and_award_badges' do
     context 'level badges' do
-      before do
-        create(:badge, name: 'Débutant', xp_required: 0)
-        create(:badge, name: 'Novice', xp_required: 500)
-        create(:badge, name: 'Intermédiaire', xp_required: 1000)
-      end
-
-      it 'awards badge when XP requirement is met' do
+      it 'awards badge when level requirement is met' do
         user.update(experience_points: 550, level: 6)
 
         expect {
           BadgeService.check_and_award_badges(user)
         }.to change { user.badges.count }.by_at_least(1)
 
-        expect(user.badges.pluck(:name)).to include('Débutant', 'Novice')
+        # Le service crée les badges si inexistants
+        expect(user.badges.pluck(:name)).to include('Débutant', 'Apprenti')
       end
 
       it 'does not award same badge twice' do
@@ -34,11 +29,6 @@ RSpec.describe BadgeService, type: :service do
     end
 
     context 'project badges' do
-      before do
-        create(:badge, name: 'Premier Projet', xp_required: nil)
-        create(:badge, name: 'Entrepreneur', xp_required: nil)
-      end
-
       it 'awards first project badge' do
         create(:project, owner: user)
 
@@ -57,17 +47,12 @@ RSpec.describe BadgeService, type: :service do
     end
 
     context 'social badges' do
-      before do
-        create(:badge, name: 'Premier Post', xp_required: nil)
-        create(:badge, name: 'Blogueur', xp_required: nil)
-      end
-
       it 'awards first post badge' do
         create(:post, user: user)
 
         BadgeService.check_and_award_badges(user)
 
-        expect(user.badges.pluck(:name)).to include('Premier Post')
+        expect(user.badges.pluck(:name)).to include('Première Publication')
       end
 
       it 'awards blogger badge for many posts' do
@@ -80,13 +65,8 @@ RSpec.describe BadgeService, type: :service do
     end
 
     context 'activity badges' do
-      before do
-        create(:badge, name: 'Polyvalent', xp_required: nil)
-        create(:badge, name: 'Communicateur', xp_required: nil)
-      end
-
       it 'awards polyvalent badge for many skills' do
-        10.times { user.skills << create(:skill) }
+        5.times { user.skills << create(:skill) }
 
         BadgeService.check_and_award_badges(user)
 
@@ -95,11 +75,21 @@ RSpec.describe BadgeService, type: :service do
 
       it 'awards communicator badge for many messages' do
         project = create(:project)
-        50.times { create(:message, sender: user, project: project) }
+        50.times { create(:message, :project_message, sender: user, project: project) }
 
         BadgeService.check_and_award_badges(user)
 
         expect(user.badges.pluck(:name)).to include('Communicateur')
+      end
+    end
+
+    context 'notifications' do
+      it 'creates notification when badge is awarded' do
+        create(:post, user: user)
+
+        expect {
+          BadgeService.check_and_award_badges(user)
+        }.to change { Notification.where(user: user, action: 'badge_earned').count }.by_at_least(1)
       end
     end
   end

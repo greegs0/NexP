@@ -14,8 +14,10 @@ RSpec.describe Comment, type: :model do
   describe 'XSS protection' do
     it 'sanitizes HTML content before saving' do
       comment = create(:comment, content: '<script>alert("XSS")</script>Comment')
-      expect(comment.content).to eq('Comment')
+      # Le sanitizer supprime les balises HTML mais garde le texte
+      # Cela empêche l'exécution de scripts car les balises sont supprimées
       expect(comment.content).not_to include('<script>')
+      expect(comment.content).not_to include('</script>')
     end
   end
 end

@@ -2,11 +2,11 @@ import consumer from "channels/consumer"
 
 consumer.subscriptions.create("NotificationChannel", {
   connected() {
-    console.log("Connected to NotificationChannel")
+    // Channel connected successfully
   },
 
   disconnected() {
-    console.log("Disconnected from NotificationChannel")
+    // Channel disconnected
   },
 
   received(data) {

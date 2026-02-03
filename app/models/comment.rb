@@ -1,4 +1,6 @@
 class Comment < ApplicationRecord
+  include Sanitizable
+
   belongs_to :user
   belongs_to :post, counter_cache: true
   belongs_to :parent, class_name: 'Comment', optional: true
@@ -11,16 +13,4 @@ class Comment < ApplicationRecord
 
   # Note: Les validations d'image sont gérées côté client avec accept='image/*'
   # Pour ajouter des validations serveur, installer active_storage_validations et redémarrer le serveur
-
-  # Sanitize le contenu avant sauvegarde pour prévenir XSS
-  before_save :sanitize_content
-
-  private
-
-  def sanitize_content
-    return if content.blank?
-
-    # Supprime toutes les balises HTML pour prévenir XSS
-    self.content = Rails::HTML5::FullSanitizer.new.sanitize(content)
-  end
 end

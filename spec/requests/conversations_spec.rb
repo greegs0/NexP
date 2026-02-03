@@ -69,10 +69,10 @@ RSpec.describe "Conversations", type: :request do
         expect(user.reload.experience_points).to eq(initial_xp + 3)
       end
 
-      it "creates a notification" do
+      it "creates a notification for recipient" do
         expect {
           post conversation_messages_path(other_user), params: { message: { content: "New message" } }
-        }.to change(Notification, :count).by(1)
+        }.to change { Notification.where(user: other_user, action: 'message').count }.by(1)
       end
     end
   end

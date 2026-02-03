@@ -8,7 +8,8 @@ class UserSkill < ApplicationRecord
     expert: 2
   }, _prefix: :proficiency
 
-  validates :skill_id, uniqueness: {
+  validates :user_id, presence: true
+  validates :skill_id, presence: true, uniqueness: {
     scope: :user_id,
     message: "déjà ajoutée à tes compétences"
   }

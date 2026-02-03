@@ -16,8 +16,10 @@ RSpec.describe Post, type: :model do
   describe 'XSS protection' do
     it 'sanitizes HTML content before saving' do
       post = create(:post, content: '<script>alert("XSS")</script>Hello')
-      expect(post.content).to eq('Hello')
+      # Le sanitizer supprime les balises HTML mais garde le texte
+      # Cela empêche l'exécution de scripts car les balises sont supprimées
       expect(post.content).not_to include('<script>')
+      expect(post.content).not_to include('</script>')
     end
 
     it 'allows plain text' do

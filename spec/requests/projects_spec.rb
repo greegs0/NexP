@@ -66,7 +66,8 @@ RSpec.describe "Projects", type: :request do
 
     it "redirects for non-existing project" do
       get project_path(id: 999999)
-      expect(response).to redirect_to(projects_path)
+      # Le concern Securable redirige vers root_path pour les RecordNotFound
+      expect(response).to redirect_to(root_path)
     end
   end
 

@@ -104,21 +104,47 @@ export default class extends Controller {
       return
     }
 
-    const html = notifications.map(notif => `
-      <a href="/notifications" class="flex items-start gap-3 p-3 hover:bg-secondary/50 transition-colors border-b border-border last:border-0 ${notif.read ? 'opacity-60' : ''}">
-        <div class="w-8 h-8 bg-primary/20 text-primary rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold">
-          ${notif.actor_initial || '?'}
-        </div>
-        <div class="flex-1 min-w-0">
-          <p class="text-sm text-foreground">
-            <span class="font-medium">${this.escapeHtml(notif.actor_name || 'Quelqu\'un')}</span>
-            <span class="text-muted-foreground">${this.escapeHtml(notif.message)}</span>
-          </p>
-          <p class="text-xs text-muted-foreground mt-0.5">${notif.time_ago}</p>
-        </div>
-        ${!notif.read ? '<div class="w-2 h-2 bg-primary rounded-full flex-shrink-0 mt-2"></div>' : ''}
-      </a>
-    `).join('')
+    const html = notifications.map(notif => {
+      // Notification de badge - affiche la description directement
+      if (notif.action === 'badge_earned' && notif.badge_name) {
+        const description = notif.badge_description || `Tu as débloqué le badge ${notif.badge_name}!`
+        return `
+          <div class="flex items-start gap-3 p-3 border-b border-border last:border-0 ${notif.read ? 'opacity-60' : ''}">
+            <div class="w-8 h-8 bg-yellow-500/20 text-yellow-500 rounded-full flex items-center justify-center flex-shrink-0">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+              </svg>
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm text-foreground">
+                <span class="text-muted-foreground">Badge:</span>
+                <span class="font-medium text-primary">${this.escapeHtml(notif.badge_name)}</span>
+              </p>
+              <p class="text-xs text-muted-foreground mt-1">${this.escapeHtml(description)}</p>
+              <p class="text-xs text-muted-foreground/60 mt-0.5">${notif.time_ago}</p>
+            </div>
+            ${!notif.read ? '<div class="w-2 h-2 bg-yellow-500 rounded-full flex-shrink-0 mt-2"></div>' : ''}
+          </div>
+        `
+      }
+
+      // Notification standard
+      return `
+        <a href="/notifications" class="flex items-start gap-3 p-3 hover:bg-secondary/50 transition-colors border-b border-border last:border-0 ${notif.read ? 'opacity-60' : ''}">
+          <div class="w-8 h-8 bg-primary/20 text-primary rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold">
+            ${notif.actor_initial || '?'}
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm text-foreground">
+              <span class="font-medium">${this.escapeHtml(notif.actor_name || 'Quelqu\'un')}</span>
+              <span class="text-muted-foreground">${this.escapeHtml(notif.message)}</span>
+            </p>
+            <p class="text-xs text-muted-foreground mt-0.5">${notif.time_ago}</p>
+          </div>
+          ${!notif.read ? '<div class="w-2 h-2 bg-primary rounded-full flex-shrink-0 mt-2"></div>' : ''}
+        </a>
+      `
+    }).join('')
 
     this.listTarget.innerHTML = html
   }

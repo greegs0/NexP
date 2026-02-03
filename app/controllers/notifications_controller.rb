@@ -46,8 +46,9 @@ class NotificationsController < ApplicationController
   end
 
   def notification_json(notification)
-    {
+    data = {
       id: notification.id,
+      action: notification.action,
       message: notification.message,
       read: notification.read?,
       actor_name: notification.actor&.display_name,
@@ -55,5 +56,13 @@ class NotificationsController < ApplicationController
       time_ago: helpers.time_ago_in_words(notification.created_at),
       created_at: notification.created_at
     }
+
+    # Ajouter les infos du badge si c'est une notification de badge
+    if notification.action == 'badge_earned' && notification.notifiable.is_a?(Badge)
+      data[:badge_name] = notification.notifiable.name
+      data[:badge_description] = notification.notifiable.description
+    end
+
+    data
   end
 end

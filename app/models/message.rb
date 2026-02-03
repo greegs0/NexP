@@ -1,13 +1,12 @@
 class Message < ApplicationRecord
+  include Sanitizable
+
   belongs_to :sender, class_name: 'User'
   belongs_to :project, optional: true
   belongs_to :recipient, class_name: 'User', optional: true
 
   validates :content, presence: true, length: { minimum: 1, maximum: 1000 }
   validate :must_have_project_or_recipient
-
-  # Sanitize le contenu avant sauvegarde pour prévenir XSS
-  before_save :sanitize_content
 
   scope :unread, -> { where(read_at: nil) }
   scope :read, -> { where.not(read_at: nil) }
@@ -44,12 +43,5 @@ class Message < ApplicationRecord
     if project_id.present? && recipient_id.present?
       errors.add(:base, "Le message ne peut pas avoir à la fois un projet et un destinataire")
     end
-  end
-
-  def sanitize_content
-    return if content.blank?
-
-    # Supprime toutes les balises HTML pour prévenir XSS
-    self.content = Rails::HTML5::FullSanitizer.new.sanitize(content)
   end
 end

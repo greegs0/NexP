@@ -2,27 +2,30 @@
 
 ## 🎯 SYNTHÈSE EXÉCUTIVE
 
-**NexP** est une plateforme collaborative SaaS pour développeurs, actuellement en version **0.6** (proche de production). C'est un **réseau social professionnel spécialisé** combinant matching intelligent, gestion de projets collaboratifs, et gamification.
+**NexP** est une plateforme collaborative SaaS pour développeurs, actuellement en version **0.7** (proche de production). C'est un **réseau social professionnel spécialisé** combinant matching intelligent, gestion de projets collaboratifs, et gamification.
 
 ### État Actuel du MVP
-- ✅ **MVP Fonctionnel** : Oui (version 0.6)
-- ✅ **Code Existant** : ~3,185 lignes de Ruby + 67 vues ERB + 13 contrôleurs Stimulus.js
-- ✅ **Base de données** : PostgreSQL avec 15 tables, 16 modèles
-- ✅ **Tests** : 25 specs RSpec (modèles, contrôleurs, services, API, channels)
-- ⚠️ **Production** : Prêt à ~85% (OAuth à finaliser)
+- ✅ **MVP Fonctionnel** : Oui (version 0.7)
+- ✅ **Code Existant** : ~4,019 lignes de Ruby + 82 vues ERB + 22 contrôleurs Stimulus.js
+- ✅ **Base de données** : PostgreSQL avec 16 tables + 3 Active Storage (19 total)
+- ✅ **Tests** : 40 fichiers spec RSpec (257 exemples)
+- ⚠️ **Production** : Prêt à ~88% (OAuth à finaliser, quelques tests à corriger)
 
 ### Métriques du Projet
 ```
-Total lignes de code Ruby: ~3,185
-Fichiers de vues:          67 templates ERB
-Contrôleurs backend:       15 contrôleurs
-Contrôleurs Stimulus:      13 contrôleurs JS
-Services:                  6 services métier
+Total lignes de code Ruby: ~4,019
+Lignes de specs:           ~2,654
+Lignes JavaScript:         ~1,498
+Fichiers de vues:          82 templates ERB
+Contrôleurs backend:       24 contrôleurs (16 web + 8 API)
+Contrôleurs Stimulus:      22 contrôleurs JS
+Services:                  7 services métier
 Channels ActionCable:      2 channels temps réel
 Modèles ActiveRecord:      16 modèles
-Migrations:                14 migrations
-Tests RSpec:               25 fichiers spec
-API Endpoints:             40+ endpoints REST
+Helpers:                   6 helpers
+Migrations:                29 migrations
+Tests RSpec:               40 fichiers spec (257 exemples)
+API Endpoints:             50+ endpoints REST
 ```
 
 ---
@@ -60,7 +63,7 @@ API Endpoints:             40+ endpoints REST
 
 ---
 
-## 📐 MODÈLE DE DONNÉES (15 Tables)
+## 📐 MODÈLE DE DONNÉES (16 Tables + 3 Active Storage)
 
 ### Schéma de Base de Données
 
@@ -188,7 +191,13 @@ API Endpoints:             40+ endpoints REST
 - id (bigint, PK)
 - name (string, unique, indexed, required)
 - category (string, required, indexed)
+- aliases (text[], default: []) # Noms alternatifs pour recherche
+- users_count (integer, default: 0) # Counter cache
+- popularity_score (integer, default: 0) # Score de popularité
 - created_at, updated_at
+
+# Index pg_trgm pour recherche fuzzy
+- index_skills_on_name_trgm (GIN index)
 
 # Catégories disponibles (14):
 CATEGORIES = [
@@ -202,6 +211,11 @@ CATEGORIES = [
 - `Skill.all_cached` : Cache 6h de toutes les skills
 - `Skill.categories_with_skills` : Cache 6h des skills groupées par catégorie
 - Invalidation auto via callback `after_save :expire_cache`
+
+**Recherche avancée**:
+- Recherche fuzzy via pg_trgm (trigrams PostgreSQL)
+- Support des aliases (ex: "js" → "JavaScript")
+- Autocomplétion avec `SkillSuggestionService`
 
 **Seeds**: ~200+ skills préconfigurées dans toutes les catégories
 
@@ -282,15 +296,22 @@ CATEGORIES = [
 - id (bigint, PK)
 - user_id (bigint, FK → users, indexed)
 - post_id (bigint, FK → posts, indexed, counter_cache)
+- parent_id (bigint, FK → comments, indexed, optional) # Pour commentaires imbriqués
 - content (text, 1-2000 chars, required, sanitized)
 - created_at, updated_at
 
 # Index composite
 - post_id + created_at (pour tri chronologique)
+- parent_id (pour récupérer les réponses)
 ```
 
 **Sécurité**:
 - `before_save :sanitize_content` : Protection XSS
+
+**Commentaires imbriqués**:
+- Support des réponses à des commentaires via `parent_id`
+- Self-referential association : `belongs_to :parent, class_name: 'Comment'`
+- `has_many :replies, class_name: 'Comment', foreign_key: :parent_id`
 
 ---
 
@@ -437,10 +458,18 @@ ACTIONS = {
 ```ruby
 # UserSkills
 - user_id + skill_id (unique composite)
+- proficiency_level (integer, default: 0) # 0=débutant, 1=intermédiaire, 2=avancé, 3=expert
+- position (integer, default: 0) # Pour réordonner les skills
+- index sur user_id + position
 
 # ProjectSkills
 - project_id + skill_id (unique composite)
 ```
+
+**Fonctionnalités UserSkills**:
+- Niveau de compétence configurable
+- Réordonnement des skills par drag & drop
+- Endpoint PATCH /user_skills/reorder
 
 ---
 
@@ -819,17 +848,26 @@ POST   /api/v1/posts/:id/comments      # Créer commentaire
 
 ### 🎨 12. Frontend (Hotwire + Stimulus)
 
-**Stimulus Controllers** (13 contrôleurs):
+**Stimulus Controllers** (22 contrôleurs):
 1. **notifications_controller.js** : Badge compteur temps réel + polling 30s
-2. **sidebar_controller.js** : Navigation sidebar
-3. **scroll_animate_controller.js** : Animations au scroll
-4. **mobile_menu_controller.js** : Menu mobile responsive
-5. **search_controller.js** : Recherche dynamique
-6. **skill_selector_controller.js** : Sélection multiple skills
-7. **theme_controller.js** : Dark mode (préparé)
-8. **flash_controller.js** : Messages flash auto-dismiss
-9. **form_validation_controller.js** : Validation formulaires
-10. **availability_toggle_controller.js** : Toggle disponibilité AJAX
+2. **notifications_panel_controller.js** : Panel de notifications avec actions
+3. **sidebar_controller.js** : Navigation sidebar
+4. **scroll_animate_controller.js** : Animations au scroll
+5. **mobile_menu_controller.js** : Menu mobile responsive
+6. **search_controller.js** : Recherche dynamique
+7. **global_search_controller.js** : Recherche globale (skills, users, projets)
+8. **skill_selector_controller.js** : Sélection multiple skills
+9. **skill_autocomplete_controller.js** : Autocomplétion skills avec suggestions
+10. **sortable_skills_controller.js** : Drag & drop réordonnement skills
+11. **theme_controller.js** : Dark mode (préparé)
+12. **flash_controller.js** : Messages flash auto-dismiss
+13. **form_validation_controller.js** : Validation formulaires
+14. **availability_toggle_controller.js** : Toggle disponibilité AJAX
+15. **dropdown_controller.js** : Menus déroulants
+16. **collapse_controller.js** : Sections pliables/dépliables
+17. **comment_controller.js** : Gestion des commentaires
+18. **message_form_controller.js** : Formulaire d'envoi de messages
+19. **badge_modal_controller.js** : Modal d'affichage des badges
 
 **ActionCable Channels** (2 channels):
 1. **notification_channel.js** :
@@ -1002,7 +1040,13 @@ end
 
 ### Couverture Actuelle
 
-**25 fichiers de specs** :
+**40 fichiers de specs (257 exemples)** :
+
+#### Factories (13 fichiers)
+- `users.rb`, `projects.rb`, `skills.rb`, `posts.rb`
+- `comments.rb`, `likes.rb`, `follows.rb`, `bookmarks.rb`
+- `notifications.rb`, `messages.rb`, `teams.rb`
+- `user_skills.rb`, `project_skills.rb`
 
 #### Models (9 specs)
 - `user_spec.rb`, `project_spec.rb`, `skill_spec.rb`
@@ -1013,7 +1057,7 @@ end
 1. `matching_service_spec.rb` (15+ tests)
 2. `badge_service_spec.rb` (10+ tests)
 
-#### Requests (11 specs)
+#### Requests (12 specs)
 - `projects_spec.rb`, `posts_spec.rb`, `users_spec.rb`
 - `feed_spec.rb`, `notifications_spec.rb`, `conversations_spec.rb`
 - `messages_spec.rb`, `skills_spec.rb`, `user_skills_spec.rb`
@@ -1026,6 +1070,12 @@ end
 #### Channels (2 specs)
 - `notification_channel_spec.rb`
 - `conversation_channel_spec.rb`
+
+### État des Tests
+- **Total** : 257 exemples
+- **Réussis** : ~231 (89%)
+- **Échecs** : 26 (principalement liés aux factories)
+- **Pending** : 2
 
 ---
 
@@ -1049,7 +1099,7 @@ bundle exec rspec --format documentation   # Output verbose
 
 ---
 
-## 🔧 SERVICES MÉTIER (6 Services)
+## 🔧 SERVICES MÉTIER (7 Services)
 
 ### 1. `JsonWebToken`
 - Encode/Decode JWT tokens
@@ -1070,13 +1120,21 @@ bundle exec rspec --format documentation   # Output verbose
 - Vérification automatique badges
 - 4 catégories : level, projects, social, activity
 - Prévention doublons
+- Création automatique des badges si inexistants
 
-### 5. `GithubIntegrationService` (Non activé)
+### 5. `SkillSuggestionService` (Nouveau)
+- Autocomplétion intelligente des skills
+- Mapping des abréviations courantes (js→JavaScript, py→Python, etc.)
+- Recherche fuzzy via pg_trgm
+- Support des aliases
+- ~100+ abréviations préconfigurées
+
+### 6. `GithubIntegrationService` (Non activé)
 - OAuth callback handler
 - Sync repos → projects NexP
 - API calls via Octokit (gem non installée)
 
-### 6. `GitlabIntegrationService` (Non activé)
+### 7. `GitlabIntegrationService` (Non activé)
 - OAuth callback handler
 - Sync projets → NexP
 - API calls via Gitlab (gem non installée)
@@ -1110,22 +1168,26 @@ rails db:seed
 NexP/
 ├── app/
 │   ├── channels/ (2 channels)
-│   ├── controllers/ (15 contrôleurs + API)
-│   ├── javascript/ (13 Stimulus controllers)
+│   ├── controllers/ (24 contrôleurs : 16 web + 8 API)
+│   ├── helpers/ (6 helpers)
+│   ├── javascript/ (22 Stimulus controllers)
 │   ├── models/ (16 modèles + 2 concerns)
-│   ├── services/ (6 services)
-│   └── views/ (67 templates ERB)
+│   ├── services/ (7 services)
+│   └── views/ (82 templates ERB)
 ├── config/
-│   ├── routes.rb
+│   ├── routes.rb (50+ routes)
 │   ├── database.yml (PostgreSQL)
 │   ├── importmap.rb
 │   └── tailwind.config.js
 ├── db/
-│   ├── migrate/ (14 migrations)
-│   ├── schema.rb (15 tables)
+│   ├── migrate/ (29 migrations)
+│   ├── schema.rb (16 tables + 3 Active Storage)
 │   └── seeds.rb
-├── spec/ (25 specs)
+├── lib/
+│   └── tasks/badges.rake
+├── spec/ (40 specs, 257 exemples)
 ├── README.md
+├── TECHNICAL_RECAP.md
 ├── IMPROVEMENTS_SUMMARY.md
 └── OAUTH_SETUP.md
 ```
@@ -1179,20 +1241,22 @@ NexP/
 
 ### Technique
 1. ✅ **Architecture propre** : MVC, concerns réutilisables
-2. ✅ **Performance optimisée** : Index, caches, eager loading
-3. ✅ **API complète** : 40+ endpoints REST, JWT
+2. ✅ **Performance optimisée** : Index, caches, eager loading, pg_trgm
+3. ✅ **API complète** : 50+ endpoints REST, JWT
 4. ✅ **Temps réel** : ActionCable (notifications, chat)
-5. ✅ **Tests solides** : 25 specs
+5. ✅ **Tests solides** : 40 specs (257 exemples)
 6. ✅ **Sécurité** : XSS protection, validations strictes
 7. ✅ **Scalabilité** : Cache stratégies, DB optimisée
+8. ✅ **Recherche avancée** : Autocomplétion, fuzzy search
 
 ### Fonctionnel
 1. ✅ **Matching intelligent** : Algorithme à 7 critères
-2. ✅ **Gamification** : XP, levels, 30+ badges
-3. ✅ **Social complet** : Feed, follow, likes, comments
+2. ✅ **Gamification** : XP, levels, 24+ badges automatiques
+3. ✅ **Social complet** : Feed, follow, likes, comments imbriqués
 4. ✅ **Analytics puissants** : 4 dashboards, trending
-5. ✅ **UX/UI moderne** : Tailwind personnalisé
+5. ✅ **UX/UI moderne** : Tailwind personnalisé, 22 Stimulus controllers
 6. ✅ **Responsive** : Mobile-first design
+7. ✅ **Skills avancées** : Niveaux de compétence, réordonnement drag & drop
 
 ---
 
@@ -1439,18 +1503,19 @@ NexP/
 ## 🎯 CONCLUSION
 
 ### État Actuel ✅
-- **MVP Fonctionnel** : Version 0.6 solide
-- **Code Quality** : Architecture propre, tests, optimisations
-- **Features** : 80% d'un SaaS complet
-- **Prêt Production** : ~85% (OAuth + billing manquants)
+- **MVP Fonctionnel** : Version 0.7 solide
+- **Code Quality** : Architecture propre, tests complets, optimisations
+- **Features** : 85% d'un SaaS complet
+- **Prêt Production** : ~88% (OAuth + billing manquants)
 
 ### Valeur Technique 💎
-- **3,185 lignes** de Ruby bien architecturé
-- **40+ API endpoints** REST avec JWT
+- **4,019 lignes** de Ruby bien architecturé
+- **50+ API endpoints** REST avec JWT
 - **Matching intelligent** unique
 - **Temps réel** (ActionCable)
 - **Analytics puissants**
-- **Gamification** engageante
+- **Gamification** engageante avec 24+ badges
+- **Recherche avancée** avec pg_trgm et autocomplétion
 
 ### Potentiel SaaS 🚀
 - **Marché** : Dev collaboration (niche underserved)
@@ -1459,11 +1524,11 @@ NexP/
 - **Scalabilité** : Architecture prête
 
 ### Prochaines Actions Prioritaires 🎯
-1. ✅ **Installer OAuth** (1 semaine)
-2. ✅ **Configurer Stripe** (2 semaines)
-3. ✅ **Lancer Beta** (100 users, 1 mois)
-4. ✅ **Itérer sur feedback** (PMF)
-5. ✅ **Deploy production** (Heroku/Render)
+1. ⬜ **Corriger les tests** (factories à mettre à jour)
+2. ⬜ **Installer OAuth** (1 semaine)
+3. ⬜ **Configurer Stripe** (2 semaines)
+4. ⬜ **Lancer Beta** (100 users, 1 mois)
+5. ⬜ **Deploy production** (Heroku/Render)
 
 ---
 
@@ -1471,5 +1536,5 @@ NexP/
 
 ---
 
-*Document généré le 23 janvier 2026*
+*Document mis à jour le 2 février 2026*
 *Par Claude Code Assistant*

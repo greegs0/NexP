@@ -1,142 +1,128 @@
+# frozen_string_literal: true
+
+# Service pour vérifier et attribuer les badges aux utilisateurs
+#
+# Usage:
+#   BadgeService.check_and_award_badges(user)
+#
 class BadgeService
+  # Définitions des badges avec leur critère et description
+  BADGE_DEFINITIONS = {
+    # Badges de niveau
+    level: {
+      'Débutant' => { threshold: 1, description: "Bienvenue! Tu viens de rejoindre la communauté." },
+      'Apprenti' => { threshold: 5, description: "Niveau 5 atteint. Tu progresses bien!" },
+      'Intermédiaire' => { threshold: 10, description: "Niveau 10! Tu maîtrises les bases de la plateforme." },
+      'Avancé' => { threshold: 20, description: "Niveau 20. Tu es un membre avancé et expérimenté." },
+      'Expert' => { threshold: 30, description: "Niveau 30! Ton expertise est reconnue par tous." },
+      'Maître' => { threshold: 50, description: "Niveau 50. Tu es un maître incontesté!" },
+      'Légende' => { threshold: 100, description: "Niveau 100! Tu es une légende vivante de la plateforme." }
+    },
+
+    # Badges de projets créés
+    owned_projects: {
+      'Premier Projet' => { threshold: 1, description: "Tu as créé ton premier projet. C'est le début de l'aventure!" },
+      'Entrepreneur' => { threshold: 5, description: "5 projets créés! Tu as l'âme d'un entrepreneur." },
+      'Chef de Projet' => { threshold: 10, description: "10 projets à ton actif. Tu es un vrai chef de projet!" }
+    },
+
+    # Badges de participation
+    projects: {
+      'Collaborateur' => { threshold: 5, description: "Tu as participé à 5 projets. L'esprit d'équipe te définit." },
+      'Team Player' => { threshold: 10, description: "10 projets en collaboration. Tu es un joueur d'équipe exemplaire!" }
+    },
+
+    # Badges sociaux - posts
+    posts: {
+      'Première Publication' => { threshold: 1, description: "Tu as publié ton premier post. Ta voix compte!" },
+      'Blogueur' => { threshold: 10, description: "10 publications! Tu partages régulièrement tes idées." },
+      'Influenceur' => { threshold: 50, description: "50 posts publiés. Tu es une vraie source d'inspiration!" }
+    },
+
+    # Badges sociaux - commentaires
+    comments: {
+      'Commentateur' => { threshold: 20, description: "20 commentaires laissés. Tu aimes participer aux discussions." }
+    },
+
+    # Badges sociaux - followers
+    followers: {
+      'Populaire' => { threshold: 10, description: "10 personnes te suivent. Ta communauté grandit!" },
+      'Célébrité' => { threshold: 50, description: "50 followers! Tu es une célébrité sur la plateforme." }
+    },
+
+    # Badges sociaux - following
+    following: {
+      'Social' => { threshold: 10, description: "Tu suis 10 personnes. Tu aimes découvrir de nouveaux profils." }
+    },
+
+    # Badges de compétences
+    skills: {
+      'Polyvalent' => { threshold: 5, description: "5 compétences ajoutées. Tu es polyvalent et curieux!" },
+      'Expert Multi-Domaines' => { threshold: 10, description: "10 compétences maîtrisées. Un vrai couteau suisse!" }
+    },
+
+    # Badges de messages
+    sent_messages: {
+      'Communicateur' => { threshold: 50, description: "50 messages envoyés. Tu aimes échanger avec les autres." },
+      'Bavard' => { threshold: 200, description: "200 messages! La communication n'a pas de secret pour toi." }
+    }
+  }.freeze
+
   def self.check_and_award_badges(user)
     new(user).check_and_award_badges
   end
 
   def initialize(user)
     @user = user
+    @user_stats = calculate_user_stats
   end
 
   def check_and_award_badges
-    check_level_badges
-    check_project_badges
-    check_social_badges
-    check_activity_badges
+    BADGE_DEFINITIONS.each do |stat_key, badges|
+      check_badges_for_stat(stat_key, badges)
+    end
   end
 
   private
 
-  def check_level_badges
-    level_badges = {
-      'Débutant' => 1,
-      'Apprenti' => 5,
-      'Intermédiaire' => 10,
-      'Avancé' => 20,
-      'Expert' => 30,
-      'Maître' => 50,
-      'Légende' => 100
+  def calculate_user_stats
+    # Utilise les counter_cache quand disponibles pour éviter les N+1 queries
+    {
+      level: @user.level,
+      owned_projects: @user.owned_projects_count,    # counter_cache
+      projects: @user.projects.count,                 # pas de counter_cache
+      posts: @user.posts_count,                       # counter_cache
+      comments: @user.comments.count,                 # pas de counter_cache
+      followers: @user.followers_count,               # counter_cache
+      following: @user.following_count,               # counter_cache
+      skills: @user.skills.count,                     # pas de counter_cache
+      sent_messages: @user.sent_messages.count        # pas de counter_cache
     }
+  end
 
-    level_badges.each do |name, required_level|
-      next if @user.level < required_level
+  def check_badges_for_stat(stat_key, badges)
+    current_value = @user_stats[stat_key]
+    return unless current_value
 
-      badge = Badge.find_or_create_by(name: name) do |b|
-        b.description = "Atteindre le niveau #{required_level}"
-        b.xp_required = (required_level - 1) * 100
-      end
+    badges.each do |name, config|
+      next unless current_value >= config[:threshold]
 
+      badge = find_or_create_badge(name, config[:description], stat_key, config[:threshold])
       award_badge(badge)
     end
   end
 
-  def check_project_badges
-    owned_count = @user.owned_projects.count
-    participated_count = @user.projects.count
-
-    project_badges = {
-      'Premier Projet' => { owned: 1 },
-      'Entrepreneur' => { owned: 5 },
-      'Chef de Projet' => { owned: 10 },
-      'Collaborateur' => { participated: 5 },
-      'Team Player' => { participated: 10 },
-      'Vétéran' => { total: 20 }
-    }
-
-    project_badges.each do |name, requirements|
-      should_award = false
-
-      if requirements[:owned] && owned_count >= requirements[:owned]
-        should_award = true
-      elsif requirements[:participated] && participated_count >= requirements[:participated]
-        should_award = true
-      elsif requirements[:total] && (owned_count + participated_count) >= requirements[:total]
-        should_award = true
-      end
-
-      if should_award
-        badge = Badge.find_or_create_by(name: name) do |b|
-          b.description = "Badge de projet: #{name}"
-        end
-        award_badge(badge)
-      end
-    end
+  def find_or_create_badge(name, description, stat_key, threshold)
+    badge = Badge.find_or_initialize_by(name: name)
+    badge.description = description
+    badge.xp_required = calculate_xp_required(stat_key, threshold) if badge.respond_to?(:xp_required=)
+    badge.save!
+    badge
   end
 
-  def check_social_badges
-    posts_count = @user.posts.count
-    comments_count = @user.comments.count
-    followers_count = @user.followers.count
-    following_count = @user.following.count
-
-    social_badges = {
-      'Première Publication' => { posts: 1 },
-      'Blogueur' => { posts: 10 },
-      'Influenceur' => { posts: 50 },
-      'Commentateur' => { comments: 20 },
-      'Populaire' => { followers: 10 },
-      'Célébrité' => { followers: 50 },
-      'Social' => { following: 10 }
-    }
-
-    social_badges.each do |name, requirements|
-      should_award = false
-
-      if requirements[:posts] && posts_count >= requirements[:posts]
-        should_award = true
-      elsif requirements[:comments] && comments_count >= requirements[:comments]
-        should_award = true
-      elsif requirements[:followers] && followers_count >= requirements[:followers]
-        should_award = true
-      elsif requirements[:following] && following_count >= requirements[:following]
-        should_award = true
-      end
-
-      if should_award
-        badge = Badge.find_or_create_by(name: name) do |b|
-          b.description = "Badge social: #{name}"
-        end
-        award_badge(badge)
-      end
-    end
-  end
-
-  def check_activity_badges
-    skills_count = @user.skills.count
-    messages_count = @user.sent_messages.count
-
-    activity_badges = {
-      'Polyvalent' => { skills: 5 },
-      'Expert Multi-Domaines' => { skills: 10 },
-      'Communicateur' => { messages: 50 },
-      'Bavard' => { messages: 200 }
-    }
-
-    activity_badges.each do |name, requirements|
-      should_award = false
-
-      if requirements[:skills] && skills_count >= requirements[:skills]
-        should_award = true
-      elsif requirements[:messages] && messages_count >= requirements[:messages]
-        should_award = true
-      end
-
-      if should_award
-        badge = Badge.find_or_create_by(name: name) do |b|
-          b.description = "Badge d'activité: #{name}"
-        end
-        award_badge(badge)
-      end
-    end
+  def calculate_xp_required(stat_key, threshold)
+    return (threshold - 1) * 100 if stat_key == :level
+    0
   end
 
   def award_badge(badge)
@@ -147,7 +133,10 @@ class BadgeService
       earned_at: Time.current
     )
 
-    # Créer une notification
+    create_badge_notification(badge)
+  end
+
+  def create_badge_notification(badge)
     Notification.create(
       user: @user,
       actor: @user,
