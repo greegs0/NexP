@@ -68,12 +68,11 @@ Rails.application.configure do
   config.log_level = ENV.fetch("RAILS_LOG_LEVEL", "info")
 
   # Use Redis for caching in production
-  config.cache_store = :redis_cache_store, {
+  config.cache_store = :redis_cache_store,
     url: ENV.fetch('REDIS_URL', 'redis://localhost:6379/0'),
     namespace: 'nexp_cache',
     expires_in: 90.minutes,
     reconnect_attempts: 3
-  }
 
   # Use Sidekiq for background jobs
   config.active_job.queue_adapter = :sidekiq
