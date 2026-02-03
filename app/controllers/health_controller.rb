@@ -1,6 +1,6 @@
 class HealthController < ApplicationController
   # Pas besoin d'authentification pour le health check
-  skip_before_action :authenticate_user!, if: :devise_controller?
+  skip_before_action :verify_authenticity_token
 
   def show
     # Vérifier les services critiques
