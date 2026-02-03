@@ -54,6 +54,7 @@ gem "redis", ">= 4.0.1"
 
 # Sidekiq for background jobs
 gem "sidekiq", "~> 7.0"
+gem "connection_pool", "~> 2.4"  # Pin to 2.x for Sidekiq compatibility
 
 # Sentry for error monitoring (gratuit jusqu'à 5k errors/mois)
 gem "sentry-ruby"
