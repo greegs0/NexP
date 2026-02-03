@@ -97,9 +97,6 @@ class Rack::Attack
   end
 end
 
-# Utiliser Redis pour le rate limiting (partagé entre tous les serveurs)
-# En développement, Redis tourne en local. En production, utiliser REDIS_URL
-Rack::Attack.cache.store = ActiveSupport::Cache::RedisCacheStore.new(
-  url: ENV.fetch('REDIS_URL', 'redis://localhost:6379/1'),
-  namespace: 'nexp_rack_attack'
-)
+# Utiliser un memory store pour le rate limiting
+# Redis désactivé temporairement pour éviter les problèmes de déploiement
+Rack::Attack.cache.store = ActiveSupport::Cache::MemoryStore.new
