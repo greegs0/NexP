@@ -1,5 +1,5 @@
 class SitemapsController < ApplicationController
-  skip_before_action :authenticate_user!, if: -> { respond_to?(:authenticate_user!) }
+  skip_before_action :authenticate_user!, raise: false
 
   def index
     @projects = Project.where(status: %w[open in_progress]).order(updated_at: :desc).limit(1000)
