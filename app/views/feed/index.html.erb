@@ -127,9 +127,9 @@
     <!-- Colonne latérale : Suggestions et projets -->
     <div class="lg:col-span-1 space-y-4 sm:space-y-6 order-1 lg:order-2">
       <!-- Suggestions d'utilisateurs -->
-      <% if @suggested_users.any? %>
-        <div class="card animate-fade-in-up" style="animation-delay: 100ms;">
-          <h3 class="font-bold text-sm sm:text-base text-foreground mb-3 sm:mb-4">Suggestions pour toi</h3>
+      <div class="card animate-fade-in-up" style="animation-delay: 100ms;">
+        <h3 class="font-bold text-sm sm:text-base text-foreground mb-3 sm:mb-4">Suggestions pour toi</h3>
+        <% if @suggested_users.any? %>
           <div class="flex lg:flex-col gap-3 sm:gap-4 overflow-x-auto lg:overflow-visible pb-2 lg:pb-0 scrollbar-hide">
             <% @suggested_users.each do |user| %>
               <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0 lg:flex-shrink">
@@ -149,13 +149,19 @@
           <%= link_to users_path, class: "text-primary hover:text-primary/80 text-xs sm:text-sm font-medium block mt-3 sm:mt-4 hidden lg:block" do %>
             Voir plus →
           <% end %>
-        </div>
-      <% end %>
+        <% else %>
+          <p class="text-sm text-muted-foreground mb-3">Ajoute des compétences à ton profil pour voir des suggestions.</p>
+          <%= link_to users_path, class: "btn-secondary text-xs inline-flex items-center gap-2" do %>
+            Explorer les développeurs
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+          <% end %>
+        <% end %>
+      </div>
 
       <!-- Projets récents - Hidden on mobile, visible on lg screens -->
-      <% if @recent_projects.any? %>
-        <div class="card animate-fade-in-up hidden lg:block" style="animation-delay: 200ms;">
-          <h3 class="font-bold text-foreground mb-4">Projets récents</h3>
+      <div class="card animate-fade-in-up hidden lg:block" style="animation-delay: 200ms;">
+        <h3 class="font-bold text-foreground mb-4">Projets récents</h3>
+        <% if @recent_projects.any? %>
           <div class="space-y-4">
             <% @recent_projects.each do |project| %>
               <%= link_to project_path(project), class: "block group" do %>
@@ -176,8 +182,14 @@
           <%= link_to projects_path, class: "text-primary hover:text-primary/80 text-sm font-medium block mt-4" do %>
             Voir tous les projets →
           <% end %>
-        </div>
-      <% end %>
+        <% else %>
+          <p class="text-sm text-muted-foreground mb-3">Aucun projet pour le moment.</p>
+          <%= link_to new_project_path, class: "btn-primary text-xs inline-flex items-center gap-2" do %>
+            Créer un projet
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+          <% end %>
+        <% end %>
+      </div>
     </div>
   </div>
 </div>
