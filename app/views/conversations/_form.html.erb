@@ -1,12 +1,25 @@
-<%= form_with(url: conversation_messages_path(recipient), scope: :message, id: "message_form", class: "flex gap-3", data: { controller: "message-form", message_form_target: "form" }) do |form| %>
-  <%= form.text_area :content,
-    rows: 2,
-    class: "input flex-1",
-    placeholder: "Écris ton message... (Entrée pour envoyer, Shift+Entrée pour nouvelle ligne)",
-    required: true,
-    data: {
-      message_form_target: "textarea",
-      action: "keydown->message-form#handleKeydown"
-    } %>
-  <%= form.submit "Envoyer", class: "btn-primary self-end" %>
-<% end %>
+<div id="message_form_container">
+  <% if current_user.can_send_message? %>
+    <%= form_with(url: conversation_messages_path(recipient), scope: :message, id: "message_form", class: "flex flex-col sm:flex-row gap-2 sm:gap-3", html: { autocomplete: "off" }, data: { controller: "message-form", message_form_target: "form" }) do |form| %>
+      <%= form.text_area :content,
+        rows: 2,
+        class: "input flex-1 text-sm sm:text-base",
+        placeholder: "Écris ton message...",
+        required: true,
+        autocomplete: "off",
+        data: {
+          message_form_target: "textarea",
+          action: "keydown->message-form#handleKeydown"
+        } %>
+      <%= form.submit "Envoyer", class: "btn-primary self-end sm:self-end w-full sm:w-auto", data: { action: "click->message-form#submit" } %>
+    <% end %>
+    <% if current_user.free_plan? %>
+      <p class="text-xs text-muted-foreground mt-2"><%= current_user.remaining_messages %>/<%= User::FREE_MESSAGE_LIMIT %> messages restants ce mois</p>
+    <% end %>
+  <% else %>
+    <div class="p-3 sm:p-4 bg-destructive/10 border border-destructive/20 rounded-lg text-center">
+      <p class="text-xs sm:text-sm text-destructive mb-1 sm:mb-2">Limite atteinte : <%= User::FREE_MESSAGE_LIMIT %> messages/mois en plan gratuit</p>
+      <p class="text-xs text-muted-foreground">Plan Builder bientôt disponible</p>
+    </div>
+  <% end %>
+</div>

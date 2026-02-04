@@ -30,6 +30,9 @@ Rails.application.routes.draw do
   # Feed
   get 'feed', to: 'feed#index', as: :feed
 
+  # Badges
+  resources :badges, only: [:index]
+
   # Skills management
   resources :skills, only: [:index, :show] do
     collection do
@@ -146,4 +149,7 @@ Rails.application.routes.draw do
   # Health checks
   get "up" => "rails/health#show", as: :rails_health_check
   get "health" => "health#show", as: :health_check
+
+  # SEO
+  get "sitemap.xml" => "sitemaps#index", as: :sitemap, defaults: { format: :xml }
 end

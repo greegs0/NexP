@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_02_03_110556) do
+ActiveRecord::Schema[7.1].define(version: 2026_02_04_113030) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "plpgsql"
@@ -50,6 +50,8 @@ ActiveRecord::Schema[7.1].define(version: 2026_02_03_110556) do
     t.integer "xp_required"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "category"
+    t.index ["category"], name: "index_badges_on_category"
     t.index ["name"], name: "index_badges_on_name"
     t.index ["xp_required"], name: "index_badges_on_xp_required"
   end
@@ -285,6 +287,9 @@ ActiveRecord::Schema[7.1].define(version: 2026_02_03_110556) do
     t.string "unconfirmed_email"
     t.string "confirmation_code"
     t.datetime "confirmation_code_sent_at"
+    t.string "plan", default: "free", null: false
+    t.integer "messages_count_this_month", default: 0, null: false
+    t.datetime "messages_reset_at"
     t.index ["available"], name: "index_users_on_available"
     t.index ["confirmation_code"], name: "index_users_on_confirmation_code"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
@@ -293,6 +298,7 @@ ActiveRecord::Schema[7.1].define(version: 2026_02_03_110556) do
     t.index ["github_username"], name: "index_users_on_github_username"
     t.index ["gitlab_username"], name: "index_users_on_gitlab_username"
     t.index ["level"], name: "index_users_on_level"
+    t.index ["plan"], name: "index_users_on_plan"
     t.index ["provider", "uid"], name: "index_users_on_provider_and_uid", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["username"], name: "index_users_on_username", unique: true

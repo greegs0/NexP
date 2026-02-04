@@ -26,32 +26,44 @@
   <!-- Message Form -->
   <div class="card">
     <h2 class="text-lg font-bold text-primary mb-4">Écrire un message</h2>
-    <%= form_with(model: [@project, @message], id: "message_form", class: "space-y-4") do |f| %>
-      <% if @message.errors.any? %>
-        <div class="p-4 bg-error bg-opacity-10 border border-error rounded-lg">
-          <h3 class="font-bold text-error mb-2">
-            <%= pluralize(@message.errors.count, "erreur") %> empêche l'envoi du message :
-          </h3>
-          <ul class="list-disc list-inside text-sm text-error">
-            <% @message.errors.full_messages.each do |msg| %>
-              <li><%= msg %></li>
-            <% end %>
-          </ul>
+    <% if current_user.can_send_message? %>
+      <%= form_with(model: [@project, @message], id: "message_form", class: "space-y-4") do |f| %>
+        <% if @message.errors.any? %>
+          <div class="p-4 bg-error bg-opacity-10 border border-error rounded-lg">
+            <h3 class="font-bold text-error mb-2">
+              <%= pluralize(@message.errors.count, "erreur") %> empêche l'envoi du message :
+            </h3>
+            <ul class="list-disc list-inside text-sm text-error">
+              <% @message.errors.full_messages.each do |msg| %>
+                <li><%= msg %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+
+        <div>
+          <%= f.label :content, "Message", class: "block text-sm font-medium text-secondary mb-2" %>
+          <%= f.text_area :content,
+              rows: 4,
+              class: "input",
+              placeholder: "Écrivez votre message...",
+              required: true %>
+        </div>
+
+        <div class="flex items-center justify-between gap-3">
+          <div class="flex gap-3">
+            <%= f.submit "Envoyer", class: "btn-accent" %>
+            <%= link_to "Annuler", project_path(@project), class: "btn-secondary" %>
+          </div>
+          <% if current_user.free_plan? %>
+            <span class="text-xs text-muted-foreground"><%= current_user.remaining_messages %>/<%= User::FREE_MESSAGE_LIMIT %> messages restants</span>
+          <% end %>
         </div>
       <% end %>
-
-      <div>
-        <%= f.label :content, "Message", class: "block text-sm font-medium text-secondary mb-2" %>
-        <%= f.text_area :content,
-            rows: 4,
-            class: "input",
-            placeholder: "Écrivez votre message...",
-            required: true %>
-      </div>
-
-      <div class="flex gap-3">
-        <%= f.submit "Envoyer", class: "btn-accent" %>
-        <%= link_to "Annuler", project_path(@project), class: "btn-secondary" %>
+    <% else %>
+      <div class="p-4 bg-destructive/10 border border-destructive/20 rounded-lg text-center">
+        <p class="text-sm text-destructive mb-2">Limite atteinte : <%= User::FREE_MESSAGE_LIMIT %> messages/mois en plan gratuit</p>
+        <p class="text-xs text-muted-foreground">Plan Builder bientôt disponible</p>
       </div>
     <% end %>
   </div>

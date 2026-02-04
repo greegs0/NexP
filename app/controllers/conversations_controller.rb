@@ -1,8 +1,10 @@
 class ConversationsController < ApplicationController
   include Broadcastable
+  include PlanLimits
 
   before_action :authenticate_user!
   before_action :set_recipient, only: [:show, :create]
+  before_action :check_message_limit!, only: [:create]
 
   def index
     # Récupérer tous les utilisateurs avec qui on a eu des conversations
@@ -28,6 +30,9 @@ class ConversationsController < ApplicationController
     @message.recipient = @recipient
 
     if @message.save
+      # Incrémenter le compteur de messages pour le plan
+      current_user.increment_message_count!
+
       # Créer et broadcaster une notification
       notification = Notification.create(
         user: @recipient,
@@ -50,7 +55,7 @@ class ConversationsController < ApplicationController
     else
       @messages = Message.conversation_between(current_user, @recipient).includes(:sender)
       respond_to do |format|
-        format.turbo_stream { render turbo_stream: turbo_stream.replace('message_form', partial: 'form', locals: { recipient: @recipient, message: @message }) }
+        format.turbo_stream { render turbo_stream: turbo_stream.replace('message_form_container', partial: 'form', locals: { recipient: @recipient, message: @message }) }
         format.html { render :show, status: :unprocessable_entity }
       end
     end

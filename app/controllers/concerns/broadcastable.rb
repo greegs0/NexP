@@ -6,6 +6,7 @@ module Broadcastable
   def broadcast_notification(notification)
     NotificationChannel.broadcast_to(notification.user, {
       id: notification.id,
+      user_id: notification.user.id,
       actor_name: notification.actor.display_name,
       message: notification.message,
       created_at: notification.created_at,

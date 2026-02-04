@@ -1,7 +1,10 @@
 class MessagesController < ApplicationController
+  include PlanLimits
+
   before_action :authenticate_user!
   before_action :set_project
   before_action :authorize_member!
+  before_action :check_message_limit!, only: [:create]
 
   def index
     @messages = @project.messages
@@ -21,6 +24,9 @@ class MessagesController < ApplicationController
     @message.sender = current_user
 
     if @message.save
+      # Incrémenter le compteur de messages pour le plan
+      current_user.increment_message_count!
+
       respond_to do |format|
         format.html { redirect_to project_messages_path(@project), notice: 'Message envoyé.' }
         format.turbo_stream

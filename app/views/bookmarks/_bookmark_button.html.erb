@@ -1,0 +1,38 @@
+<%# Bouton favoris générique pour projets et posts %>
+<%# Paramètres: bookmarkable (Project ou Post), style (:icon, :button) %>
+<% style ||= :icon %>
+<% is_bookmarked = user_signed_in? && current_user.bookmarks.exists?(bookmarkable: bookmarkable) %>
+<% dom_id = "bookmark_#{bookmarkable.class.name.downcase}_#{bookmarkable.id}" %>
+
+<%= turbo_frame_tag dom_id do %>
+  <% if user_signed_in? %>
+    <% if bookmarkable.is_a?(Project) %>
+      <% bookmark_path_params = { project_id: bookmarkable.id } %>
+    <% else %>
+      <% bookmark_path_params = { post_id: bookmarkable.id } %>
+    <% end %>
+
+    <% if style == :button %>
+      <%= button_to bookmarks_path(bookmark_path_params),
+          method: :post,
+          class: "btn-secondary inline-flex items-center gap-2 #{is_bookmarked ? 'text-primary' : ''}",
+          title: is_bookmarked ? "Retirer des favoris" : "Ajouter aux favoris",
+          data: { turbo_frame: dom_id } do %>
+        <svg class="w-4 h-4" fill="<%= is_bookmarked ? 'currentColor' : 'none' %>" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path>
+        </svg>
+        <%= is_bookmarked ? "Favori" : "Favoris" %>
+      <% end %>
+    <% else %>
+      <%= button_to bookmarks_path(bookmark_path_params),
+          method: :post,
+          class: "p-1.5 rounded-lg hover:bg-secondary transition-colors #{is_bookmarked ? 'text-primary' : 'text-muted-foreground hover:text-primary'}",
+          title: is_bookmarked ? "Retirer des favoris" : "Ajouter aux favoris",
+          data: { turbo_frame: dom_id } do %>
+        <svg class="w-5 h-5" fill="<%= is_bookmarked ? 'currentColor' : 'none' %>" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path>
+        </svg>
+      <% end %>
+    <% end %>
+  <% end %>
+<% end %>

@@ -16,11 +16,21 @@ class BookmarksController < ApplicationController
 
     if @bookmark.new_record?
       @bookmark.save
-      redirect_back(fallback_location: root_path, notice: 'Ajouté aux favoris.')
+      @is_bookmarked = true
     else
-      # Remove bookmark si déjà existant
       @bookmark.destroy
-      redirect_back(fallback_location: root_path, notice: 'Retiré des favoris.')
+      @is_bookmarked = false
+    end
+
+    respond_to do |format|
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.replace(
+          "bookmark_#{@bookmarkable.class.name.downcase}_#{@bookmarkable.id}",
+          partial: "bookmarks/bookmark_button",
+          locals: { bookmarkable: @bookmarkable, style: params[:style]&.to_sym || :icon }
+        )
+      end
+      format.html { redirect_back(fallback_location: root_path, notice: @is_bookmarked ? 'Ajouté aux favoris.' : 'Retiré des favoris.') }
     end
   end
 

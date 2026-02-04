@@ -1,1 +1,10 @@
-# See https://www.robotstxt.org/robotstxt.html for documentation on how to use the robots.txt file
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Allow: /
+
+# Disallow admin and sensitive areas
+Disallow: /rails/
+Disallow: /admin/
+
+# Sitemap
+Sitemap: https://nexp.dev/sitemap.xml

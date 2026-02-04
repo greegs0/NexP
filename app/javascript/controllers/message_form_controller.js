@@ -6,10 +6,32 @@ export default class extends Controller {
 
   connect() {
     // Focus automatique sur le textarea
-    this.textareaTarget.focus()
+    if (this.hasTextareaTarget) {
+      this.textareaTarget.focus()
+      // S'assurer que le textarea est vide à la connexion (après remplacement Turbo)
+      // Le navigateur peut parfois remplir avec l'autocomplete
+      this.textareaTarget.value = ''
+    }
 
     // Scroll vers le bas quand le formulaire est reconnecté (après Turbo Stream)
     this.scrollToBottom()
+
+    // Écouter les événements Turbo sur le document pour ce formulaire
+    this.boundHandleSubmitEnd = this.handleSubmitEnd.bind(this)
+    document.addEventListener('turbo:submit-end', this.boundHandleSubmitEnd)
+  }
+
+  disconnect() {
+    document.removeEventListener('turbo:submit-end', this.boundHandleSubmitEnd)
+  }
+
+  handleSubmitEnd(event) {
+    // Vérifie que c'est notre formulaire qui a été soumis
+    if (this.hasFormTarget && event.target === this.formTarget && event.detail.success) {
+      this.textareaTarget.value = ''
+      this.textareaTarget.focus()
+      setTimeout(() => this.scrollToBottom(), 100)
+    }
   }
 
   handleKeydown(event) {
@@ -21,20 +43,22 @@ export default class extends Controller {
     // Si Shift + Entrée, on laisse le comportement par défaut (retour à la ligne)
   }
 
+  // Appelé quand le bouton Envoyer est cliqué
+  submit(event) {
+    const content = this.textareaTarget.value.trim()
+    if (content.length === 0) {
+      event.preventDefault()
+      return
+    }
+    // Laisser Turbo gérer la soumission et le clear
+  }
+
   submitForm() {
     // Vérifie que le textarea n'est pas vide
     const content = this.textareaTarget.value.trim()
-    if (content.length > 0) {
-      // Soumet le formulaire (les données sont capturées à ce moment)
+    if (content.length > 0 && this.hasFormTarget) {
+      // Soumet le formulaire via Turbo
       this.formTarget.requestSubmit()
-
-      // Vide immédiatement le textarea APRÈS la capture des données
-      // pour une UX instantanée
-      this.textareaTarget.value = ''
-      this.textareaTarget.focus()
-
-      // Scroll vers le bas après l'envoi
-      setTimeout(() => this.scrollToBottom(), 200)
     }
   }
 

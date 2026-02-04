@@ -4,26 +4,23 @@
   <meta charset="UTF-8">
   <title>422 - Demande Invalide | NexP</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     :root {
       --background: #0a0a0a;
       --foreground: #fafafa;
       --card: #141414;
-      --primary: #7a8f5c;
+      --primary: #8fa66b;
       --warning: #f59e0b;
       --muted-foreground: #737373;
       --border: #262626;
-      --radius: 0.25rem;
+      --radius: 0.5rem;
     }
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       background-color: var(--background);
@@ -37,84 +34,102 @@
     }
 
     .container {
-      max-width: 500px;
+      max-width: 600px;
       text-align: center;
     }
 
     .logo {
-      font-size: 1.25rem;
-      font-weight: 600;
+      font-size: 1.5rem;
+      font-weight: 700;
       letter-spacing: -0.025em;
-      margin-bottom: 3rem;
+      margin-bottom: 2rem;
     }
 
-    .logo-accent {
-      color: var(--primary);
-    }
+    .logo-accent { color: var(--primary); }
 
     .error-code {
-      font-size: 6rem;
-      font-weight: 700;
-      color: var(--warning);
+      font-size: 8rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--warning) 0%, #d97706 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
       line-height: 1;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1rem;
       letter-spacing: -0.05em;
     }
 
     h1 {
-      font-size: 1.5rem;
-      font-weight: 600;
+      font-size: 1.75rem;
+      font-weight: 700;
       margin-bottom: 1rem;
       color: var(--foreground);
-      letter-spacing: -0.025em;
     }
 
-    p {
-      font-size: 1rem;
+    .subtitle {
+      font-size: 1.125rem;
       color: var(--muted-foreground);
       margin-bottom: 2rem;
-      line-height: 1.6;
     }
+
+    .code-block {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      margin: 2rem 0;
+      text-align: left;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.875rem;
+      overflow-x: auto;
+    }
+
+    .code-comment { color: #6a737d; }
+    .code-keyword { color: #ff7b72; }
+    .code-string { color: var(--primary); }
+    .code-function { color: #d2a8ff; }
+    .code-warning { color: var(--warning); }
 
     .btn-primary {
       display: inline-flex;
       align-items: center;
-      justify-content: center;
+      gap: 0.5rem;
       background-color: var(--primary);
-      color: var(--foreground);
-      padding: 0.75rem 2rem;
+      color: #0a0a0a;
+      padding: 0.875rem 2rem;
       border-radius: var(--radius);
       text-decoration: none;
-      font-weight: 500;
-      transition: all 0.3s ease;
+      font-weight: 600;
+      transition: all 0.2s ease;
       border: none;
       cursor: pointer;
       font-size: 1rem;
     }
 
     .btn-primary:hover {
-      opacity: 0.9;
-      transform: scale(1.05);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(143, 166, 107, 0.3);
     }
 
     .btn-secondary {
       display: inline-flex;
       align-items: center;
-      justify-content: center;
+      gap: 0.5rem;
       background-color: transparent;
       color: var(--foreground);
-      padding: 0.75rem 2rem;
+      padding: 0.875rem 2rem;
       border-radius: var(--radius);
       border: 1px solid var(--border);
       text-decoration: none;
       font-weight: 500;
-      transition: all 0.3s ease;
+      transition: all 0.2s ease;
       cursor: pointer;
       font-size: 1rem;
     }
 
     .btn-secondary:hover {
       background-color: var(--card);
+      border-color: var(--muted-foreground);
     }
 
     .buttons {
@@ -124,11 +139,32 @@
       flex-wrap: wrap;
     }
 
-    .tagline {
+    .fun-fact {
       margin-top: 3rem;
+      padding: 1rem;
+      background: var(--card);
+      border-radius: var(--radius);
+      border-left: 3px solid var(--warning);
+    }
+
+    .fun-fact-title {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--warning);
+      margin-bottom: 0.5rem;
+    }
+
+    .fun-fact-text {
       font-size: 0.875rem;
       color: var(--muted-foreground);
-      opacity: 0.6;
+    }
+
+    .tagline {
+      margin-top: 2rem;
+      font-size: 0.875rem;
+      color: var(--muted-foreground);
+      opacity: 0.5;
     }
   </style>
 </head>
@@ -138,14 +174,37 @@
     <div class="logo">NexP<span class="logo-accent">.</span></div>
 
     <div class="error-code">422</div>
-    <h1>Demande invalide</h1>
-    <p>
-      La requête n'a pas pu être traitée. Vérifie les informations et réessaie.
-    </p>
+    <h1>TypeError: Cannot process bullshit</h1>
+    <p class="subtitle">Ta requête était syntaxiquement correcte, mais sémantiquement... discutable.</p>
+
+    <div class="code-block">
+      <span class="code-comment"># Validation de la requête</span><br>
+      <span class="code-keyword">if</span> request.<span class="code-function">valid?</span><br>
+      &nbsp;&nbsp;<span class="code-function">process</span>(request)<br>
+      <span class="code-keyword">else</span><br>
+      &nbsp;&nbsp;<span class="code-comment"># Le token CSRF a expiré pendant ta pause café</span><br>
+      &nbsp;&nbsp;<span class="code-keyword">raise</span> <span class="code-warning">UnprocessableEntity</span>, <span class="code-string">"Nice try, hacker"</span><br>
+      <span class="code-keyword">end</span>
+    </div>
 
     <div class="buttons">
-      <button onclick="window.history.back()" class="btn-secondary">Retour</button>
-      <a href="/" class="btn-primary">Accueil</a>
+      <button onclick="window.history.back()" class="btn-secondary">
+        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+        </svg>
+        Retour
+      </button>
+      <a href="/" class="btn-primary">
+        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+        </svg>
+        Retour à l'accueil
+      </a>
+    </div>
+
+    <div class="fun-fact">
+      <div class="fun-fact-title">Causes possibles</div>
+      <div class="fun-fact-text">Token CSRF expiré, formulaire soumis deux fois, ou tu as gardé l'onglet ouvert pendant 3 jours. On ne juge pas.</div>
     </div>
 
     <p class="tagline">Build. Together.</p>

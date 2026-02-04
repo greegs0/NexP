@@ -1,14 +1,67 @@
 <!DOCTYPE html>
 <html lang="fr">
   <head>
+    <meta charset="UTF-8">
     <title><%= content_for?(:page_title) ? "#{yield(:page_title)} - NexP" : 'NexP - Build. Together.' %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="description" content="NexP connecte les porteurs d'idées avec les développeurs, designers et builders qui cherchent un projet.">
+    <meta name="description" content="<%= content_for?(:meta_description) ? yield(:meta_description) : 'NexP connecte les porteurs d\'idées avec les développeurs, designers et builders qui cherchent un projet. Trouvez votre équipe, lancez votre projet.' %>">
+    <meta name="keywords" content="développeurs, designers, projets, collaboration, startup, freelance, équipe, NexP">
+    <meta name="author" content="NexP">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="<%= request.original_url %>">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <meta name="theme-color" content="#8fa66b">
+    <meta name="msapplication-TileColor" content="#0a0a0a">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="<%= request.original_url %>">
+    <meta property="og:title" content="<%= content_for?(:page_title) ? "#{yield(:page_title)} - NexP" : 'NexP - Build. Together.' %>">
+    <meta property="og:description" content="<%= content_for?(:meta_description) ? yield(:meta_description) : 'NexP connecte les porteurs d\'idées avec les développeurs, designers et builders qui cherchent un projet.' %>">
+    <meta property="og:image" content="<%= content_for?(:og_image) ? yield(:og_image) : "#{request.base_url}/og-image.png" %>">
+    <meta property="og:site_name" content="NexP">
+    <meta property="og:locale" content="fr_FR">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="<%= request.original_url %>">
+    <meta name="twitter:title" content="<%= content_for?(:page_title) ? "#{yield(:page_title)} - NexP" : 'NexP - Build. Together.' %>">
+    <meta name="twitter:description" content="<%= content_for?(:meta_description) ? yield(:meta_description) : 'NexP connecte les porteurs d\'idées avec les développeurs, designers et builders qui cherchent un projet.' %>">
+    <meta name="twitter:image" content="<%= content_for?(:og_image) ? yield(:og_image) : "#{request.base_url}/og-image.png" %>">
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "NexP",
+      "description": "Plateforme de collaboration pour développeurs, designers et entrepreneurs",
+      "url": "<%= request.base_url %>",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Web",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "EUR"
+      }
+    }
+    </script>
+
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
+    <% if user_signed_in? %>
+      <meta name="current-user-id" content="<%= current_user.id %>">
+    <% end %>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" as="style">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
@@ -17,6 +70,9 @@
   </head>
 
   <body data-controller="sidebar" class="bg-background text-foreground">
+    <!-- Animated Background - Global -->
+    <%= render 'shared/animated_background' %>
+
     <% if user_signed_in? %>
       <%= render 'shared/sidebar' %>
 
@@ -80,7 +136,7 @@
               </button>
 
               <!-- Panneau notifications déroulant -->
-              <div data-notifications-panel-target="panel" class="hidden absolute right-0 top-full mt-2 w-80 bg-card border border-border rounded-lg shadow-xl z-50 overflow-hidden">
+              <div data-notifications-panel-target="panel" class="notifications-panel hidden absolute right-0 top-full mt-2 w-80 border border-border rounded-lg shadow-xl z-50 overflow-hidden">
                 <div class="p-3 border-b border-border flex items-center justify-between">
                   <h3 class="font-semibold text-foreground">Notifications</h3>
                   <%= link_to "Tout voir", notifications_path, class: "text-xs text-primary hover:text-primary/80" %>

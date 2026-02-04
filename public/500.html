@@ -4,26 +4,23 @@
   <meta charset="UTF-8">
   <title>500 - Erreur Serveur | NexP</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     :root {
       --background: #0a0a0a;
       --foreground: #fafafa;
       --card: #141414;
-      --primary: #7a8f5c;
-      --destructive: #dc2626;
+      --primary: #8fa66b;
+      --destructive: #ef4444;
       --muted-foreground: #737373;
       --border: #262626;
-      --radius: 0.25rem;
+      --radius: 0.5rem;
     }
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       background-color: var(--background);
@@ -37,61 +34,121 @@
     }
 
     .container {
-      max-width: 500px;
+      max-width: 600px;
       text-align: center;
     }
 
     .logo {
-      font-size: 1.25rem;
-      font-weight: 600;
+      font-size: 1.5rem;
+      font-weight: 700;
       letter-spacing: -0.025em;
-      margin-bottom: 3rem;
+      margin-bottom: 2rem;
     }
 
-    .logo-accent {
-      color: var(--primary);
-    }
+    .logo-accent { color: var(--primary); }
 
     .error-code {
-      font-size: 6rem;
-      font-weight: 700;
-      color: var(--destructive);
+      font-size: 8rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--destructive) 0%, #dc2626 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
       line-height: 1;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1rem;
       letter-spacing: -0.05em;
     }
 
     h1 {
-      font-size: 1.5rem;
-      font-weight: 600;
+      font-size: 1.75rem;
+      font-weight: 700;
       margin-bottom: 1rem;
       color: var(--foreground);
-      letter-spacing: -0.025em;
     }
 
-    p {
-      font-size: 1rem;
+    .subtitle {
+      font-size: 1.125rem;
       color: var(--muted-foreground);
       margin-bottom: 2rem;
-      line-height: 1.6;
+    }
+
+    .terminal {
+      background: #1a1a1a;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      margin: 2rem 0;
+      text-align: left;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      overflow-x: auto;
+    }
+
+    .terminal-header {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .terminal-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    .dot-red { background: #ff5f56; }
+    .dot-yellow { background: #ffbd2e; }
+    .dot-green { background: #27ca40; }
+
+    .terminal-line { color: var(--muted-foreground); margin-bottom: 0.25rem; }
+    .terminal-error { color: var(--destructive); }
+    .terminal-prompt { color: var(--primary); }
+    .terminal-blink {
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0; }
     }
 
     .btn-primary {
       display: inline-flex;
       align-items: center;
-      justify-content: center;
+      gap: 0.5rem;
       background-color: var(--primary);
-      color: var(--foreground);
-      padding: 0.75rem 2rem;
+      color: #0a0a0a;
+      padding: 0.875rem 2rem;
       border-radius: var(--radius);
       text-decoration: none;
-      font-weight: 500;
-      transition: all 0.3s ease;
+      font-weight: 600;
+      transition: all 0.2s ease;
     }
 
     .btn-primary:hover {
-      opacity: 0.9;
-      transform: scale(1.05);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(143, 166, 107, 0.3);
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background-color: transparent;
+      color: var(--foreground);
+      padding: 0.875rem 2rem;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+
+    .btn-secondary:hover {
+      background-color: var(--card);
+      border-color: var(--muted-foreground);
     }
 
     .buttons {
@@ -101,11 +158,32 @@
       flex-wrap: wrap;
     }
 
-    .tagline {
+    .fun-fact {
       margin-top: 3rem;
+      padding: 1rem;
+      background: var(--card);
+      border-radius: var(--radius);
+      border-left: 3px solid var(--destructive);
+    }
+
+    .fun-fact-title {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--destructive);
+      margin-bottom: 0.5rem;
+    }
+
+    .fun-fact-text {
       font-size: 0.875rem;
       color: var(--muted-foreground);
-      opacity: 0.6;
+    }
+
+    .tagline {
+      margin-top: 2rem;
+      font-size: 0.875rem;
+      color: var(--muted-foreground);
+      opacity: 0.5;
     }
   </style>
 </head>
@@ -115,16 +193,45 @@
     <div class="logo">NexP<span class="logo-accent">.</span></div>
 
     <div class="error-code">500</div>
-    <h1>Erreur serveur</h1>
-    <p>
-      Une erreur inattendue s'est produite. Notre équipe a été notifiée et travaille sur le problème.
-    </p>
+    <h1>Houston, we have a problem</h1>
+    <p class="subtitle">Le serveur a décidé de prendre une pause café non autorisée.</p>
 
-    <div class="buttons">
-      <a href="/" class="btn-primary">Retour à l'accueil</a>
+    <div class="terminal">
+      <div class="terminal-header">
+        <div class="terminal-dot dot-red"></div>
+        <div class="terminal-dot dot-yellow"></div>
+        <div class="terminal-dot dot-green"></div>
+      </div>
+      <div class="terminal-line">$ rails server</div>
+      <div class="terminal-line">=> Booting Puma</div>
+      <div class="terminal-line">=> Rails 7.1.0 application starting in production</div>
+      <div class="terminal-error">ERROR: undefined method `work_properly' for Server</div>
+      <div class="terminal-error">HINT: Have you tried turning it off and on again?</div>
+      <div class="terminal-line">&nbsp;</div>
+      <div class="terminal-line"><span class="terminal-prompt">$</span> <span class="terminal-blink">_</span></div>
     </div>
 
-    <p class="tagline">Build. Together.</p>
+    <div class="buttons">
+      <a href="javascript:location.reload()" class="btn-primary">
+        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+        </svg>
+        Réessayer
+      </a>
+      <a href="/" class="btn-secondary">
+        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+        </svg>
+        Retour à l'accueil
+      </a>
+    </div>
+
+    <div class="fun-fact">
+      <div class="fun-fact-title">Pendant ce temps...</div>
+      <div class="fun-fact-text">Notre équipe de hamsters qui fait tourner les serveurs a été prévenue. Ils pédalent aussi vite que possible pour résoudre le problème.</div>
+    </div>
+
+    <p class="tagline">Build. Together. (quand ça marche)</p>
   </div>
 </body>
 </html>

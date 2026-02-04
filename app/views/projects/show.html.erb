@@ -2,21 +2,21 @@
 
 <div class="max-w-7xl mx-auto">
   <!-- Header -->
-  <div class="mb-8 animate-fade-in-up">
-    <div class="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-6">
+  <div class="mb-4 sm:mb-8 animate-fade-in-up">
+    <div class="flex flex-col md:flex-row md:items-start justify-between gap-3 sm:gap-4 mb-4 sm:mb-6">
       <div class="flex-1">
-        <div class="flex items-center gap-3 mb-3">
-          <span class="px-3 py-1 text-xs rounded-full font-medium <%= %w[open in_progress].include?(@project.status) ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground' %>">
+        <div class="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3 flex-wrap">
+          <span class="px-2 sm:px-3 py-1 text-xs rounded-full font-medium <%= %w[open in_progress].include?(@project.status) ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground' %>">
             <%= @project.status.titleize %>
           </span>
-          <span class="px-3 py-1 text-xs rounded-full font-medium bg-secondary text-secondary-foreground">
+          <span class="px-2 sm:px-3 py-1 text-xs rounded-full font-medium bg-secondary text-secondary-foreground">
             <%= @project.visibility.titleize %>
           </span>
         </div>
-        <h1 class="text-3xl md:text-4xl font-bold text-foreground tracking-tight mb-2">
+        <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground tracking-tight mb-1 sm:mb-2">
           <%= @project.title %><span class="text-primary">.</span>
         </h1>
-        <p class="text-muted-foreground">
+        <p class="text-sm sm:text-base text-muted-foreground">
           Par <%= link_to @project.owner.display_name, user_path(@project.owner), class: "text-primary hover:text-primary/80" %>
           <% if @is_owner %>
             <span class="ml-2 badge badge-primary text-xs">Créateur</span>
@@ -24,7 +24,10 @@
         </p>
       </div>
 
-      <div class="flex flex-wrap gap-3">
+      <div class="flex flex-wrap gap-2 sm:gap-3">
+        <!-- Bookmark button - visible pour tous -->
+        <%= render "bookmarks/bookmark_button", bookmarkable: @project, style: :button %>
+
         <% if @is_owner %>
           <%= link_to edit_project_path(@project), class: "btn-primary inline-flex items-center gap-2" do %>
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -84,29 +87,29 @@
     </div>
   </div>
 
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
     <!-- Colonne principale -->
-    <div class="lg:col-span-2 space-y-6">
+    <div class="lg:col-span-2 space-y-4 sm:space-y-6">
       <!-- Description -->
       <div class="card animate-fade-in-up" style="animation-delay: 100ms;">
-        <div class="flex items-center gap-2 mb-4">
-          <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="flex items-center gap-2 mb-3 sm:mb-4">
+          <svg class="w-4 h-4 sm:w-5 sm:h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
           </svg>
-          <h2 class="text-xl font-bold text-foreground">Description</h2>
+          <h2 class="text-lg sm:text-xl font-bold text-foreground">Description</h2>
         </div>
-        <div class="text-muted-foreground prose prose-sm max-w-none prose-invert">
+        <div class="text-sm sm:text-base text-muted-foreground prose prose-sm max-w-none prose-invert">
           <%= simple_format(@project.description) %>
         </div>
       </div>
 
       <!-- Compétences requises -->
       <div class="card animate-fade-in-up" style="animation-delay: 150ms;">
-        <div class="flex items-center gap-2 mb-4">
-          <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="flex items-center gap-2 mb-3 sm:mb-4">
+          <svg class="w-4 h-4 sm:w-5 sm:h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
           </svg>
-          <h2 class="text-xl font-bold text-foreground">Compétences requises</h2>
+          <h2 class="text-lg sm:text-xl font-bold text-foreground">Compétences requises</h2>
         </div>
         <% if @project_skills.any? %>
           <div class="space-y-4">
@@ -130,13 +133,13 @@
 
       <!-- Calendrier -->
       <div class="card animate-fade-in-up" style="animation-delay: 200ms;">
-        <div class="flex items-center gap-2 mb-4">
-          <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="flex items-center gap-2 mb-3 sm:mb-4">
+          <svg class="w-4 h-4 sm:w-5 sm:h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
           </svg>
-          <h2 class="text-xl font-bold text-foreground">Calendrier</h2>
+          <h2 class="text-lg sm:text-xl font-bold text-foreground">Calendrier</h2>
         </div>
-        <div class="space-y-3 text-muted-foreground">
+        <div class="space-y-2 sm:space-y-3 text-sm sm:text-base text-muted-foreground">
           <% if @project.start_date %>
             <p class="flex items-center gap-2">
               <span class="text-foreground font-medium">Début :</span>
@@ -163,27 +166,27 @@
     </div>
 
     <!-- Sidebar -->
-    <div class="space-y-6">
+    <div class="space-y-4 sm:space-y-6">
       <!-- Équipe -->
       <div class="card animate-fade-in-up" style="animation-delay: 250ms;">
-        <div class="flex items-center gap-2 mb-4">
-          <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="flex items-center gap-2 mb-3 sm:mb-4">
+          <svg class="w-4 h-4 sm:w-5 sm:h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
           </svg>
-          <h3 class="text-lg font-bold text-foreground">
+          <h3 class="text-base sm:text-lg font-bold text-foreground">
             Équipe (<%= @project.current_members_count %>/<%= @project.max_members %>)
           </h3>
         </div>
 
-        <div class="space-y-3">
-          <div class="p-3 bg-primary/10 border border-primary/20 rounded-lg">
+        <div class="space-y-2 sm:space-y-3">
+          <div class="p-2 sm:p-3 bg-primary/10 border border-primary/20 rounded-lg">
             <%= link_to user_path(@project.owner), class: "block group" do %>
-              <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full stat-gradient-primary flex items-center justify-center text-white font-bold">
+              <div class="flex items-center gap-2 sm:gap-3">
+                <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-full stat-gradient-primary flex items-center justify-center text-white font-bold text-sm sm:text-base">
                   <%= @project.owner.display_name.first.upcase %>
                 </div>
                 <div>
-                  <strong class="text-foreground group-hover:text-primary transition-colors"><%= @project.owner.display_name %></strong>
+                  <strong class="text-sm sm:text-base text-foreground group-hover:text-primary transition-colors"><%= @project.owner.display_name %></strong>
                   <span class="block text-xs text-muted-foreground">Créateur</span>
                 </div>
               </div>
@@ -191,12 +194,12 @@
           </div>
 
           <% @team_members.where.not(id: @project.owner.id).each do |member| %>
-            <div class="p-3 bg-secondary rounded-lg hover:bg-muted transition-colors">
-              <%= link_to user_path(member), class: "flex items-center gap-3 group" do %>
-                <div class="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-foreground font-bold">
+            <div class="p-2 sm:p-3 bg-secondary rounded-lg hover:bg-muted transition-colors">
+              <%= link_to user_path(member), class: "flex items-center gap-2 sm:gap-3 group" do %>
+                <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-muted flex items-center justify-center text-foreground font-bold text-sm sm:text-base">
                   <%= member.display_name.first.upcase %>
                 </div>
-                <span class="text-foreground group-hover:text-primary transition-colors"><%= member.display_name %></span>
+                <span class="text-sm sm:text-base text-foreground group-hover:text-primary transition-colors"><%= member.display_name %></span>
               <% end %>
             </div>
           <% end %>
@@ -205,13 +208,13 @@
 
       <!-- Informations -->
       <div class="card animate-fade-in-up" style="animation-delay: 300ms;">
-        <div class="flex items-center gap-2 mb-4">
-          <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="flex items-center gap-2 mb-3 sm:mb-4">
+          <svg class="w-4 h-4 sm:w-5 sm:h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
           </svg>
-          <h3 class="text-lg font-bold text-foreground">Informations</h3>
+          <h3 class="text-base sm:text-lg font-bold text-foreground">Informations</h3>
         </div>
-        <div class="space-y-3 text-sm text-muted-foreground">
+        <div class="space-y-2 sm:space-y-3 text-xs sm:text-sm text-muted-foreground">
           <p class="flex justify-between">
             <span>Créé le</span>
             <span class="text-foreground"><%= l(@project.created_at, format: :short) %></span>
@@ -229,8 +232,8 @@
     </div>
   </div>
 
-  <div class="mt-8 animate-fade-in">
-    <%= link_to projects_path, class: "text-primary hover:text-primary/80 inline-flex items-center gap-2" do %>
+  <div class="mt-4 sm:mt-8 animate-fade-in">
+    <%= link_to projects_path, class: "text-primary hover:text-primary/80 inline-flex items-center gap-2 text-sm sm:text-base" do %>
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
       </svg>

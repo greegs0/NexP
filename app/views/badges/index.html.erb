@@ -1,0 +1,196 @@
+<div class="max-w-6xl mx-auto px-4 py-4 sm:py-8">
+  <!-- Header -->
+  <div class="mb-4 sm:mb-8">
+    <h1 class="text-2xl sm:text-3xl font-bold text-foreground mb-1 sm:mb-2">Badges</h1>
+    <p class="text-sm sm:text-base text-muted-foreground">Progresse et débloque des badges en utilisant NexP</p>
+  </div>
+
+  <!-- Stats Overview with Progress Bar -->
+  <div class="card mb-4 sm:mb-8">
+    <div class="flex flex-col gap-3 sm:gap-4">
+      <div class="flex items-center justify-between flex-wrap gap-2">
+        <div class="flex items-center gap-1 sm:gap-2">
+          <span class="text-xl sm:text-2xl font-bold text-foreground"><%= @unlocked_badges %></span>
+          <span class="text-base sm:text-lg text-muted-foreground">/ <%= @total_badges %> badges</span>
+        </div>
+        <div class="flex items-center gap-2 sm:gap-3">
+          <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-primary/10 flex items-center justify-center">
+            <svg class="w-4 h-4 sm:w-5 sm:h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+            </svg>
+          </div>
+          <div class="text-right">
+            <p class="font-bold text-sm sm:text-base text-foreground"><%= number_with_delimiter(@user_xp) %> XP</p>
+            <p class="text-xs text-muted-foreground">Expérience totale</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Progress Bar -->
+      <div class="flex items-center gap-2 sm:gap-4">
+        <div class="flex-1 h-3 sm:h-4 bg-secondary rounded-full overflow-hidden">
+          <div class="h-full bg-primary rounded-full transition-all duration-500" style="width: <%= @completion_percentage %>%"></div>
+        </div>
+        <span class="text-base sm:text-lg font-bold text-primary min-w-[3rem] sm:min-w-[4rem] text-right"><%= @completion_percentage %>%</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Unlocked Badges - Collapsible -->
+  <% unlocked_badges = Badge.where(id: @user_badge_ids).order(:category, :xp_required) %>
+  <% if unlocked_badges.any? %>
+    <details class="card mb-4 sm:mb-8 group" open>
+      <summary class="flex items-center justify-between cursor-pointer list-none">
+        <div class="flex items-center gap-2 sm:gap-3">
+          <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-primary/10 flex items-center justify-center">
+            <svg class="w-4 h-4 sm:w-5 sm:h-5 text-primary" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+          </div>
+          <div>
+            <h2 class="text-base sm:text-lg font-bold text-foreground">Mes badges débloqués</h2>
+            <p class="text-xs sm:text-sm text-muted-foreground"><%= unlocked_badges.count %> badges obtenus</p>
+          </div>
+        </div>
+        <svg class="w-5 h-5 text-muted-foreground transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+        </svg>
+      </summary>
+
+      <div class="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-border">
+        <div class="flex flex-wrap gap-1.5 sm:gap-2">
+          <% unlocked_badges.each do |badge| %>
+            <div class="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1.5 sm:py-2 bg-primary/5 border border-primary/20 rounded-lg">
+              <span class="text-base sm:text-lg"><%= badge.name.match(/^[\p{Emoji}\u200d]+/u)&.[](0) || '?' %></span>
+              <span class="text-xs sm:text-sm font-medium text-foreground"><%= badge.name.gsub(/^[\p{Emoji}\u200d]+\s*/u, '') %></span>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </details>
+  <% end %>
+
+  <!-- Badges by Category -->
+  <% @categories.each do |category_key, category_info| %>
+    <% badges = @all_badges[category_key] %>
+    <% next unless badges.present? %>
+
+    <%
+      # Séparer et trier les badges
+      category_unlocked = badges.select { |b| @user_badge_ids.include?(b.id) }
+      category_locked = badges.reject { |b| @user_badge_ids.include?(b.id) }
+
+      # Séparer les badges "action requise" (XP suffisant) des badges en progression
+      category_action_required = category_locked.select { |b| b.xp_required == 0 || @user_xp >= b.xp_required }
+      category_in_progress = category_locked.reject { |b| b.xp_required == 0 || @user_xp >= b.xp_required }
+
+      # Trier les badges en progression par % (le plus proche en premier)
+      category_in_progress_sorted = category_in_progress.sort_by do |b|
+        -(@user_xp.to_f / b.xp_required * 100)
+      end
+
+      # Combiner : débloqués > action requise > en progression
+      sorted_badges = category_unlocked + category_action_required + category_in_progress_sorted
+
+      category_progress = (category_unlocked.count.to_f / badges.count * 100).round
+    %>
+
+    <div class="mb-6 sm:mb-8">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-3 sm:mb-4 gap-2">
+        <div class="flex items-center gap-2 sm:gap-3">
+          <h2 class="text-lg sm:text-xl font-bold text-foreground"><%= category_info[:label] %></h2>
+          <span class="text-xs sm:text-sm text-muted-foreground">
+            <%= category_unlocked.count %>/<%= badges.count %>
+          </span>
+        </div>
+        <div class="flex items-center gap-2">
+          <div class="w-20 sm:w-24 h-1.5 sm:h-2 bg-secondary rounded-full overflow-hidden">
+            <div class="h-full bg-primary rounded-full" style="width: <%= category_progress %>%"></div>
+          </div>
+          <span class="text-xs sm:text-sm font-medium text-primary"><%= category_progress %>%</span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+        <% sorted_badges.each do |badge| %>
+          <% unlocked = @user_badge_ids.include?(badge.id) %>
+          <% progress = badge.xp_required > 0 ? [(@user_xp.to_f / badge.xp_required * 100), 100].min : 100 %>
+
+          <%
+              # Styles selon l'état
+              card_class = if unlocked
+                'border-primary/30 bg-primary/5'
+              elsif progress >= 100
+                'border-amber-500/30 bg-amber-500/5'
+              else
+                'opacity-70 hover:opacity-100'
+              end
+            %>
+          <div class="card <%= card_class %> transition-all">
+            <div class="flex items-start gap-3 sm:gap-4">
+              <!-- Badge Icon -->
+              <div class="flex-shrink-0">
+                <%
+                  icon_class = if unlocked
+                    'bg-primary/20'
+                  elsif progress >= 100
+                    'bg-amber-500/20'
+                  else
+                    'bg-secondary grayscale'
+                  end
+                %>
+                <div class="w-10 h-10 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center text-xl sm:text-2xl <%= icon_class %>">
+                  <%= badge.name.match(/^[\p{Emoji}\u200d]+/u)&.[](0) || '?' %>
+                </div>
+              </div>
+
+              <!-- Badge Info -->
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 mb-1">
+                  <h3 class="font-bold text-sm sm:text-base text-foreground truncate">
+                    <%= badge.name.gsub(/^[\p{Emoji}\u200d]+\s*/u, '') %>
+                  </h3>
+                  <% if unlocked %>
+                    <svg class="w-3 h-3 sm:w-4 sm:h-4 text-primary flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                    </svg>
+                  <% end %>
+                </div>
+
+                <p class="text-xs sm:text-sm text-muted-foreground mb-2 sm:mb-3 line-clamp-2"><%= badge.description %></p>
+
+                <!-- Progress -->
+                <% if unlocked %>
+                  <span class="inline-flex items-center gap-1 text-xs font-medium text-primary">
+                    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                    </svg>
+                    Débloqué
+                  </span>
+                <% elsif progress >= 100 %>
+                  <!-- XP suffisant mais action requise -->
+                  <span class="inline-flex items-center gap-1 text-xs font-medium text-amber-500">
+                    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                    </svg>
+                    Action requise
+                  </span>
+                <% else %>
+                  <div class="flex items-center gap-2">
+                    <div class="flex-1 h-1.5 bg-secondary rounded-full overflow-hidden">
+                      <div class="h-full bg-primary/50 rounded-full transition-all duration-300" style="width: <%= progress %>%"></div>
+                    </div>
+                    <span class="text-xs font-bold text-muted-foreground min-w-[3rem] text-right"><%= progress.round %>%</span>
+                  </div>
+                  <p class="text-xs text-muted-foreground mt-1">
+                    <%= number_with_delimiter(@user_xp) %> / <%= number_with_delimiter(badge.xp_required) %> XP
+                  </p>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>

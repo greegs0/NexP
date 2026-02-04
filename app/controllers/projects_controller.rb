@@ -1,9 +1,11 @@
 class ProjectsController < ApplicationController
   include Authorizable
+  include PlanLimits
 
   before_action :authenticate_user!
   before_action :set_project, only: [:show, :edit, :update, :destroy, :join, :leave]
   before_action -> { authorize_owner!(@project) }, only: [:edit, :update, :destroy]
+  before_action :check_project_limit!, only: [:create]
 
   def index
     @projects = Project.includes(:owner, :skills, :members)

@@ -1,6 +1,11 @@
 class User < ApplicationRecord
   include StatsCacheable
 
+  # Plan constants
+  PLANS = %w[free builder].freeze
+  FREE_PROJECT_LIMIT = 1
+  FREE_MESSAGE_LIMIT = 5
+
   # Chiffrement des tokens OAuth avec attr_encrypted
   attr_encrypted :oauth_token, key: Rails.application.credentials.encryption_key
   attr_encrypted :oauth_refresh_token, key: Rails.application.credentials.encryption_key
@@ -53,6 +58,7 @@ class User < ApplicationRecord
             allow_blank: true
   validates :experience_points, numericality: { greater_than_or_equal_to: 0 }
   validates :level, numericality: { greater_than_or_equal_to: 1, less_than_or_equal_to: 100 }
+  validates :plan, inclusion: { in: PLANS }
 
   # Callbacks
   before_save :normalize_username
@@ -123,7 +129,49 @@ class User < ApplicationRecord
     super
   end
 
+  # Plan methods
+  def free_plan?
+    plan == 'free'
+  end
+
+  def builder_plan?
+    plan == 'builder'
+  end
+
+  def can_create_project?
+    return true if builder_plan?
+    owned_projects.where(status: %w[draft open in_progress]).count < FREE_PROJECT_LIMIT
+  end
+
+  def can_send_message?
+    return true if builder_plan?
+    reset_monthly_messages_if_needed!
+    messages_count_this_month < FREE_MESSAGE_LIMIT
+  end
+
+  def increment_message_count!
+    reset_monthly_messages_if_needed!
+    increment!(:messages_count_this_month)
+  end
+
+  def remaining_messages
+    return Float::INFINITY if builder_plan?
+    reset_monthly_messages_if_needed!
+    [ FREE_MESSAGE_LIMIT - messages_count_this_month, 0 ].max
+  end
+
+  def remaining_projects
+    return Float::INFINITY if builder_plan?
+    [ FREE_PROJECT_LIMIT - owned_projects.where(status: %w[draft open in_progress]).count, 0 ].max
+  end
+
   private
+
+  def reset_monthly_messages_if_needed!
+    if messages_reset_at.nil? || messages_reset_at < Time.current.beginning_of_month
+      update_columns(messages_count_this_month: 0, messages_reset_at: Time.current)
+    end
+  end
 
   def normalize_username
     self.username = username.downcase if username.present?

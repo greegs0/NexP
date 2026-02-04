@@ -14,6 +14,6 @@
   </div>
 <% end %>
 
-<%= turbo_stream.replace "message_form" do %>
+<%= turbo_stream.replace "message_form_container" do %>
   <%= render partial: "form", locals: { recipient: @recipient } %>
 <% end %>

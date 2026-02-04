@@ -1,0 +1,26 @@
+{
+  "name": "NexP - Build. Together.",
+  "short_name": "NexP",
+  "description": "NexP connecte les porteurs d'idées avec les développeurs, designers et builders qui cherchent un projet.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#8fa66b",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

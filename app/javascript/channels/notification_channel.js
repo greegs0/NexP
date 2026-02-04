@@ -10,6 +10,15 @@ consumer.subscriptions.create("NotificationChannel", {
   },
 
   received(data) {
+    // Vérifier que la notification est pour l'utilisateur actuel
+    const currentUserMeta = document.querySelector('meta[name="current-user-id"]')
+    const currentUserId = currentUserMeta ? parseInt(currentUserMeta.content) : null
+
+    if (data.user_id && currentUserId && data.user_id !== currentUserId) {
+      // Ignorer les notifications pour d'autres utilisateurs (session WebSocket obsolète)
+      return
+    }
+
     // Mettre à jour le compteur de notifications
     this.updateNotificationBadge(data.unread_count)
 
