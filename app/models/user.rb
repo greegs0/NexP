@@ -13,7 +13,47 @@ class User < ApplicationRecord
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :validatable, :confirmable
+         :recoverable, :rememberable, :validatable, :confirmable,
+         :omniauthable, omniauth_providers: [:github, :google_oauth2]
+
+  # OmniAuth - Find or create user from OAuth data
+  def self.from_omniauth(auth)
+    user = find_by(provider: auth.provider, uid: auth.uid)
+    return user if user
+
+    # Try to find by email (link accounts)
+    user = find_by(email: auth.info.email)
+    if user
+      user.update(provider: auth.provider, uid: auth.uid)
+      return user
+    end
+
+    # Create new user
+    create(
+      provider: auth.provider,
+      uid: auth.uid,
+      email: auth.info.email,
+      password: Devise.friendly_token[0, 20],
+      username: generate_unique_username(auth),
+      name: auth.info.name,
+      github_username: (auth.info.nickname if auth.provider == 'github'),
+      confirmed_at: Time.current # Auto-confirm OAuth users
+    )
+  end
+
+  def self.generate_unique_username(auth)
+    base = auth.info.nickname || auth.info.email.split('@').first
+    base = base.gsub(/[^a-zA-Z0-9_]/, '_').downcase[0..25]
+    username = base
+
+    counter = 1
+    while exists?(username: username)
+      username = "#{base[0..(25 - counter.to_s.length)]}#{counter}"
+      counter += 1
+    end
+
+    username
+  end
 
   # Associations
   has_many :user_skills, dependent: :destroy

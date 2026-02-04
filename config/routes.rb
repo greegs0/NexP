@@ -8,7 +8,8 @@ Rails.application.routes.draw do
 
   devise_for :users, controllers: {
     confirmations: 'users/confirmations',
-    registrations: 'users/registrations'
+    registrations: 'users/registrations',
+    omniauth_callbacks: 'users/omniauth_callbacks'
   }
 
   # Routes personnalisées pour la confirmation par code

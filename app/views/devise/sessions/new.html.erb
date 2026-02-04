@@ -11,6 +11,19 @@
   <% end %>
 
   <div class="card">
+    <%= render "devise/shared/oauth_buttons" %>
+
+    <% if devise_mapping.omniauthable? %>
+      <div class="relative my-4 sm:my-5">
+        <div class="absolute inset-0 flex items-center">
+          <div class="w-full border-t border-border/40"></div>
+        </div>
+        <div class="relative flex justify-center text-xs">
+          <span class="px-3 bg-card text-muted-foreground">ou avec ton email</span>
+        </div>
+      </div>
+    <% end %>
+
     <%= form_for(resource, as: resource_name, url: session_path(resource_name), html: { class: "space-y-4 sm:space-y-6" }) do |f| %>
       <div>
         <%= f.label :email, "Email", class: "form-label text-xs sm:text-sm" %>

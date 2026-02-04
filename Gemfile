@@ -39,11 +39,11 @@ gem "attr_encrypted", "~> 4.0"
 # AWS SDK for S3-compatible storage (Cloudflare R2)
 gem "aws-sdk-s3", require: false
 
-# OAuth integrations (problème réseau - à réessayer plus tard)
-# gem "omniauth"
-# gem "omniauth-github"
-# gem "omniauth-gitlab"
-# gem "omniauth-rails_csrf_protection"
+# OAuth integrations
+gem "omniauth"
+gem "omniauth-github"
+gem "omniauth-google-oauth2"
+gem "omniauth-rails_csrf_protection"
 
 # API clients (problème réseau - à réessayer plus tard)
 # gem "octokit" # GitHub API
