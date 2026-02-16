@@ -42,9 +42,8 @@ Rails.application.configure do
   config.action_mailer.perform_deliveries = true
   config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
 
-  # Utiliser letter_opener pour prévisualiser dans le navigateur (recommandé pour dev)
-  # Les emails s'ouvrent automatiquement dans le navigateur au lieu d'être envoyés
-  config.action_mailer.delivery_method = :letter_opener
+  # Prévisualiser les emails sur /letter_opener en dev
+  config.action_mailer.delivery_method = :letter_opener_web
 
   # Note: Brevo SMTP fonctionne en production mais peut avoir des problèmes SSL sur macOS en dev
   # La configuration SMTP est dans production.rb et fonctionnera correctement sur le serveur

@@ -30,8 +30,8 @@
   </div>
 
   <!-- Barre de recherche -->
-  <div class="card mb-4 sm:mb-8 animate-fade-in-up" style="animation-delay: 100ms;" data-controller="search" data-search-url-value="<%= projects_path %>">
-    <form data-action="submit->search#preventSubmit" class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+  <div class="card mb-3 sm:mb-4 animate-fade-in-up" style="animation-delay: 100ms;" data-controller="search" data-search-url-value="<%= projects_path %>">
+    <form data-action="submit->search#preventSubmit">
       <div class="relative group">
         <div class="absolute left-0 top-0 bottom-0 w-12 flex items-center justify-center pointer-events-none">
           <svg class="w-5 h-5 text-muted-foreground group-focus-within:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -54,17 +54,17 @@
           </svg>
         </div>
       </div>
-
-      <select name="status"
-              class="input py-3"
-              aria-label="Filtrer par statut"
-              data-action="change->search#searchNow">
-        <option value="">Tous les statuts</option>
-        <% Project::STATUSES.each do |s| %>
-          <option value="<%= s %>" <%= 'selected' if params[:status] == s %>><%= translate_status(s) %></option>
-        <% end %>
-      </select>
     </form>
+  </div>
+
+  <!-- Filtres par statut -->
+  <div class="mb-4 sm:mb-8 animate-fade-in-up" style="animation-delay: 120ms;">
+    <div class="flex items-center gap-1 p-1 bg-secondary/50 rounded-xl overflow-x-auto scrollbar-hide">
+      <%= link_to "Tous", projects_path(search: params[:search]), class: "filter-pill px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium rounded-lg whitespace-nowrap transition-all #{params[:status].blank? ? 'active' : ''}" %>
+      <% Project::STATUSES.each do |s| %>
+        <%= link_to translate_status(s), projects_path(status: s, search: params[:search]), class: "filter-pill px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium rounded-lg whitespace-nowrap transition-all #{params[:status] == s ? 'active' : ''}" %>
+      <% end %>
+    </div>
   </div>
 
   <div id="projects_results" data-search-target="results">
