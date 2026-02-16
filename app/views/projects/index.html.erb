@@ -76,7 +76,7 @@
               <h3 class="text-lg font-bold text-foreground flex-1 group-hover:text-primary transition-colors">
                 <%= link_to project.title, project_path(project) %>
               </h3>
-              <div class="flex gap-2">
+              <div class="flex items-center gap-2">
                 <span class="px-3 py-1 text-xs rounded-full font-medium <%= %w[open in_progress].include?(project.status) ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground' %>">
                   <%= translate_status(project.status) %>
                 </span>
@@ -87,6 +87,32 @@
                     </svg>
                     Recrute
                   </span>
+                <% end %>
+                <% if current_user == project.owner %>
+                  <div class="relative" data-controller="dropdown">
+                    <button data-action="click->dropdown#toggle" class="p-1 text-muted-foreground hover:text-foreground hover:bg-secondary rounded transition-colors" title="Options">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path>
+                      </svg>
+                    </button>
+                    <div data-dropdown-target="menu" class="hidden absolute right-0 top-full mt-1 w-40 bg-card border border-border rounded-lg shadow-lg z-50 py-1">
+                      <%= link_to edit_project_path(project), class: "flex items-center gap-2 px-3 py-2 text-sm text-foreground hover:bg-secondary/50 transition-colors" do %>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                        </svg>
+                        Modifier
+                      <% end %>
+                      <%= button_to project_path(project),
+                          method: :delete,
+                          class: "flex items-center gap-2 px-3 py-2 text-sm text-foreground hover:bg-secondary/50 hover:text-destructive transition-colors w-full text-left",
+                          data: { turbo_confirm: "Êtes-vous sûr de vouloir supprimer ce projet ?" } do %>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                        Supprimer
+                      <% end %>
+                    </div>
+                  </div>
                 <% end %>
               </div>
             </div>
